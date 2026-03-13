@@ -316,6 +316,16 @@ tr:hover td{background:rgba(255,255,255,.015);}
           </div>
           <div class="field"><label>Fecha de venta</label><input type="date" id="f-fecha"></div>
         </div>
+        <!-- NUEVOS CAMPOS OPCIONALES -->
+        <div class="row2">
+          <div class="field"><label>RFC del cliente (opcional)</label><input type="text" id="f-rfc" placeholder="Ej. GOMJ850101MDF"></div>
+          <div class="field"><label>Ingresos mensuales (opcional)</label><input type="number" id="f-ingresos" placeholder="Ej. 25000" min="0"></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label>Tarjeta de referencia (opcional)</label><input type="text" id="f-tarjetaRef" placeholder="Ej. Clásica Banamex"></div>
+          <div class="field"><label>Línea de crédito ref. (opcional)</label><input type="number" id="f-ldcRef" placeholder="Ej. 30000" min="0"></div>
+        </div>
+        <!-- FIN NUEVOS CAMPOS -->
         <div class="frow">
           <div class="field"><label>Folio (automático si lo dejas vacío)</label><input type="text" id="f-folio" placeholder="BNX-000001" maxlength="20"></div>
           <div class="folio-pill" id="folio-pill">—</div>
@@ -367,7 +377,7 @@ tr:hover td{background:rgba(255,255,255,.015);}
         <table>
           <thead><tr>
             <th>Folio</th><th>Ejecutivo</th><th>Cliente</th><th>Teléfono</th>
-            <th>Tarjeta</th><th>Fecha venta</th><th>Registrado</th><th></th>
+            <th>Tarjeta</th><th>Estado</th><th>Fecha venta</th><th>Registrado</th><th></th>
           </tr></thead>
           <tbody id="t-body"></tbody>
         </table>
@@ -505,6 +515,8 @@ async function api(action, body={}){
 /* ── UTILS ── */
 const ADM_U='admin', ADM_P='admin123';
 let CU=null, SALES_CACHE=[], USERS_CACHE=[];
+let currentSaleForStatus = null; // Variable para el modal de estado
+
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function fmt(ts){if(!ts)return '—';const d=new Date(ts);return d.toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});}
 function fmtDate(s){if(!s)return '—';const[y,m,d]=s.split('-');const M=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];return `${parseInt(d)} ${M[parseInt(m)-1]} ${y}`;}
@@ -581,21 +593,51 @@ async function registrarVenta(){
   const tarjeta=document.getElementById('f-tarjeta').value;
   const fecha=document.getElementById('f-fecha').value;
   let folio=(document.getElementById('f-folio').value||'').trim();
+
+  // Nuevos campos
+  const rfc = (document.getElementById('f-rfc').value||'').trim();
+  const ingresos = (document.getElementById('f-ingresos').value||'').trim();
+  const tarjetaRef = (document.getElementById('f-tarjetaRef').value||'').trim();
+  const ldcRef = (document.getElementById('f-ldcRef').value||'').trim();
+
   if(!cliente){showToast('t-err','Escribe el nombre del cliente','err');return;}
   if(!tarjeta){showToast('t-err','Selecciona el tipo de tarjeta','err');return;}
   if(!fecha){showToast('t-err','Selecciona la fecha de venta','err');return;}
   if(!folio)folio=genFolio();
+
   document.getElementById('reg-btn').disabled=true;
   spin(true);
-  const r=await api('addSale',{folio,exec:CU.name,username:CU.username,cliente,tel,tarjeta,fecha,registrado:new Date().toISOString()});
+  const r = await api('addSale',{
+    folio,
+    exec:CU.name,
+    username:CU.username,
+    cliente,
+    tel,
+    tarjeta,
+    fecha,
+    registrado: new Date().toISOString(),
+    // Nuevos campos
+    rfc: rfc || null,
+    ingresos: ingresos || null,
+    tarjetaRef: tarjetaRef || null,
+    ldcRef: ldcRef || null,
+    // Estado por defecto
+    estado: 'pendiente',
+    notaEstado: 'Pendiente de contacto inicial'
+  });
   spin(false);
   document.getElementById('reg-btn').disabled=false;
   if(!r.ok){showToast('t-err','Error al guardar: '+r.error,'err');return;}
+  // Limpiar campos
   document.getElementById('f-cliente').value='';
   document.getElementById('f-tel').value='';
   document.getElementById('f-tarjeta').value='';
   document.getElementById('f-folio').value='';
   document.getElementById('f-fecha').value=new Date().toISOString().slice(0,10);
+  document.getElementById('f-rfc').value='';
+  document.getElementById('f-ingresos').value='';
+  document.getElementById('f-tarjetaRef').value='';
+  document.getElementById('f-ldcRef').value='';
   refreshFolio();
   showToast('t-ok','✓ Venta guardada — Folio '+folio,'ok');
   renderRecent();
@@ -605,7 +647,14 @@ function renderRecent(){
   const list=document.getElementById('exec-recent');
   const data=loadS(SK_S).filter(v=>v.username===CU.username).slice(0,6);
   if(!data.length){list.innerHTML='<p style="color:var(--mu);font-size:13px">Aún no tienes ventas registradas.</p>';return;}
-  list.innerHTML=data.map(v=>`<div class="ri"><div style="flex:1;min-width:0"><div class="ri-n">${esc(v.cliente)}</div><div class="ri-m">${esc(v.tarjeta)}${v.tel?' · '+esc(v.tel):''} · ${fmtDate(v.fecha)}</div></div><span class="ri-f">${esc(v.folio)}</span></div>`).join('');
+  list.innerHTML=data.map(v=>`<div class="ri">
+    <div style="flex:1;min-width:0">
+      <div class="ri-n">${esc(v.cliente)} ${v.rfc ? '📄' : ''} ${v.ingresos ? '💰' : ''}</div>
+      <div class="ri-m">${esc(v.tarjeta)}${v.tel?' · '+esc(v.tel):''} · ${fmtDate(v.fecha)}</div>
+    </div>
+    <span class="ri-f">${esc(v.folio)}</span>
+    <span class="st-badge st-${estadoClase(v.estado)}" onclick="openStatusModalFromFolio('${v.folio}')">${estadoTexto(v.estado, v.notaEstado)}</span>
+  </div>`).join('');
 }
 
 /* ── DASHBOARD ── */
@@ -626,6 +675,38 @@ async function loadAndRenderDash(){
   renderDashTable();
 }
 
+function estadoClase(estado) {
+  return { 'pendiente': 'pend', 'declino': 'decl', 'preasignado': 'pre', 'vendida': 'ok' }[estado] || 'pend';
+}
+function estadoTexto(estado, nota) {
+  const textos = { 'pendiente': '📞 Pendiente', 'declino': '❌ Declinó', 'preasignado': '⭐ Preasignado', 'vendida': '✅ Vendida' };
+  const texto = textos[estado] || '📞 Pendiente';
+  if (nota) {
+    return `<span onclick="showStatusNote('${nota.replace(/'/g, "\\'")}')" style="cursor:help;">${texto} ⓘ</span>`;
+  }
+  return texto;
+}
+
+window.showStatusNote = function(nota) {
+  document.getElementById('st-detail-txt').textContent = nota;
+  document.getElementById('st-detail-pop').classList.add('show');
+};
+
+window.openStatusModalFromFolio = function(folio) {
+  const sale = SALES_CACHE.find(v => v.folio === folio);
+  if (sale) openStatusModal(sale);
+};
+
+function openStatusModal(sale) {
+  currentSaleForStatus = sale;
+  document.getElementById('st-modal-client').textContent = `Cliente: ${sale.cliente} (Folio: ${sale.folio})`;
+  // Precargar el estado actual si existe
+  const radio = document.querySelector(`input[name="st-radio"][value="${sale.estado || 'pendiente'}"]`);
+  if (radio) radio.checked = true;
+  document.getElementById('st-nota').value = sale.notaEstado || '';
+  document.getElementById('st-modal').classList.add('show');
+}
+
 function renderDashTable(){
   const search=(document.getElementById('d-search').value||'').toLowerCase();
   const ft=document.getElementById('d-filt').value;
@@ -633,19 +714,39 @@ function renderDashTable(){
   let data=all.slice();
   if(search)data=data.filter(v=>(v.exec||'').toLowerCase().includes(search)||(v.cliente||'').toLowerCase().includes(search)||(v.folio||'').toLowerCase().includes(search)||(v.tel||'').includes(search));
   if(ft)data=data.filter(v=>v.tarjeta===ft);
+
   document.getElementById('s-tot').textContent=all.length;
   document.getElementById('s-exe').textContent=new Set(all.map(v=>v.username)).size;
   const today=new Date().toDateString();
   document.getElementById('s-hoy').textContent=all.filter(v=>v.registrado&&new Date(v.registrado).toDateString()===today).length;
   const weekAgo=Date.now()-7*86400000;
   document.getElementById('s-sem').textContent=all.filter(v=>v.registrado&&new Date(v.registrado).getTime()>weekAgo).length;
+
   const tbody=document.getElementById('t-body');
   const empty=document.getElementById('t-empty');
-  if(!data.length){tbody.innerHTML='';empty.style.display='block';}
-  else{
+  if(!data.length){
+    tbody.innerHTML='';
+    empty.style.display='block';
+  } else {
     empty.style.display='none';
-    tbody.innerHTML=data.map(v=>`<tr><td class="tdf">${esc(v.folio)}</td><td class="tdb">${esc(v.exec)}</td><td>${esc(v.cliente)}</td><td class="tdm">${esc(v.tel||'—')}</td><td><span class="badge b-r">${esc(v.tarjeta)}</span></td><td class="tdm">${fmtDate(v.fecha)}</td><td class="tdm">${fmt(v.registrado)}</td><td><button class="delbtn" data-folio="${esc(v.folio)}">✕</button></td></tr>`).join('');
+    tbody.innerHTML=data.map(v=>`<tr>
+      <td class="tdf">${esc(v.folio)}</td>
+      <td class="tdb">${esc(v.exec)}</td>
+      <td>${esc(v.cliente)}</td>
+      <td class="tdm">${esc(v.tel||'—')}</td>
+      <td><span class="badge b-r">${esc(v.tarjeta)}</span></td>
+      <td>
+        <span class="st-badge st-${estadoClase(v.estado)}" onclick="openStatusModalFromFolio('${v.folio}')">
+          ${estadoTexto(v.estado, v.notaEstado)}
+        </span>
+      </td>
+      <td class="tdm">${fmtDate(v.fecha)}</td>
+      <td class="tdm">${fmt(v.registrado)}</td>
+      <td><button class="delbtn" data-folio="${esc(v.folio)}">✕</button></td>
+    </tr>`).join('');
   }
+
+  // Ranking
   const counts={};
   all.forEach(v=>{counts[v.exec]=(counts[v.exec]||0)+1;});
   const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,12);
@@ -907,8 +1008,8 @@ document.addEventListener('click',async function(e){
   }
   if(e.target.id==='export-btn'){
     if(!SALES_CACHE.length){alert('No hay ventas para exportar.');return;}
-    const csv=['Folio,Ejecutivo,Cliente,Teléfono,Tarjeta,Fecha Venta,Registrado',
-      ...SALES_CACHE.map(v=>`"${v.folio}","${v.exec}","${v.cliente}","${v.tel||''}","${v.tarjeta}","${fmtDate(v.fecha)}","${fmt(v.registrado)}"`)
+    const csv=['Folio,Ejecutivo,Cliente,Teléfono,Tarjeta,Estado,Fecha Venta,Registrado,RFC,Ingresos,TarjetaRef,LDCRef',
+      ...SALES_CACHE.map(v=>`"${v.folio}","${v.exec}","${v.cliente}","${v.tel||''}","${v.tarjeta}","${v.estado||'pendiente'}","${fmtDate(v.fecha)}","${fmt(v.registrado)}","${v.rfc||''}","${v.ingresos||''}","${v.tarjetaRef||''}","${v.ldcRef||''}"`)
     ].join('\n');
     const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
     const url=URL.createObjectURL(blob);
@@ -922,6 +1023,45 @@ document.addEventListener('click',async function(e){
     if(!r.ok){alert('Error: '+r.error);return;}
     SALES_CACHE=[];renderDashTable();
     setSyncStatus('ok','Sincronizado · 0 ventas');return;
+  }
+  if(e.target.id==='st-cancel'){
+    document.getElementById('st-modal').classList.remove('show');
+    currentSaleForStatus = null;
+  }
+  if(e.target.id==='st-save'){
+    if (!currentSaleForStatus) return;
+    const estadoSeleccionado = document.querySelector('input[name="st-radio"]:checked')?.value;
+    const nota = document.getElementById('st-nota').value.trim();
+
+    if (!estadoSeleccionado) {
+      alert('Selecciona un estado.');
+      return;
+    }
+    if ((estadoSeleccionado === 'pendiente' || estadoSeleccionado === 'declino') && !nota) {
+      alert('La nota es obligatoria para los estados "Pendiente" y "Declinó".');
+      return;
+    }
+
+    // Actualizar la venta en SALES_CACHE
+    const index = SALES_CACHE.findIndex(v => v.folio === currentSaleForStatus.folio);
+    if (index !== -1) {
+      SALES_CACHE[index].estado = estadoSeleccionado;
+      SALES_CACHE[index].notaEstado = nota;
+      saveS(SK_S, SALES_CACHE);
+      await tgSave('SALES', SALES_CACHE);
+    }
+
+    document.getElementById('st-modal').classList.remove('show');
+    currentSaleForStatus = null;
+    // Refrescar la vista actual
+    if (document.getElementById('pg-dash').classList.contains('on')) {
+      renderDashTable();
+    } else {
+      renderRecent();
+    }
+  }
+  if(e.target.id==='st-detail-close'){
+    document.getElementById('st-detail-pop').classList.remove('show');
   }
 });
 document.addEventListener('keydown',function(e){
