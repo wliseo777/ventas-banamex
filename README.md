@@ -401,7 +401,6 @@ const ADM_U = 'admin', ADM_P = 'admin123';
 let CU = null;
 let SALES_CACHE = [];
 let USERS_CACHE = [];
-let API_URL = 'https://script.google.com/macros/s/AKfycbwKtjEj_NnV1D0WvUUwV8lbo4z11PjlUMIhidwkCesQrN1wT_kRtjoTA53kXDMvw1Sa/exec';
 
 function getConfig(){ try{ return JSON.parse(localStorage.getItem(CFG_KEY))||{}; }catch{ return {}; } }
 function saveConfig(d){ localStorage.setItem(CFG_KEY, JSON.stringify(d)); }
@@ -430,19 +429,99 @@ function showToast(id, msg, type){
 }
 function spin(on){ document.getElementById('spinner').classList.toggle('show', on); }
 
-/* ─── API ─── */
+/* ─── JSONBIN CONFIG ─── */
+// IDs de los bins — se crean automáticamente la primera vez
+const JBIN_KEY  = '$2a$10$kne8brrCST2wtHkfBeby0ODPqukyxbWzGEJvA1OVwgwxCrNCAnlJm';
+const JBIN_BASE = 'https://api.jsonbin.io/v3/b';
+const SK_BINS   = 'bnx_bin_ids';
+
+function getBinIdsLocal(){
+  try{ return JSON.parse(localStorage.getItem(SK_BINS))||{}; }catch{ return {}; }
+}
+function saveBinIdsLocal(d){ localStorage.setItem(SK_BINS, JSON.stringify(d)); }
+
+async function jbinGet(binId){
+  const r = await fetch(`${JBIN_BASE}/${binId}/latest`, {
+    headers:{'X-Master-Key':JBIN_KEY,'X-Bin-Meta':'false'}
+  });
+  if(!r.ok) throw new Error('Error leyendo bin: '+r.status);
+  return await r.json();
+}
+
+async function jbinSet(binId, data){
+  const r = await fetch(`${JBIN_BASE}/${binId}`, {
+    method:'PUT',
+    headers:{'Content-Type':'application/json','X-Master-Key':JBIN_KEY},
+    body: JSON.stringify(data)
+  });
+  if(!r.ok) throw new Error('Error guardando bin: '+r.status);
+}
+
+async function ensureBins(){
+  const ids = getBinIdsLocal();
+  if(ids.sales && ids.users) return ids;
+  // Crear bins si no existen
+  async function createBin(name, init){
+    const r = await fetch(JBIN_BASE, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-Master-Key':JBIN_KEY,'X-Bin-Name':name},
+      body: JSON.stringify(init)
+    });
+    if(!r.ok) throw new Error('No se pudo crear bin '+name+': '+r.status);
+    const j = await r.json();
+    return j.metadata.id;
+  }
+  if(!ids.sales)  ids.sales  = await createBin('bnx_ventas', []);
+  if(!ids.users)  ids.users  = await createBin('bnx_usuarios', []);
+  saveBinIdsLocal(ids);
+  return ids;
+}
+
+/* ─── API wrapper ─── */
 async function api(action, body={}){
   try {
-    const url = new URL(API_URL);
-    url.searchParams.set('action', action);
-    if(Object.keys(body).length > 0){
-      url.searchParams.set('data', encodeURIComponent(JSON.stringify(body)));
+    const ids = await ensureBins();
+
+    if(action==='getSales'){
+      const d = await jbinGet(ids.sales);
+      return { ok:true, data: Array.isArray(d)?d:[] };
     }
-    const res = await fetch(url.toString());
-    const data = await res.json();
-    return data;
+    if(action==='addSale'){
+      const arr = await jbinGet(ids.sales);
+      const list = Array.isArray(arr)?arr:[];
+      list.unshift(body);
+      await jbinSet(ids.sales, list);
+      return { ok:true };
+    }
+    if(action==='deleteSale'){
+      const arr = await jbinGet(ids.sales);
+      await jbinSet(ids.sales, (Array.isArray(arr)?arr:[]).filter(v=>v.folio!==body.folio));
+      return { ok:true };
+    }
+    if(action==='clearSales'){
+      await jbinSet(ids.sales, []);
+      return { ok:true };
+    }
+    if(action==='getUsers'){
+      const d = await jbinGet(ids.users);
+      return { ok:true, data: Array.isArray(d)?d:[] };
+    }
+    if(action==='addUser'){
+      const arr = await jbinGet(ids.users);
+      const list = Array.isArray(arr)?arr:[];
+      if(list.find(u=>u.username===body.username)) return { ok:false, error:'El usuario ya existe' };
+      list.push(body);
+      await jbinSet(ids.users, list);
+      return { ok:true };
+    }
+    if(action==='deleteUser'){
+      const arr = await jbinGet(ids.users);
+      await jbinSet(ids.users, (Array.isArray(arr)?arr:[]).filter(u=>u.username!==body.username));
+      return { ok:true };
+    }
+    return { ok:false, error:'Acción desconocida' };
   } catch(e) {
-    return { ok: false, error: e.message };
+    return { ok:false, error: e.message };
   }
 }
 
@@ -855,5 +934,7 @@ document.addEventListener('change',function(e){
 /* ─── ARRANQUE ─── */
 checkSetup();
 </script>
+</body>
+</html>
 </body>
 </html>
