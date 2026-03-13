@@ -184,6 +184,87 @@ tr:hover td{background:rgba(255,255,255,.015);}
   .twocol{grid-template-columns:1fr;}
   .row2{grid-template-columns:1fr;}
 }
+
+/* ── TARJETAS VISUALES ── */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.25rem;margin-bottom:2rem;}
+.tc{border-radius:18px;padding:1.5rem 1.6rem;position:relative;overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s;min-height:190px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 8px 32px rgba(0,0,0,.5);}
+.tc:hover{transform:translateY(-5px);box-shadow:0 20px 50px rgba(0,0,0,.7);}
+.tc.sel{outline:3px solid rgba(255,255,255,.8);outline-offset:3px;}
+.tc-joy{background:linear-gradient(135deg,#C8102E 0%,#8B0B1F 100%);}
+.tc-clasica{background:linear-gradient(135deg,#1a2744 0%,#2e4a8a 100%);}
+.tc-teleton{background:linear-gradient(135deg,#4a0080 0%,#9333ea 100%);}
+.tc-oro{background:linear-gradient(135deg,#7c4f00 0%,#C8A84B 100%);}
+.tc-descubre{background:linear-gradient(135deg,#064e3b 0%,#10b981 100%);}
+.tc-platinum{background:linear-gradient(135deg,#1f2937 0%,#6b7280 100%);}
+.tc-explora{background:linear-gradient(135deg,#1e3a8a 0%,#3b82f6 100%);}
+.tc-chip{width:36px;height:26px;border-radius:5px;background:linear-gradient(135deg,#c8a84b,#f0c060,#c8a84b);margin-bottom:1rem;box-shadow:0 2px 8px rgba(0,0,0,.4);}
+.tc-num{font-family:monospace;font-size:14px;letter-spacing:.2em;color:rgba(255,255,255,.8);margin-bottom:.5rem;}
+.tc-cardname{font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.1em;}
+.tc-titular{font-size:13px;color:#fff;font-weight:600;letter-spacing:.04em;}
+.tc-logo{position:absolute;top:1.2rem;right:1.2rem;font-family:'Bebas Neue',sans-serif;font-size:.95rem;color:rgba(255,255,255,.9);letter-spacing:.06em;}
+.tc-badge{position:absolute;top:1.2rem;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.35);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:3px 11px;font-size:10px;font-weight:600;color:#fff;white-space:nowrap;}
+.tc-mc{position:absolute;bottom:1.2rem;right:1.2rem;display:flex;}
+.tc-mc span{width:22px;height:22px;border-radius:50%;opacity:.9;}
+.tc-mc .r{background:#eb001b;}
+.tc-mc .y{background:#f79e1b;margin-left:-9px;}
+/* Detail panel */
+.card-detail{background:var(--s1);border:1px solid var(--br2);border-radius:16px;padding:1.75rem;margin-top:1.5rem;animation:fadeIn .2s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.cd-top{display:flex;gap:1.25rem;align-items:flex-start;flex-wrap:wrap;margin-bottom:1.5rem;}
+.cd-mini{border-radius:12px;padding:1rem 1.1rem;width:180px;min-height:110px;flex-shrink:0;display:flex;flex-direction:column;justify-content:space-between;}
+.cd-title{font-family:'Bebas Neue',sans-serif;font-size:1.7rem;letter-spacing:.03em;flex:1;}
+.cd-pts{font-size:12px;color:var(--mu);margin-top:.2rem;}
+.cd-close{background:var(--s2);border:1px solid var(--br2);border-radius:8px;padding:6px 14px;font-family:'Outfit',sans-serif;font-size:12px;color:var(--mu);cursor:pointer;flex-shrink:0;align-self:flex-start;}
+.cd-close:hover{color:var(--tx);}
+.cd-nums{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:8px;margin-bottom:1.25rem;}
+.cd-n{background:var(--s2);border-radius:10px;padding:10px 12px;}
+.cd-nl{font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:.06em;font-weight:500;}
+.cd-nv{font-size:14px;font-weight:600;margin-top:3px;}
+.red{color:#f88;}.green{color:var(--green);}.gold{color:var(--gold-l);}
+.cd-sec{font-size:11px;font-weight:600;color:var(--mu);text-transform:uppercase;letter-spacing:.08em;margin:1.2rem 0 .6rem;}
+.cd-bens{list-style:none;display:flex;flex-direction:column;gap:7px;}
+.cd-bens li{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.55;color:#ccc;background:var(--s2);border-radius:8px;padding:9px 12px;}
+.cd-ico{font-size:15px;flex-shrink:0;margin-top:1px;}
+.cd-bt{font-weight:600;color:var(--tx);display:block;margin-bottom:2px;}
+.cd-reqs{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:7px;}
+.cd-req{background:var(--s2);border-radius:8px;padding:8px 12px;font-size:12px;color:#ccc;display:flex;gap:8px;align-items:flex-start;}
+.cd-nota{background:var(--gold-f);border:1px solid rgba(200,168,75,.25);border-radius:8px;padding:10px 14px;font-size:11px;color:#bbb;line-height:1.6;margin-top:1rem;}
+/* ── STATUS BADGES en ventas ── */
+.st-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;transition:opacity .15s;white-space:nowrap;}
+.st-badge:hover{opacity:.8;}
+.st-pend{background:rgba(251,191,36,.15);border:1px solid rgba(251,191,36,.4);color:#fbbf24;}
+.st-decl{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.4);color:#ef4444;}
+.st-pre{background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.4);color:#a855f7;}
+.st-ok{background:var(--green-f);border:1px solid rgba(34,197,94,.3);color:var(--green);}
+/* ── STATUS MODAL ── */
+.st-modal{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:999;padding:1rem;}
+.st-modal.show{display:flex;}
+.st-box{background:var(--s1);border:1px solid var(--br2);border-radius:18px;padding:2rem;max-width:420px;width:100%;}
+.st-box h3{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.03em;margin-bottom:.3rem;}
+.st-box p{font-size:13px;color:var(--mu);margin-bottom:1.25rem;line-height:1.6;}
+.st-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:1.25rem;}
+.st-opt{display:flex;align-items:center;gap:10px;background:var(--s2);border:2px solid var(--br2);border-radius:10px;padding:11px 14px;cursor:pointer;transition:border-color .15s;}
+.st-opt:hover{border-color:var(--br2);}
+.st-opt.chosen{border-color:var(--gold);}
+.st-opt input[type=radio]{accent-color:var(--gold);width:16px;height:16px;flex-shrink:0;}
+.st-opt-label{font-size:13px;font-weight:500;}
+.st-opt-sub{font-size:11px;color:var(--mu);margin-top:2px;}
+.st-nota-wrap{margin-bottom:1rem;}
+.st-nota-wrap label{font-size:11px;font-weight:500;color:var(--mu);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px;}
+.st-nota-wrap textarea{width:100%;background:var(--s2);border:1px solid var(--br2);border-radius:8px;padding:10px 14px;color:var(--tx);font-family:'Outfit',sans-serif;font-size:13px;resize:vertical;min-height:80px;outline:none;}
+.st-nota-wrap textarea:focus{border-color:var(--gold);}
+.st-btns{display:flex;gap:8px;justify-content:flex-end;}
+.st-save{padding:10px 22px;background:var(--red);border:none;border-radius:8px;color:#fff;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;}
+.st-save:hover{background:var(--red-d);}
+.st-cancel{padding:10px 18px;background:transparent;border:1px solid var(--br2);border-radius:8px;color:var(--mu);font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;}
+.st-cancel:hover{color:var(--tx);}
+/* ── STATUS DETAIL POPUP ── */
+.st-detail-pop{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:999;padding:1rem;}
+.st-detail-pop.show{display:flex;}
+.st-detail-box{background:var(--s1);border:1px solid var(--br2);border-radius:18px;padding:2rem;max-width:400px;width:100%;}
+.st-detail-box h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;margin-bottom:1rem;}
+.st-detail-txt{font-size:14px;line-height:1.7;color:#ccc;background:var(--s2);border-radius:10px;padding:14px;}
+
 </style>
 </head>
 <body>
@@ -618,29 +699,197 @@ async function addUser(){
 
 /* ── BENEFICIOS ── */
 const CARDS=[
-  {id:'joy',name:'Joy Banamex',meta:{Ingresos:'$15,000',LDC:'$15,000',CAT:'83.5% sin IVA',Tasa:'62.75% anual',Anualidad:'Sin comisión de por vida'},beneficios:['Sin comisión de administración de por vida con compra mínima de $300 al mes.','Descuentos y promociones todo el año en negocios participantes.','Puedes elegir tu fecha de corte una vez al año.','Sin CVV impreso para mayor seguridad en compras en línea.','Preventas exclusivas para eventos culturales, deportivos y espectáculos.','Mastercard Global Service: reposición en 48 hrs en caso de pérdida.']},
-  {id:'clasica',name:'Clásica Banamex',meta:{Ingresos:'$15,000',LDC:'$15,000',CAT:'88.7% sin IVA',Tasa:'62.63% anual',Anualidad:'$815 sin IVA',Adicional:'$405 sin IVA'},beneficios:['Primera anualidad bonificada con una compra antes del primer corte (bonificación a 90 días).','5% en Puntos Premia por todas tus compras. Úsalos como efectivo en cajeros Citibanamex.','Puntos Dobles al cargar gasolina todos los días (topado a 1,000 puntos/semana).','3, 6 o 12 Pagos Fijos en Salud y Belleza. Monto mínimo $3,000 al 55 2226 3639.','Preventas exclusivas para eventos culturales, deportivos y espectáculos.','Cambia tu fecha de corte una vez al año.']},
-  {id:'teleton',name:'Teleton Banamex',meta:{Ingresos:'$15,000',LDC:'$15,000',CAT:'87.0% sin IVA',Tasa:'62.47% anual',Anualidad:'$540 sin IVA',Adicional:'Sin costo'},beneficios:['Primera anualidad bonificada con una compra antes del primer corte.','Anualidad más baja del mercado en su segmento.','6 tarjetas adicionales sin costo.','Preventas exclusivas para los mejores eventos de México.','Cada uso apoya al Teletón y causa social.']},
-  {id:'oro',name:'Oro Banamex',meta:{Ingresos:'$25,000',LDC:'$25,000',CAT:'85.7% sin IVA',Tasa:'60.58% anual',Anualidad:'$1,230 sin IVA',Adicional:'$620 sin IVA'},beneficios:['Primera anualidad bonificada con una compra antes del primer corte.','7% en Puntos Premia por todas tus compras.','Puntos Premia al doble al consumir gasolina (topado a 1,000 pts/semana).','3 MSI en viajes, salud y belleza. Monto mínimo $3,000.','MSI en negocios participantes: viajes, tecnología, ropa y más.','Seguro de Accidente en Viajes: hasta $400 USD por robo o daño accidental.','Master Seguro de Viajes: hasta $250,000 USD para ti y tu familia.','Seguro por facturación fraudulenta: cubre hasta el saldo de la cuenta.','Preventas exclusivas para eventos culturales, deportivos y espectáculos.']},
-  {id:'descubre',name:'Descubre Banamex',meta:{Ingresos:'$25,000',LDC:'$25,000',CAT:'86.0% sin IVA',Tasa:'60.65% anual',Anualidad:'$1,230 sin IVA',Adicional:'$620 sin IVA'},beneficios:['Primera anualidad bonificada con una compra antes del primer corte.','1 Punto Momento Banamex por cada dólar gastado en todas tus compras.','2x1 en boletos de avión a playas nacionales: bienvenida (600 pts en 3 meses) o aniversario (4,500 pts). Destinos: Acapulco, La Paz, Puerto Vallarta, Huatulco, Cozumel, Cancún, Los Cabos, Veracruz, Mazatlán, Zihuatanejo.','Mastercard Concierge 24/7: asistente personal en todo el mundo.','Elite Valet AICM: 50% descuento, hasta 5 días, 2 entradas por mes.','Dining Program: 20% descuento en restaurantes seleccionados + bebida de cortesía.','Preventas exclusivas para los mejores eventos de México.']},
-  {id:'platinum',name:'Platinum Banamex',meta:{Ingresos:'$75,000',LDC:'$50,000',CAT:'40.7% sin IVA',Tasa:'32.02% anual',Anualidad:'$2,725 sin IVA',Adicional:'$1,360 sin IVA'},beneficios:['Primera anualidad bonificada con una compra antes del primer corte.','10% en Puntos Premia por todas tus compras.','LIBRA Premium gratis: Asistencia Vial, Legal, Gestoría, en el Hogar y Médica.','10 accesos GRATIS a Salas Beyond (tú + 1 acompañante) + 4 accesos a 800+ salas VIP Mastercard al año.','Mastercard Concierge 24/7 en todo el mundo.','Dining Program: 20% descuento en restaurantes seleccionados + bebida de cortesía.','Elite Valet AICM: 50% descuento, hasta 5 días, 2 entradas por mes.','MSI en negocios participantes.','Preventas exclusivas para eventos culturales, deportivos y espectáculos.']},
-  {id:'explora',name:'Explora Banamex',meta:{Ingresos:'$75,000',LDC:'$50,000',CAT:'81.2% sin IVA',Tasa:'58.19% anual',Anualidad:'$2,725 sin IVA',Adicional:'$1,360 sin IVA'},beneficios:['Primera anualidad bonificada con una compra antes del primer corte.','1.15 Puntos Momentos Banamex por cada dólar gastado. Tarjetas adicionales también generan puntos.','2x1 en boletos de avión: bienvenida (1,300 pts en 3 meses) o aniversario (10,000 Puntos Explora).','10 accesos GRATIS a Salas Beyond (tú + 1 acompañante) + 4 accesos a 800+ salas VIP Mastercard al año.','Mastercard Concierge 24/7 en todo el mundo.','Elite Valet AICM: 50% descuento, hasta 5 días, 2 entradas por mes.','Seguros Mastercard completos: viaje, equipaje, autos y más.']}
+  {id:'joy',color:'tc-joy',name:'Joy Banamex',badge:'Sin anualidad',
+   num:'•••• •••• •••• 1234',
+   cat:'84% sin IVA',tasa:'63.69% anual',anualidad:'Sin comisión*',ingreso:'$15,000',ldc:'Desde $15,000',adicional:'—',
+   pts:'No genera puntos Premia',
+   bens:[
+     {i:'🎬',t:'2x1 en Cinépolis',d:'Boletos en salas tradicionales comprando en cinepolis.com o la app. Código: W4BE26UE25WD44Z6 (vigente al 31 ago 2026).'},
+     {i:'☕',t:'Bonificación Starbucks',d:'Ahorra $45 en tu próximo consumo al recargar $150 en la app Starbucks Rewards los domingos.'},
+     {i:'🚫',t:'Sin CVV impreso',d:'Más segura para compras en línea. Tu CVV digital cambia en cada compra desde la App Banamex.'},
+     {i:'📅',t:'Elige tu fecha de corte',d:'Cambia tu fecha de corte una vez al año llamando al 55 1226 2639.'},
+     {i:'🎟️',t:'Preventas exclusivas',d:'Compra tus boletos antes que nadie para los mejores eventos culturales, deportivos y espectáculos de México.'},
+     {i:'🆘',t:'Mastercard Global Service',d:'Reposición de tarjeta en 48 hrs en caso de robo o extravío en cualquier parte del mundo.'},
+     {i:'🏥',t:'Libra One gratis 1 año',d:'Consulta médica, nutricional y más asistencias sin costo durante el primer año. Solicítalo al 55 5809 4904.'},
+   ],
+   reqs:['INE/IFE o pasaporte vigente','Comprobante de domicilio no mayor a 3 meses (luz, agua, predial, TV de paga)','18 años de edad mínimo','Ingresos desde $15,000 MXN'],
+   nota:'*Realiza al menos $300 en compras al mes para evitar comisión por inactividad de $149 sin IVA. Aplican cargos recurrentes.'
+  },
+  {id:'clasica',color:'tc-clasica',name:'Clásica Banamex',badge:'Puntos Premia 5%',
+   num:'•••• •••• •••• 2345',
+   cat:'88.7% sin IVA',tasa:'62.63% anual',anualidad:'$815 sin IVA',ingreso:'$15,000',ldc:'Desde $15,000',adicional:'$405 sin IVA',
+   pts:'5% Puntos Premia en todas tus compras',
+   bens:[
+     {i:'🎁',t:'1er año sin anualidad',d:'Realiza una compra antes del primer corte. Bonificación a los 90 días. Vigente hasta 21 mayo 2026. Solo titulares.'},
+     {i:'⭐',t:'5% Puntos Premia',d:'Acumula en todas tus compras y úsalos como efectivo en cajeros Citibanamex o en establecimientos participantes.'},
+     {i:'⛽',t:'Puntos Dobles en gasolina',d:'Gana el doble de puntos al cargar gasolina todos los días de la semana. Tope de 1,000 puntos por semana.'},
+     {i:'🏥',t:'3, 6 o 12 Pagos Fijos en Salud',d:'En hospitales, laboratorios, farmacias y clínicas de salud y belleza. Mínimo $3,000. Llama 48 hrs después al 55 2226 3639.'},
+     {i:'🎬',t:'2x1 en Cinépolis',d:'Beneficio Mastercard en salas tradicionales comprando desde cinepolis.com o la app.'},
+     {i:'🎟️',t:'Preventas exclusivas',d:'Acceso anticipado a boletos de los mejores eventos antes que el público en general.'},
+     {i:'🏥',t:'Libra One gratis 1 año',d:'Asistencias médicas, nutricionales y más sin costo el primer año de la tarjeta.'},
+   ],
+   reqs:['INE/IFE o pasaporte vigente','Comprobante de domicilio no mayor a 3 meses','18 años de edad mínimo','Ingresos desde $15,000 MXN'],
+   nota:'Bono bienvenida: 2,000 Puntos Premia al gastar $5,000 en primeros 3 meses. Vigente hasta 21 may 2026.'
+  },
+  {id:'teleton',color:'tc-teleton',name:'Teletón Banamex',badge:'Causa social',
+   num:'•••• •••• •••• 3456',
+   cat:'87.0% sin IVA',tasa:'62.47% anual',anualidad:'$540 sin IVA',ingreso:'$15,000',ldc:'Desde $15,000',adicional:'Sin costo',
+   pts:'No genera puntos Premia',
+   bens:[
+     {i:'❤️',t:'Apoya al Teletón',d:'Cada uso de tu tarjeta apoya a los Centros de Rehabilitación Infantil Teletón en México.'},
+     {i:'💰',t:'Anualidad más baja del segmento',d:'Solo $540 sin IVA. Primer año sin anualidad con una compra antes del primer corte. Vigente hasta 21 may 2026.'},
+     {i:'👨‍👩‍👧‍👦',t:'6 tarjetas adicionales sin costo',d:'Agrega hasta 6 tarjetas adicionales para tu familia sin ningún costo extra.'},
+     {i:'🎬',t:'2x1 en Cinépolis',d:'Beneficio Mastercard en salas tradicionales de todo el país.'},
+     {i:'🎟️',t:'Preventas exclusivas',d:'Compra tus boletos antes que nadie en los mejores eventos de México.'},
+     {i:'🏥',t:'Libra One gratis 1 año',d:'Asistencias médicas y más sin costo el primer año.'},
+   ],
+   reqs:['INE/IFE o pasaporte vigente','Comprobante de domicilio no mayor a 3 meses','18 años de edad mínimo','Ingresos desde $15,000 MXN'],
+   nota:'Primer año sin anualidad con una compra antes del primer corte. Vigente hasta 21 may 2026. Solo titulares.'
+  },
+  {id:'oro',color:'tc-oro',name:'Oro Banamex',badge:'Puntos Premia 7%',
+   num:'•••• •••• •••• 4567',
+   cat:'85.7% sin IVA',tasa:'60.58% anual',anualidad:'$1,230 sin IVA',ingreso:'$25,000',ldc:'Desde $25,000',adicional:'$620 sin IVA',
+   pts:'7% Puntos Premia en todas tus compras',
+   bens:[
+     {i:'🎁',t:'1er año sin anualidad + bono',d:'Anualidad bonificada con una compra. Bono de 2,000 Puntos al gastar $5,000 en primeros 3 meses. Vigente hasta 21 may 2026.'},
+     {i:'⭐',t:'7% Puntos Premia',d:'El mayor % de puntos en tarjetas básicas Banamex. Acumula y canjea como efectivo en cajeros.'},
+     {i:'⛽',t:'Puntos Dobles en gasolina',d:'El doble de puntos al cargar gasolina todos los días. Tope de 1,000 pts/semana.'},
+     {i:'✈️',t:'3 MSI en viajes y salud',d:'3 meses sin intereses en viajes, salud y belleza. Mínimo $3,000. Llama al 55 2226 3639.'},
+     {i:'🛡️',t:'Seguro de viajes',d:'Hasta $400 USD por robo o daño accidental en viajes. Master Seguro de Viajes hasta $250,000 USD.'},
+     {i:'🔒',t:'Seguro por fraude',d:'Cobertura hasta el saldo total de la cuenta en caso de facturación fraudulenta.'},
+     {i:'🏥',t:'Libra One gratis 1 año',d:'Asistencias médicas, viales y más sin costo el primer año de la tarjeta.'},
+   ],
+   reqs:['INE/IFE o pasaporte vigente','Comprobante de domicilio no mayor a 3 meses','18 años de edad mínimo','Ingresos desde $25,000 MXN'],
+   nota:'Bono bienvenida: 2,000 Puntos Premia al gastar $5,000 en primeros 3 meses. Vigente hasta 21 may 2026.'
+  },
+  {id:'descubre',color:'tc-descubre',name:'Descubre Banamex',badge:'Puntos Momentos',
+   num:'•••• •••• •••• 5678',
+   cat:'86.0% sin IVA',tasa:'62.31% anual',anualidad:'$1,230 sin IVA',ingreso:'$25,000',ldc:'Desde $25,000',adicional:'$620 sin IVA',
+   pts:'1 Punto Momento por cada $1 USD gastado',
+   bens:[
+     {i:'🎁',t:'1er año sin anualidad + bono',d:'Anualidad bonificada. Bono de 2,000 Puntos al gastar $5,000 en primeros 3 meses. Vigente hasta 21 may 2026.'},
+     {i:'🌟',t:'Puntos Momentos',d:'1 Punto Momento por cada dólar gastado (o equivalente en pesos) en todas tus compras.'},
+     {i:'✈️',t:'2x1 en vuelos nacionales',d:'Bienvenida: 600 pts en 3 meses. Aniversario: 4,500 pts. Destinos: Cancún, Los Cabos, PVR, Acapulco, Cozumel, Huatulco, La Paz, Veracruz, Mazatlán, Zihuatanejo.'},
+     {i:'🎩',t:'Mastercard Concierge 24/7',d:'Asistente personal para reservas de restaurantes, hoteles y coordinación de eventos en todo el mundo.'},
+     {i:'🚗',t:'Elite Valet AICM',d:'50% de descuento en estacionamiento cercano al AICM. Hasta 5 días naturales, 2 entradas por mes.'},
+     {i:'🍽️',t:'Dining Program',d:'20% de descuento en restaurantes seleccionados más bebida de cortesía en tu visita.'},
+     {i:'🎟️',t:'Preventas exclusivas',d:'Compra antes que nadie para los mejores eventos culturales, deportivos y espectáculos.'},
+   ],
+   reqs:['INE/IFE o pasaporte vigente','Comprobante de domicilio no mayor a 3 meses','18 años de edad mínimo','Ingresos desde $25,000 MXN'],
+   nota:'Bono bienvenida: 2,000 Puntos Momentos al gastar $5,000 en primeros 3 meses. Calculado al 31 mar 2025, vigente al 30 sep 2025.'
+  },
+  {id:'platinum',color:'tc-platinum',name:'Platinum Banamex',badge:'Premium · Salas VIP',
+   num:'•••• •••• •••• 6789',
+   cat:'40.7% sin IVA',tasa:'32.02% anual',anualidad:'$2,725 sin IVA',ingreso:'$75,000',ldc:'Desde $50,000',adicional:'$1,360 sin IVA',
+   pts:'10% Puntos Premia en todas tus compras',
+   bens:[
+     {i:'🎁',t:'1er año sin anualidad + bono',d:'Anualidad bonificada. Bono de 4,000 Puntos al gastar $15,000 en primeros 3 meses. Vigente hasta 21 may 2026.'},
+     {i:'💎',t:'10% Puntos Premia',d:'El mayor % de puntos de toda la línea Banamex. Acumula y úsalos como efectivo en cajeros.'},
+     {i:'🛡️',t:'LIBRA Premium gratis de por vida',d:'Asistencias Vial, Legal, Gestoría, en el Hogar y Médica sin costo mientras mantengas la tarjeta activa.'},
+     {i:'✈️',t:'14 accesos anuales a salas VIP',d:'10 accesos a Salones Beyond (tú + 1 acompañante) en CDMX, GDL y MTY + 4 accesos a 800+ salas Mastercard Airport Experiences en el mundo.'},
+     {i:'🎩',t:'Mastercard Concierge 24/7',d:'Asistente personal en todo el mundo para reservas, eventos especiales y coordinación.'},
+     {i:'🍽️',t:'Dining Program',d:'20% de descuento en restaurantes seleccionados + bebida de cortesía.'},
+     {i:'📉',t:'CAT preferencial',d:'Solo 40.7% sin IVA — la tasa más baja de las tarjetas estándar Banamex.'},
+   ],
+   reqs:['INE/IFE o pasaporte vigente','Comprobante de domicilio no mayor a 3 meses','18 años mínimo','Ingresos desde $75,000 MXN','Buen historial crediticio'],
+   nota:'Bono bienvenida: 4,000 Puntos Premia al gastar $15,000 en primeros 3 meses. Vigente hasta 21 may 2026. Solo titulares.'
+  },
+  {id:'explora',color:'tc-explora',name:'Explora Banamex',badge:'Viajero frecuente',
+   num:'•••• •••• •••• 7890',
+   cat:'81.2% sin IVA',tasa:'60.27% anual',anualidad:'$2,725 sin IVA',ingreso:'$75,000',ldc:'Desde $50,000',adicional:'$1,360 sin IVA',
+   pts:'1.15 Puntos Momentos por cada $1 USD gastado',
+   bens:[
+     {i:'🎁',t:'1er año sin anualidad + bono',d:'Anualidad bonificada. Bono de 4,000 Puntos al gastar $15,000 en primeros 3 meses. Vigente hasta 21 may 2026.'},
+     {i:'🌟',t:'1.15 Puntos Momentos',d:'Por cada dólar gastado (o equivalente en pesos). Las tarjetas adicionales también acumulan puntos en la cuenta titular.'},
+     {i:'✈️',t:'2x1 en vuelos + bono aniversario',d:'Bienvenida: 1,300 pts en 3 meses. Aniversario: 10,000 Puntos Explora para vuelos nacionales e internacionales.'},
+     {i:'🛫',t:'14 accesos anuales a salas VIP',d:'10 accesos a Salones Beyond + 4 accesos a 800+ salas Mastercard Airport Experiences en todo el mundo.'},
+     {i:'🎩',t:'Mastercard Concierge 24/7',d:'Asistente personal global los 365 días para reservas, eventos y coordinación especial.'},
+     {i:'🚗',t:'Elite Valet AICM',d:'50% de descuento en estacionamiento AICM. Hasta 5 días naturales, 2 entradas por mes.'},
+     {i:'🔒',t:'Master Seguro de Viajes hasta $1M USD',d:'Cobertura de hasta $1,000,000 USD para ti y tu familia más seguro de equipaje, autos y más.'},
+   ],
+   reqs:['INE/IFE o pasaporte vigente','Comprobante de domicilio no mayor a 3 meses','18 años mínimo','Ingresos desde $75,000 MXN','Buen historial crediticio'],
+   nota:'Bono bienvenida: 4,000 Puntos al gastar $15,000 en primeros 3 meses. Calculado al 31 mar 2025, vigente al 30 sep 2025.'
+  }
 ];
 
+let _activeCard = null;
+
 function buildBenPanels(){
-  const tabsEl=document.getElementById('ben-tabs');
-  const panelsEl=document.getElementById('ben-panels');
-  tabsEl.innerHTML=CARDS.map((c,i)=>`<button class="btab${i===0?' on':''}" data-bid="${c.id}">${c.name}</button>`).join('');
-  panelsEl.innerHTML=CARDS.map((c,i)=>`<div class="ben-panel${i===0?' on':''}" id="ben-${c.id}"><div class="ben-hero"><div class="ben-name">${c.name}</div><div class="ben-meta">${Object.entries(c.meta).map(([k,v])=>`<div class="bm"><div class="bm-l">${k}</div><div class="bm-v ${k==='Tasa'||k==='CAT'?'red':'green'}">${v}</div></div>`).join('')}</div><ul class="ben-list">${c.beneficios.map((b,i)=>`<li><span class="ben-bullet">${i+1}</span><span>${b}</span></li>`).join('')}</ul></div></div>`).join('');
-  tabsEl.querySelectorAll('.btab').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      tabsEl.querySelectorAll('.btab').forEach(b=>b.classList.remove('on'));
-      panelsEl.querySelectorAll('.ben-panel').forEach(p=>p.classList.remove('on'));
-      btn.classList.add('on');
-      document.getElementById('ben-'+btn.dataset.bid).classList.add('on');
-    });
-  });
+  document.getElementById('ben-tabs').style.display='none';
+  document.getElementById('ben-panels').innerHTML=
+    '<div class="cards-grid" id="cards-grid"></div><div id="card-detail-wrap"></div>';
+  renderCardsGrid();
 }
+
+function renderCardsGrid(){
+  const grid = document.getElementById('cards-grid');
+  if(!grid) return;
+  grid.innerHTML = CARDS.map(c=>`
+    <div class="tc ${c.color}${_activeCard===c.id?' sel':''}" data-cid="${c.id}">
+      <div class="tc-badge">${c.badge}</div>
+      <div class="tc-logo">BANAMEX</div>
+      <div>
+        <div class="tc-chip"></div>
+        <div class="tc-num">${c.num}</div>
+      </div>
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;">
+        <div>
+          <div class="tc-cardname">Tarjeta de Crédito</div>
+          <div class="tc-titular">${c.name}</div>
+        </div>
+        <div class="tc-mc"><span class="r"></span><span class="y"></span></div>
+      </div>
+    </div>`).join('');
+  grid.querySelectorAll('.tc').forEach(el=>el.addEventListener('click',()=>showCardDetail(el.dataset.cid)));
+}
+
+function showCardDetail(id){
+  _activeCard = id;
+  renderCardsGrid();
+  const c = CARDS.find(x=>x.id===id);
+  const wrap = document.getElementById('card-detail-wrap');
+  wrap.innerHTML=`
+    <div class="card-detail">
+      <div class="cd-top">
+        <div class="tc ${c.color} cd-mini">
+          <div>
+            <div class="tc-chip" style="width:28px;height:20px;margin-bottom:.5rem;"></div>
+            <div style="font-family:monospace;font-size:10px;color:rgba(255,255,255,.6);letter-spacing:.1em;">${c.num}</div>
+          </div>
+          <div style="font-size:11px;color:#fff;font-weight:600;">${c.name}</div>
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div class="cd-title">${c.name}</div>
+          <div class="cd-pts">${c.pts}</div>
+        </div>
+        <button class="cd-close" id="cd-close">✕ Cerrar</button>
+      </div>
+      <div class="cd-nums">
+        <div class="cd-n"><div class="cd-nl">CAT Promedio</div><div class="cd-nv red">${c.cat}</div></div>
+        <div class="cd-n"><div class="cd-nl">Tasa anual</div><div class="cd-nv red">${c.tasa}</div></div>
+        <div class="cd-n"><div class="cd-nl">Anualidad</div><div class="cd-nv gold">${c.anualidad}</div></div>
+        <div class="cd-n"><div class="cd-nl">Ingreso mínimo</div><div class="cd-nv green">${c.ingreso}</div></div>
+        <div class="cd-n"><div class="cd-nl">Línea de Crédito</div><div class="cd-nv green">${c.ldc}</div></div>
+        <div class="cd-n"><div class="cd-nl">Tarjeta adicional</div><div class="cd-nv">${c.adicional}</div></div>
+      </div>
+      <div class="cd-sec">✨ Beneficios principales</div>
+      <ul class="cd-bens">
+        ${c.bens.map(b=>`<li><span class="cd-ico">${b.i}</span><div><span class="cd-bt">${b.t}</span>${b.d}</div></li>`).join('')}
+      </ul>
+      <div class="cd-sec">📋 Requisitos de contratación</div>
+      <div class="cd-reqs">
+        ${c.reqs.map(r=>`<div class="cd-req"><span>✔</span><span>${r}</span></div>`).join('')}
+      </div>
+      <div class="cd-nota">ℹ️ ${c.nota}</div>
+    </div>`;
+  document.getElementById('cd-close').addEventListener('click',()=>{
+    _activeCard=null; renderCardsGrid();
+    document.getElementById('card-detail-wrap').innerHTML='';
+    document.getElementById('card-detail-wrap').scrollIntoView({behavior:'smooth',block:'nearest'});
+  });
+  wrap.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
 
 /* ── EVENT DELEGATION ── */
 document.addEventListener('click',async function(e){
@@ -685,5 +934,51 @@ document.addEventListener('input',function(e){
 /* ── ARRANQUE ── */
 document.getElementById('login-screen').style.display='flex';
 </script>
+
+<!-- STATUS MODAL -->
+<div class="st-modal" id="st-modal">
+  <div class="st-box">
+    <h3>Cambiar estado de venta</h3>
+    <p id="st-modal-client">Cliente: —</p>
+    <div class="st-opts">
+      <label class="st-opt" id="opt-pend">
+        <input type="radio" name="st-radio" value="pendiente">
+        <div><div class="st-opt-label">📞 Pendiente de llamar</div><div class="st-opt-sub">El cliente aún no ha sido contactado</div></div>
+      </label>
+      <label class="st-opt" id="opt-decl">
+        <input type="radio" name="st-radio" value="declino">
+        <div><div class="st-opt-label">❌ Declinó</div><div class="st-opt-sub">El cliente no quiso la tarjeta</div></div>
+      </label>
+      <label class="st-opt" id="opt-pre">
+        <input type="radio" name="st-radio" value="preasignado">
+        <div><div class="st-opt-label">⭐ Preasignado</div><div class="st-opt-sub">Cliente con oferta de tarjeta ya asignada</div></div>
+      </label>
+      <label class="st-opt" id="opt-ok">
+        <input type="radio" name="st-radio" value="vendida">
+        <div><div class="st-opt-label">✅ Vendida</div><div class="st-opt-sub">Tarjeta contratada exitosamente</div></div>
+      </label>
+    </div>
+    <div class="st-nota-wrap">
+      <label>Nota / razón (obligatorio para pendiente y declinó)</label>
+      <textarea id="st-nota" placeholder="Ej: No contestó, llamar el martes por la tarde…"></textarea>
+    </div>
+    <div class="st-btns">
+      <button class="st-cancel" id="st-cancel">Cancelar</button>
+      <button class="st-save" id="st-save">Guardar estado</button>
+    </div>
+  </div>
+</div>
+
+<!-- STATUS DETAIL POPUP -->
+<div class="st-detail-pop" id="st-detail-pop">
+  <div class="st-detail-box">
+    <h3 id="st-detail-title">Razón</h3>
+    <div class="st-detail-txt" id="st-detail-txt"></div>
+    <div style="margin-top:1.25rem;text-align:right;">
+      <button class="st-cancel" id="st-detail-close">Cerrar</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
