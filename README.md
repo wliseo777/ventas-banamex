@@ -424,9 +424,9 @@ tr:hover td{background:rgba(255,255,255,.015);}
     <div class="wide">
       <div class="pgtitle gt">Gestión de <span>usuarios</span></div>
       <p class="pgsub">Agrega o elimina ejecutivos. La cuenta admin no se puede borrar.</p>
-      <div style="display:flex;align-items:flex-start;gap:10px;padding:11px 14px;background:rgba(200,168,75,.07);border:1px solid rgba(200,168,75,.2);border-radius:8px;font-size:12px;color:#bbb;margin-bottom:1.5rem;line-height:1.6;">
-        <span style="font-size:16px;flex-shrink:0;margin-top:1px;">💾</span>
-        <span>Los ejecutivos se guardan <strong style="color:var(--gold-l)">en este navegador/dispositivo</strong>. Si abres la app en otra computadora o celular, tendrás que volver a agregarlos ahí. Las <strong style="color:var(--gold-l)">ventas</strong> sí se sincronizan automáticamente entre todos vía Telegram.</span>
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:11px 14px;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.2);border-radius:8px;font-size:12px;color:#bbb;margin-bottom:1.5rem;line-height:1.6;">
+        <span style="font-size:16px;flex-shrink:0;margin-top:1px;">☁️</span>
+        <span>Los ejecutivos se guardan en la <strong style="color:var(--green)">nube</strong> y se sincronizan en todos los dispositivos. Puedes agregar ejecutivos desde cualquier computadora y todos podrán iniciar sesión.</span>
       </div>
       <div class="twocol">
         <div class="card">
@@ -449,188 +449,260 @@ tr:hover td{background:rgba(255,255,255,.015);}
 
 <script>
 /* ════════════════════════════════════════════════════
-   TELEGRAM CONFIG
+   MOTOR DE DATOS  —  JSONBin.io  (base de datos real)
+   ────────────────────────────────────────────────────
+   JSONBin guarda JSON en una URL fija (bin). Se lee
+   con GET y se actualiza con PUT. No hay offsets ni
+   historial que se pierda — siempre hay UN solo
+   documento que es la fuente de verdad.
+
+   BIN de VENTAS  → se crea solo la primera vez
+   BIN de USUARIOS → se crea solo la primera vez
+   Los IDs de los bins se guardan en localStorage para
+   que la próxima sesión acceda al mismo bin.
+
+   Telegram sigue activo pero solo para NOTIFICACIONES,
+   NO como base de datos.
    ════════════════════════════════════════════════════ */
+
 const TG_TOKEN = '8674156237:AAH_TxLj17k8U08zwTuz1XxrvNLgaqsPNcE';
 const TG_CHAT  = '-1003454541647';
 const TG_URL   = 'https://api.telegram.org/bot' + TG_TOKEN;
 
 /* ════════════════════════════════════════════════════
-   CLAVES DE ALMACENAMIENTO
-
-   DISEÑO CORRECTO:
-   ─ VENTAS   → Telegram (sincronización entre dispositivos)
-               usa un mensaje "ancla" que SE EDITA siempre.
-               La ID del mensaje ancla se guarda en localStorage.
-   ─ USUARIOS → SOLO localStorage. Nunca van a Telegram.
-               El problema anterior era que getUpdates avanza
-               el offset y nunca vuelve a ver mensajes viejos,
-               borrando así los usuarios al leer desde otro
-               dispositivo. Solución definitiva: usuarios son
-               locales al admin, no necesitan sincronizarse.
+   JSONBIN  —  UN SOLO BIN COMPARTIDO
+   ────────────────────────────────────────────────────
+   Guardamos TODO (ventas + usuarios) en un solo bin.
+   El ID del bin se comparte entre dispositivos a través
+   de Telegram: el primer dispositivo que abre la app
+   crea el bin y envía el ID al grupo. Los demás lo
+   leen de Telegram al arrancar.
    ════════════════════════════════════════════════════ */
-const SK_S        = 'bnx_sales_v7';      // ventas en localStorage (caché)
-const SK_U        = 'bnx_users_v7';      // usuarios en localStorage (fuente de verdad)
-const SK_SALES_MSG= 'bnx_tg_sales_msgid';// ID del mensaje ancla de ventas en Telegram
-const TG_PREFIX   = 'BNX_SALES_V7:';    // prefijo del mensaje de ventas
+const JB_KEY    = '$2a$10$wFvQQYt1niwfxhSjO5s7.OW0GbqVu5n.r1gJwQ8vkIxvAp0j8OaVe';
+const JB_BASE   = 'https://api.jsonbin.io/v3/b';
+const SK_BIN    = 'bnx_shared_bin_v9';   // ID del bin en localStorage
+const SK_S      = 'bnx_sales_v9';
+const SK_U      = 'bnx_users_v9';
+const TG_BIN_PREFIX = 'BNX_BINID_V9:';  // prefijo para el mensaje de ID en Telegram
 
 let TG_CONNECTED = null;
 
-function loadLS(k){ try{ return JSON.parse(localStorage.getItem(k))||[]; }catch{ return []; } }
+function loadLS(k){ try{ return JSON.parse(localStorage.getItem(k))||null; }catch{ return null; } }
 function saveLS(k,d){ localStorage.setItem(k, JSON.stringify(d)); }
+function loadArr(k){ const v=loadLS(k); return Array.isArray(v)?v:[]; }
 
-/* ════════════════════════════════════════════════════
-   TELEGRAM — VENTAS CON MENSAJE ANCLA
-   En lugar de enviar un nuevo mensaje cada vez, se
-   edita siempre el mismo mensaje. Así getUpdates no
-   importa nada: la verdad está en ese único mensaje.
-   ════════════════════════════════════════════════════ */
-async function tgPost(method, params={}){
+/* ── JSONBin helpers ─────────────────────────────── */
+async function jbGet(binId){
   try{
-    const r = await fetch(`${TG_URL}/${method}`,{
+    const r = await fetch(`${JB_BASE}/${binId}/latest`,{
+      headers:{'X-Master-Key':JB_KEY}
+    });
+    const j = await r.json();
+    return j.record!==undefined ? {ok:true,data:j.record} : {ok:false,error:j.message||'Error'};
+  }catch(e){return{ok:false,error:e.message};}
+}
+
+async function jbPut(binId, data){
+  try{
+    const r = await fetch(`${JB_BASE}/${binId}`,{
+      method:'PUT',
+      headers:{'Content-Type':'application/json','X-Master-Key':JB_KEY},
+      body:JSON.stringify(data)
+    });
+    const j = await r.json();
+    return j.record!==undefined ? {ok:true} : {ok:false,error:j.message||'Error escritura'};
+  }catch(e){return{ok:false,error:e.message};}
+}
+
+async function jbCreate(data){
+  try{
+    const r = await fetch(JB_BASE,{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{
+        'Content-Type':'application/json',
+        'X-Master-Key':JB_KEY,
+        'X-Bin-Name':'banamex-ventas-shared',
+        'X-Bin-Private':'false'
+      },
+      body:JSON.stringify(data)
+    });
+    const j = await r.json();
+    return j.metadata?.id ? {ok:true,id:j.metadata.id} : {ok:false,error:j.message||'Error crear bin'};
+  }catch(e){return{ok:false,error:e.message};}
+}
+
+/* ── Telegram helpers ────────────────────────────── */
+async function tgPost(method,params={}){
+  try{
+    const r=await fetch(`${TG_URL}/${method}`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify(params)
     });
     return await r.json();
-  }catch(e){ return {ok:false, description:e.message}; }
+  }catch(e){return{ok:false};}
 }
 
-/* Guarda ventas: edita el mensaje ancla si existe, si no crea uno nuevo */
-async function tgSaveVentas(arr){
-  const text = TG_PREFIX + JSON.stringify(arr);
-  const existingId = localStorage.getItem(SK_SALES_MSG);
-  let r;
-  if(existingId){
-    r = await tgPost('editMessageText',{
-      chat_id: TG_CHAT,
-      message_id: parseInt(existingId),
-      text
-    });
-    // Si el edit falla (mensaje borrado, etc.), crear nuevo
-    if(!r.ok){
-      r = await tgPost('sendMessage',{ chat_id: TG_CHAT, text });
-      if(r.ok && r.result?.message_id){
-        localStorage.setItem(SK_SALES_MSG, r.result.message_id);
-      }
-    }
-  } else {
-    r = await tgPost('sendMessage',{ chat_id: TG_CHAT, text });
-    if(r.ok && r.result?.message_id){
-      localStorage.setItem(SK_SALES_MSG, r.result.message_id);
-    }
-  }
-  setTgStatus(r.ok);
-  return r.ok;
-}
-
-/* Lee ventas: intenta leer el mensaje ancla directamente por ID.
-   Si no tiene ID guardada, hace un scan de los últimos 100 mensajes. */
-async function tgLoadVentas(){
-  const existingId = localStorage.getItem(SK_SALES_MSG);
-  if(existingId){
-    // Telegram no tiene "getMessage" directo, usamos forwardMessage como truco
-    // En cambio, confiamos en el caché local y solo sincronizamos en refresh
-    // Hacemos getUpdates sin offset para ver si hay algo más nuevo
-  }
-  // Scan sin offset — lee TODOS los updates disponibles (últimos ~100)
-  // NO guardamos offset para que siempre pueda encontrar el mensaje ancla
-  const r = await tgPost('getUpdates',{ limit:100 });
-  if(!r.ok){ setTgStatus(false); return null; }
-  setTgStatus(true);
-  let latest = null;
-  let latestMsgId = 0;
+/* Busca el bin ID en el historial de Telegram */
+async function tgFindBinId(){
+  const r = await tgPost('getUpdates',{limit:100});
+  if(!r.ok) return null;
+  let found=null;
   for(const u of (r.result||[])){
-    const txt = u.message?.text || u.edited_message?.text || '';
-    const msgId = u.message?.message_id || u.edited_message?.message_id || 0;
-    const chatId = (u.message?.chat?.id || u.edited_message?.chat?.id || '').toString();
-    if(chatId === TG_CHAT && txt.startsWith(TG_PREFIX) && msgId >= latestMsgId){
-      try{
-        latest = JSON.parse(txt.slice(TG_PREFIX.length));
-        latestMsgId = msgId;
-        // Guardar el ID del mensaje más reciente como ancla
-        localStorage.setItem(SK_SALES_MSG, msgId);
-      }catch{}
+    const txt=u.message?.text||'';
+    if(u.message?.chat?.id?.toString()===TG_CHAT && txt.startsWith(TG_BIN_PREFIX)){
+      found=txt.slice(TG_BIN_PREFIX.length).trim();
     }
   }
-  return latest;
+  return found||null;
 }
 
-function setTgStatus(ok){
-  TG_CONNECTED = ok;
-  const el = document.getElementById('tg-status');
-  if(!el) return;
-  if(ok){
-    el.className = 'tg-status tg-ok';
-    el.textContent = '✓ Telegram conectado';
-  } else {
-    el.className = 'tg-status tg-err';
-    el.textContent = '✕ Sin conexión Telegram';
+/* Publica el bin ID en Telegram para que otros dispositivos lo encuentren */
+async function tgPublishBinId(id){
+  await tgPost('sendMessage',{chat_id:TG_CHAT, text:`${TG_BIN_PREFIX}${id}`});
+}
+
+async function tgNotify(msg){
+  await tgPost('sendMessage',{chat_id:TG_CHAT,text:msg});
+}
+
+function setDbStatus(ok){
+  TG_CONNECTED=ok;
+  const el=document.getElementById('tg-status');
+  if(!el)return;
+  el.className=ok?'tg-status tg-ok':'tg-status tg-err';
+  el.textContent=ok?'✓ Nube sincronizada':'✕ Sin conexión';
+}
+
+/* ── Obtener el bin compartido (crea si no existe) ── */
+async function getSharedBin(){
+  // 1. ¿Ya lo tenemos en localStorage?
+  let id=localStorage.getItem(SK_BIN);
+  if(id) return id;
+
+  // 2. ¿Está publicado en Telegram?
+  id=await tgFindBinId();
+  if(id){
+    localStorage.setItem(SK_BIN,id);
+    return id;
   }
+
+  // 3. Crear bin nuevo y publicar el ID en Telegram
+  const initial={sales:[],users:[]};
+  const r=await jbCreate(initial);
+  if(r.ok){
+    localStorage.setItem(SK_BIN,r.id);
+    await tgPublishBinId(r.id);
+    return r.id;
+  }
+  return null;
+}
+
+/* ── Leer todo el bin ───────────────────────────── */
+async function readBin(){
+  const id=await getSharedBin();
+  if(!id) return null;
+  const r=await jbGet(id);
+  if(r.ok){
+    const data=r.data||{};
+    if(!data.sales) data.sales=[];
+    if(!data.users) data.users=[];
+    // actualizar cache local
+    saveLS(SK_S, data.sales);
+    saveLS(SK_U, data.users);
+    setDbStatus(true);
+    return data;
+  }
+  setDbStatus(false);
+  return null;
+}
+
+/* ── Escribir todo el bin ───────────────────────── */
+async function writeBin(data){
+  const id=await getSharedBin();
+  if(!id) return false;
+  const r=await jbPut(id,data);
+  setDbStatus(r.ok);
+  return r.ok;
 }
 
 /* ════════════════════════════════════════════════════
    API WRAPPER
-   VENTAS  → Telegram (sincronizado)
-   USUARIOS → localStorage puro (sin Telegram)
    ════════════════════════════════════════════════════ */
 async function api(action, body={}){
   try{
+
     /* ── VENTAS ── */
     if(action==='getSales'){
-      const remote = await tgLoadVentas();
-      if(remote !== null){ saveLS(SK_S, remote); return {ok:true, data:remote}; }
-      return {ok:true, data: loadLS(SK_S)};
+      const data=await readBin();
+      if(data){ return {ok:true,data:data.sales}; }
+      return {ok:true,data:loadArr(SK_S)};
     }
+
     if(action==='addSale'){
-      const arr = loadLS(SK_S);
-      arr.unshift(body);
-      saveLS(SK_S, arr);
-      await tgSaveVentas(arr);
-      return {ok:true};
+      const data=(await readBin())||{sales:loadArr(SK_S),users:loadArr(SK_U)};
+      data.sales.unshift(body);
+      const ok=await writeBin(data);
+      if(ok){
+        saveLS(SK_S,data.sales);
+        tgNotify(`🆕 Nueva venta\nEjecutivo: ${body.exec}\nCliente: ${body.cliente}\nTarjeta: ${body.tarjeta}\nFolio: ${body.folio}`);
+      }
+      return {ok};
     }
+
     if(action==='deleteSale'){
-      const arr = loadLS(SK_S).filter(v=>v.folio!==body.folio);
-      saveLS(SK_S, arr);
-      await tgSaveVentas(arr);
-      return {ok:true};
+      const data=(await readBin())||{sales:loadArr(SK_S),users:loadArr(SK_U)};
+      data.sales=data.sales.filter(v=>v.folio!==body.folio);
+      const ok=await writeBin(data);
+      if(ok) saveLS(SK_S,data.sales);
+      return {ok};
     }
+
     if(action==='clearSales'){
-      saveLS(SK_S, []);
-      await tgSaveVentas([]);
-      return {ok:true};
+      const data=(await readBin())||{sales:[],users:loadArr(SK_U)};
+      data.sales=[];
+      const ok=await writeBin(data);
+      if(ok) saveLS(SK_S,[]);
+      return {ok};
     }
+
     if(action==='updateSale'){
-      const arr = loadLS(SK_S);
-      const idx = arr.findIndex(v=>v.folio===body.folio);
-      if(idx!==-1) arr[idx] = {...arr[idx], ...body};
-      saveLS(SK_S, arr);
-      await tgSaveVentas(arr);
-      SALES_CACHE = arr;
-      return {ok:true};
+      const data=(await readBin())||{sales:loadArr(SK_S),users:loadArr(SK_U)};
+      const idx=data.sales.findIndex(v=>v.folio===body.folio);
+      if(idx!==-1) data.sales[idx]={...data.sales[idx],...body};
+      const ok=await writeBin(data);
+      if(ok){ saveLS(SK_S,data.sales); SALES_CACHE=data.sales; }
+      return {ok};
     }
 
-    /* ── USUARIOS: SOLO localStorage, nunca Telegram ── */
+    /* ── USUARIOS ── */
     if(action==='getUsers'){
-      return {ok:true, data: loadLS(SK_U)};
-    }
-    if(action==='addUser'){
-      const arr = loadLS(SK_U);
-      if(arr.find(u=>u.username===body.username)) return {ok:false, error:'El usuario ya existe'};
-      arr.push(body);
-      saveLS(SK_U, arr);
-      return {ok:true};
-    }
-    if(action==='deleteUser'){
-      const arr = loadLS(SK_U).filter(u=>u.username!==body.username);
-      saveLS(SK_U, arr);
-      return {ok:true};
+      const data=await readBin();
+      if(data){ return {ok:true,data:data.users}; }
+      return {ok:true,data:loadArr(SK_U)};
     }
 
-    return {ok:false, error:'Acción desconocida'};
+    if(action==='addUser'){
+      const data=(await readBin())||{sales:loadArr(SK_S),users:loadArr(SK_U)};
+      if(data.users.find(u=>u.username===body.username)) return {ok:false,error:'El usuario ya existe'};
+      data.users.push(body);
+      const ok=await writeBin(data);
+      if(ok) saveLS(SK_U,data.users);
+      return {ok};
+    }
+
+    if(action==='deleteUser'){
+      const data=(await readBin())||{sales:loadArr(SK_S),users:loadArr(SK_U)};
+      data.users=data.users.filter(u=>u.username!==body.username);
+      const ok=await writeBin(data);
+      if(ok) saveLS(SK_U,data.users);
+      return {ok};
+    }
+
+    return {ok:false,error:'Acción desconocida'};
+
   }catch(e){
-    setTgStatus(false);
-    return {ok:false, error:e.message};
+    setDbStatus(false);
+    return {ok:false,error:e.message};
   }
 }
 
@@ -1364,5 +1436,4 @@ document.getElementById('login-screen').style.display='flex';
 </div>
 
 </body>
-</html>
 </html>
