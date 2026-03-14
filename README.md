@@ -479,112 +479,86 @@ tr:hover td{background:rgba(255,255,255,.015);}
 
 <script>
 /* ══════════════════════════════════════════
-   ALMACENAMIENTO: localStorage + JSONBin nube
-   API Key: completa y funcional
+   ALMACENAMIENTO: localStorage + Google Sheets
+   (via Apps Script GET — sin CORS)
    ══════════════════════════════════════════ */
-const SK_S     = 'bnx_sales_v6';
-const SK_U     = 'bnx_users_v6';
-const SK_BIN_U = 'bnx_bin_u';
-const SK_BIN_S = 'bnx_bin_s';
-const JB_KEY   = '$2a$10$TXGPn1KOo8sTXZQ3PCgRjOg5PbcJuDcWy0r/siYUpte7.eN4Vp4lu';
-const JB_COL   = '69b59872b7ec241ddc6abbb1';
-const JB_BASE  = 'https://api.jsonbin.io/v3';
+const SK_S  = 'bnx_sales_v6';
+const SK_U  = 'bnx_users_v6';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbz9rGZsNAS6sLaoz70vHO6s-SunZW2vgXw5MZ9RJ_BRAmVYmDHDWxW3mXBrYcflLqQpJg/exec';
 
 function loadS(k){ try{ return JSON.parse(localStorage.getItem(k))||[]; }catch{ return []; } }
 function saveS(k,d){ localStorage.setItem(k, JSON.stringify(d)); }
 
-async function jbGet(id){
-  try{
-    const r = await fetch(`${JB_BASE}/b/${id}/latest`,{
-      headers:{'X-Master-Key':JB_KEY,'X-Bin-Meta':'false'}
-    });
-    if(!r.ok) return null;
-    const d = await r.json();
-    return Array.isArray(d) ? d : null;
-  }catch{ return null; }
-}
+/* GET request usando <script> tag para evitar CORS completamente */
+function gasGet(action, data=null){
+  return new Promise((resolve)=>{
+    const cbName = '_gas_cb_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+    let params = `?action=${action}&cb=${cbName}`;
+    if(data) params += `&data=${encodeURIComponent(JSON.stringify(data))}`;
+    
+    window[cbName] = function(result){
+      delete window[cbName];
+      document.getElementById(cbName)?.remove();
+      resolve(result);
+    };
 
-async function jbSet(id, data){
-  try{
-    const r = await fetch(`${JB_BASE}/b/${id}`,{
-      method:'PUT',
-      headers:{'Content-Type':'application/json','X-Master-Key':JB_KEY},
-      body: JSON.stringify(data)
-    });
-    return r.ok;
-  }catch{ return false; }
-}
+    // timeout fallback
+    const timer = setTimeout(()=>{
+      delete window[cbName];
+      document.getElementById(cbName)?.remove();
+      resolve({ok:false, error:'timeout'});
+    }, 12000);
 
-async function jbCreate(name){
-  try{
-    const r = await fetch(`${JB_BASE}/b`,{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'X-Master-Key':JB_KEY,
-        'X-Bin-Name':name,
-        'X-Collection-Id':JB_COL,
-        'X-Bin-Private':'false'
-      },
-      body: JSON.stringify([])
-    });
-    if(!r.ok) return null;
-    const j = await r.json();
-    return j?.metadata?.id || null;
-  }catch{ return null; }
-}
+    window[cbName]._timer = timer;
+    const orig = window[cbName];
+    window[cbName] = function(r){ clearTimeout(orig._timer); orig(r); };
 
-async function getBin(sk, name){
-  let id = localStorage.getItem(sk);
-  if(!id){
-    id = await jbCreate(name);
-    if(id) localStorage.setItem(sk, id);
-  }
-  return id || null;
+    const s = document.createElement('script');
+    s.id = cbName;
+    s.src = GAS_URL + params;
+    s.onerror = ()=>{ clearTimeout(timer); delete window[cbName]; s.remove(); resolve({ok:false,error:'network error'}); };
+    document.head.appendChild(s);
+  });
 }
 
 async function api(action, body={}){
   try{
     /* ── VENTAS ── */
     if(action==='getSales'){
-      const id = await getBin(SK_BIN_S,'bnx-ventas');
-      if(id){ const d=await jbGet(id); if(d){ saveS(SK_S,d); return {ok:true,data:d}; } }
+      const r = await gasGet('getSales');
+      if(r.ok && Array.isArray(r.data)){ saveS(SK_S,r.data); return {ok:true,data:r.data}; }
       return {ok:true, data:loadS(SK_S)};
     }
     if(action==='addSale'){
       const a=loadS(SK_S); a.unshift(body); saveS(SK_S,a);
-      const id=await getBin(SK_BIN_S,'bnx-ventas'); if(id) jbSet(id,a);
+      gasGet('addSale', body); // fire and forget
       return {ok:true};
     }
     if(action==='deleteSale'){
       const a=loadS(SK_S).filter(v=>v.folio!==body.folio); saveS(SK_S,a);
-      const id=await getBin(SK_BIN_S,'bnx-ventas'); if(id) jbSet(id,a);
+      gasGet('deleteSale', body);
       return {ok:true};
     }
     if(action==='clearSales'){
       saveS(SK_S,[]);
-      const id=await getBin(SK_BIN_S,'bnx-ventas'); if(id) jbSet(id,[]);
+      gasGet('clearSales');
       return {ok:true};
     }
     /* ── USUARIOS ── */
     if(action==='getUsers'){
-      const id = await getBin(SK_BIN_U,'bnx-usuarios');
-      if(id){ const d=await jbGet(id); if(d){ saveS(SK_U,d); return {ok:true,data:d}; } }
+      const r = await gasGet('getUsers');
+      if(r.ok && Array.isArray(r.data)){ saveS(SK_U,r.data); return {ok:true,data:r.data}; }
       return {ok:true, data:loadS(SK_U)};
     }
     if(action==='addUser'){
-      const id=await getBin(SK_BIN_U,'bnx-usuarios');
-      let a = id ? (await jbGet(id)||loadS(SK_U)) : loadS(SK_U);
-      if(a.find(u=>u.username===body.username)) return {ok:false,error:'El usuario ya existe'};
-      a.push(body); saveS(SK_U,a);
-      if(id) await jbSet(id,a);
+      const r = await gasGet('addUser', body);
+      if(!r.ok) return r;
+      const a=loadS(SK_U); a.push(body); saveS(SK_U,a);
       return {ok:true};
     }
     if(action==='deleteUser'){
-      const id=await getBin(SK_BIN_U,'bnx-usuarios');
-      let a = id ? (await jbGet(id)||loadS(SK_U)) : loadS(SK_U);
-      a = a.filter(u=>u.username!==body.username); saveS(SK_U,a);
-      if(id) await jbSet(id,a);
+      const a=loadS(SK_U).filter(u=>u.username!==body.username); saveS(SK_U,a);
+      gasGet('deleteUser', body);
       return {ok:true};
     }
     return {ok:false,error:'Acción desconocida'};
