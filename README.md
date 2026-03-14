@@ -486,7 +486,7 @@ const SK_S     = 'bnx_sales_v6';
 const SK_U     = 'bnx_users_v6';
 const SK_BIN_U = 'bnx_bin_u';
 const SK_BIN_S = 'bnx_bin_s';
-const JB_KEY   = '$2a$10$kne8brrCST2wtHkfBeby0ODPqukyxbWzGEJvA1OVwgwxCrNCAnlJm';
+const JB_KEY   = '$2a$10$TXGPn1KOo8sTXZQ3PCgRjOg5PbcJuDcWy0r/siYUpte7.eN4Vp4lu';
 const JB_COL   = '69b59872b7ec241ddc6abbb1';
 const JB_BASE  = 'https://api.jsonbin.io/v3';
 
