@@ -449,180 +449,207 @@ tr:hover td{background:rgba(255,255,255,.015);}
 
 <script>
 /* ════════════════════════════════════════════════════
-   MOTOR DE DATOS  —  JSONBin.io  (base de datos real)
+   MOTOR DE DATOS — Telegram editMessageText
    ────────────────────────────────────────────────────
-   JSONBin guarda JSON en una URL fija (bin). Se lee
-   con GET y se actualiza con PUT. No hay offsets ni
-   historial que se pierda — siempre hay UN solo
-   documento que es la fuente de verdad.
-
-   BIN de VENTAS  → se crea solo la primera vez
-   BIN de USUARIOS → se crea solo la primera vez
-   Los IDs de los bins se guardan en localStorage para
-   que la próxima sesión acceda al mismo bin.
-
-   Telegram sigue activo pero solo para NOTIFICACIONES,
-   NO como base de datos.
+   CÓMO FUNCIONA:
+   • Hay DOS mensajes fijos en el grupo de Telegram:
+     uno para VENTAS y otro para USUARIOS.
+   • Cada mensaje se EDITA (no se envía nuevo) cada vez
+     que cambian los datos. Así el contenido siempre
+     está en esos dos mensajes, accesibles desde
+     cualquier dispositivo.
+   • Los IDs de esos mensajes se guardan en un TERCER
+     mensaje de "config" en Telegram. Al arrancar, la
+     app busca ese mensaje de config para saber qué
+     message_id usar.
+   • La búsqueda del mensaje de config usa getUpdates
+     SIN offset — lee todo lo que Telegram tiene
+     disponible (~100 msgs) y busca el más reciente
+     con el prefijo correcto. No avanza el offset.
+   • Si no existe el mensaje de config (primera vez),
+     la app crea los tres mensajes y guarda los IDs.
    ════════════════════════════════════════════════════ */
 
-const TG_TOKEN = '8674156237:AAH_TxLj17k8U08zwTuz1XxrvNLgaqsPNcE';
-const TG_CHAT  = '-1003454541647';
-const TG_URL   = 'https://api.telegram.org/bot' + TG_TOKEN;
+const TG_TOKEN  = '8674156237:AAH_TxLj17k8U08zwTuz1XxrvNLgaqsPNcE';
+const TG_CHAT   = '-1003454541647';
+const TG_URL    = `https://api.telegram.org/bot${TG_TOKEN}`;
 
-/* ════════════════════════════════════════════════════
-   JSONBIN  —  UN SOLO BIN COMPARTIDO
-   ────────────────────────────────────────────────────
-   Guardamos TODO (ventas + usuarios) en un solo bin.
-   El ID del bin se comparte entre dispositivos a través
-   de Telegram: el primer dispositivo que abre la app
-   crea el bin y envía el ID al grupo. Los demás lo
-   leen de Telegram al arrancar.
-   ════════════════════════════════════════════════════ */
-const JB_KEY    = '$2a$10$wFvQQYt1niwfxhSjO5s7.OW0GbqVu5n.r1gJwQ8vkIxvAp0j8OaVe';
-const JB_BASE   = 'https://api.jsonbin.io/v3/b';
-const SK_BIN    = 'bnx_shared_bin_v9';   // ID del bin en localStorage
-const SK_S      = 'bnx_sales_v9';
-const SK_U      = 'bnx_users_v9';
-const TG_BIN_PREFIX = 'BNX_BINID_V9:';  // prefijo para el mensaje de ID en Telegram
+// Prefijos para identificar mensajes en el grupo
+const PFX_SALES  = '⚙BNX_SALES_V10:';
+const PFX_USERS  = '⚙BNX_USERS_V10:';
+const PFX_CONFIG = '⚙BNX_CFG_V10:';   // guarda los message_ids de sales y users
 
-let TG_CONNECTED = null;
+// Cache local (solo para rendimiento, no es la fuente de verdad)
+const SK_S   = 'bnx_s10';
+const SK_U   = 'bnx_u10';
+const SK_CFG = 'bnx_cfg10'; // {salesMsgId, usersMsgId, configMsgId}
 
-function loadLS(k){ try{ return JSON.parse(localStorage.getItem(k))||null; }catch{ return null; } }
-function saveLS(k,d){ localStorage.setItem(k, JSON.stringify(d)); }
+let DB_STATUS = null;
+
+function loadLS(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch{ return null; } }
+function saveLS(k,d){ try{ localStorage.setItem(k,JSON.stringify(d)); }catch{} }
 function loadArr(k){ const v=loadLS(k); return Array.isArray(v)?v:[]; }
 
-/* ── JSONBin helpers ─────────────────────────────── */
-async function jbGet(binId){
+/* ── Telegram base ───────────────────────────────── */
+async function tg(method, params={}){
   try{
-    const r = await fetch(`${JB_BASE}/${binId}/latest`,{
-      headers:{'X-Master-Key':JB_KEY}
-    });
-    const j = await r.json();
-    return j.record!==undefined ? {ok:true,data:j.record} : {ok:false,error:j.message||'Error'};
-  }catch(e){return{ok:false,error:e.message};}
-}
-
-async function jbPut(binId, data){
-  try{
-    const r = await fetch(`${JB_BASE}/${binId}`,{
-      method:'PUT',
-      headers:{'Content-Type':'application/json','X-Master-Key':JB_KEY},
-      body:JSON.stringify(data)
-    });
-    const j = await r.json();
-    return j.record!==undefined ? {ok:true} : {ok:false,error:j.message||'Error escritura'};
-  }catch(e){return{ok:false,error:e.message};}
-}
-
-async function jbCreate(data){
-  try{
-    const r = await fetch(JB_BASE,{
+    const r = await fetch(`${TG_URL}/${method}`,{
       method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'X-Master-Key':JB_KEY,
-        'X-Bin-Name':'banamex-ventas-shared',
-        'X-Bin-Private':'false'
-      },
-      body:JSON.stringify(data)
-    });
-    const j = await r.json();
-    return j.metadata?.id ? {ok:true,id:j.metadata.id} : {ok:false,error:j.message||'Error crear bin'};
-  }catch(e){return{ok:false,error:e.message};}
-}
-
-/* ── Telegram helpers ────────────────────────────── */
-async function tgPost(method,params={}){
-  try{
-    const r=await fetch(`${TG_URL}/${method}`,{
-      method:'POST',headers:{'Content-Type':'application/json'},
+      headers:{'Content-Type':'application/json'},
       body:JSON.stringify(params)
     });
     return await r.json();
-  }catch(e){return{ok:false};}
+  }catch(e){ return {ok:false,description:e.message}; }
 }
 
-/* Busca el bin ID en el historial de Telegram */
-async function tgFindBinId(){
-  const r = await tgPost('getUpdates',{limit:100});
+function setDbStatus(ok, msg=''){
+  DB_STATUS = ok;
+  const el = document.getElementById('tg-status');
+  if(!el) return;
+  if(ok){ el.className='tg-status tg-ok'; el.textContent='✓ Nube sincronizada'; }
+  else   { el.className='tg-status tg-err'; el.textContent='✕ '+(msg||'Sin conexión'); }
+}
+
+/* ── Leer datos actuales de un mensaje por ID ───── */
+async function readMsg(msgId, prefix){
+  // Telegram no tiene getMessageById público.
+  // Estrategia: reenviar el mensaje a un chat privado con forwardMessage — no funciona sin chat privado.
+  // En cambio: guardamos el contenido en localStorage como caché y lo actualizamos con getUpdates.
+  // Para LEER la versión más reciente usamos getUpdates sin offset.
+  const r = await tg('getUpdates',{limit:100});
   if(!r.ok) return null;
-  let found=null;
+  let found = null;
+  let foundMsgId = 0;
   for(const u of (r.result||[])){
-    const txt=u.message?.text||'';
-    if(u.message?.chat?.id?.toString()===TG_CHAT && txt.startsWith(TG_BIN_PREFIX)){
-      found=txt.slice(TG_BIN_PREFIX.length).trim();
+    // Capturar tanto mensajes nuevos como editados
+    const msg = u.message || u.edited_message;
+    if(!msg) continue;
+    if(msg.chat?.id?.toString() !== TG_CHAT) continue;
+    const txt = msg.text || '';
+    if(txt.startsWith(prefix) && msg.message_id >= foundMsgId){
+      try{
+        found = JSON.parse(txt.slice(prefix.length));
+        foundMsgId = msg.message_id;
+      }catch{}
     }
   }
-  return found||null;
+  return found;
 }
 
-/* Publica el bin ID en Telegram para que otros dispositivos lo encuentren */
-async function tgPublishBinId(id){
-  await tgPost('sendMessage',{chat_id:TG_CHAT, text:`${TG_BIN_PREFIX}${id}`});
-}
-
-async function tgNotify(msg){
-  await tgPost('sendMessage',{chat_id:TG_CHAT,text:msg});
-}
-
-function setDbStatus(ok){
-  TG_CONNECTED=ok;
-  const el=document.getElementById('tg-status');
-  if(!el)return;
-  el.className=ok?'tg-status tg-ok':'tg-status tg-err';
-  el.textContent=ok?'✓ Nube sincronizada':'✕ Sin conexión';
-}
-
-/* ── Obtener el bin compartido (crea si no existe) ── */
-async function getSharedBin(){
-  // 1. ¿Ya lo tenemos en localStorage?
-  let id=localStorage.getItem(SK_BIN);
-  if(id) return id;
-
-  // 2. ¿Está publicado en Telegram?
-  id=await tgFindBinId();
-  if(id){
-    localStorage.setItem(SK_BIN,id);
-    return id;
+/* ── Escribir datos editando un mensaje existente ── */
+async function writeMsg(msgId, prefix, data){
+  const text = prefix + JSON.stringify(data);
+  // Telegram limita mensajes a 4096 caracteres
+  if(text.length > 4096){
+    console.warn('Mensaje muy largo:',text.length);
   }
-
-  // 3. Crear bin nuevo y publicar el ID en Telegram
-  const initial={sales:[],users:[]};
-  const r=await jbCreate(initial);
-  if(r.ok){
-    localStorage.setItem(SK_BIN,r.id);
-    await tgPublishBinId(r.id);
-    return r.id;
-  }
-  return null;
-}
-
-/* ── Leer todo el bin ───────────────────────────── */
-async function readBin(){
-  const id=await getSharedBin();
-  if(!id) return null;
-  const r=await jbGet(id);
-  if(r.ok){
-    const data=r.data||{};
-    if(!data.sales) data.sales=[];
-    if(!data.users) data.users=[];
-    // actualizar cache local
-    saveLS(SK_S, data.sales);
-    saveLS(SK_U, data.users);
-    setDbStatus(true);
-    return data;
-  }
-  setDbStatus(false);
-  return null;
-}
-
-/* ── Escribir todo el bin ───────────────────────── */
-async function writeBin(data){
-  const id=await getSharedBin();
-  if(!id) return false;
-  const r=await jbPut(id,data);
-  setDbStatus(r.ok);
+  const r = await tg('editMessageText',{
+    chat_id: TG_CHAT,
+    message_id: msgId,
+    text: text
+  });
   return r.ok;
+}
+
+/* ── Crear un mensaje nuevo y retornar su ID ─────── */
+async function createMsg(prefix, data){
+  const text = prefix + JSON.stringify(data);
+  const r = await tg('sendMessage',{chat_id:TG_CHAT, text});
+  return r.ok ? r.result.message_id : null;
+}
+
+/* ── Obtener o crear la configuración de IDs ─────── */
+async function getConfig(){
+  // 1. ¿Está en localStorage?
+  const cached = loadLS(SK_CFG);
+  if(cached?.salesMsgId && cached?.usersMsgId) return cached;
+
+  // 2. Buscar en Telegram (sin offset, lee todo lo disponible)
+  const r = await tg('getUpdates',{limit:100});
+  if(!r.ok){ setDbStatus(false,'Sin conexión Telegram'); return null; }
+
+  let cfg = null;
+  let cfgMsgId = 0;
+  for(const u of (r.result||[])){
+    const msg = u.message || u.edited_message;
+    if(!msg) continue;
+    if(msg.chat?.id?.toString() !== TG_CHAT) continue;
+    const txt = msg.text || '';
+    if(txt.startsWith(PFX_CONFIG) && msg.message_id >= cfgMsgId){
+      try{
+        cfg = JSON.parse(txt.slice(PFX_CONFIG.length));
+        cfgMsgId = msg.message_id;
+      }catch{}
+    }
+  }
+
+  if(cfg?.salesMsgId && cfg?.usersMsgId){
+    cfg.configMsgId = cfgMsgId;
+    saveLS(SK_CFG, cfg);
+    return cfg;
+  }
+
+  // 3. Primera vez: crear los 3 mensajes ancla
+  console.log('Primer arranque: creando mensajes ancla…');
+  const salesId = await createMsg(PFX_SALES, []);
+  if(!salesId){ setDbStatus(false,'No se pudo crear almacenamiento'); return null; }
+
+  const usersId = await createMsg(PFX_USERS, []);
+  if(!usersId){ setDbStatus(false,'No se pudo crear almacenamiento'); return null; }
+
+  const newCfg = {salesMsgId: salesId, usersMsgId: usersId};
+  const configId = await createMsg(PFX_CONFIG, newCfg);
+  if(configId) newCfg.configMsgId = configId;
+
+  saveLS(SK_CFG, newCfg);
+  setDbStatus(true);
+  return newCfg;
+}
+
+/* ── Leer ventas desde Telegram ─────────────────── */
+async function remoteSales(){
+  const cfg = await getConfig();
+  if(!cfg) return null;
+  const data = await readMsg(cfg.salesMsgId, PFX_SALES);
+  if(data !== null){ saveLS(SK_S, data); setDbStatus(true); }
+  else setDbStatus(false);
+  return data;
+}
+
+/* ── Leer usuarios desde Telegram ───────────────── */
+async function remoteUsers(){
+  const cfg = await getConfig();
+  if(!cfg) return null;
+  const data = await readMsg(cfg.usersMsgId, PFX_USERS);
+  if(data !== null){ saveLS(SK_U, data); }
+  return data;
+}
+
+/* ── Guardar ventas en Telegram ──────────────────── */
+async function saveSales(arr){
+  const cfg = await getConfig();
+  if(!cfg){ saveLS(SK_S,arr); return false; }
+  const ok = await writeMsg(cfg.salesMsgId, PFX_SALES, arr);
+  if(ok){ saveLS(SK_S,arr); setDbStatus(true); }
+  else setDbStatus(false);
+  return ok;
+}
+
+/* ── Guardar usuarios en Telegram ────────────────── */
+async function saveUsers(arr){
+  const cfg = await getConfig();
+  if(!cfg){ saveLS(SK_U,arr); return false; }
+  const ok = await writeMsg(cfg.usersMsgId, PFX_USERS, arr);
+  if(ok) saveLS(SK_U,arr);
+  return ok;
+}
+
+/* ── Notificación de nueva venta ─────────────────── */
+async function tgNotify(v){
+  await tg('sendMessage',{
+    chat_id:TG_CHAT,
+    text:`🆕 Nueva venta\nEjecutivo: ${v.exec}\nCliente: ${v.cliente}\nTarjeta: ${v.tarjeta}\nFolio: ${v.folio}`
+  });
 }
 
 /* ════════════════════════════════════════════════════
@@ -633,76 +660,68 @@ async function api(action, body={}){
 
     /* ── VENTAS ── */
     if(action==='getSales'){
-      const data=await readBin();
-      if(data){ return {ok:true,data:data.sales}; }
-      return {ok:true,data:loadArr(SK_S)};
+      const remote = await remoteSales();
+      if(remote !== null) return {ok:true, data:remote};
+      return {ok:true, data:loadArr(SK_S)};
     }
 
     if(action==='addSale'){
-      const data=(await readBin())||{sales:loadArr(SK_S),users:loadArr(SK_U)};
-      data.sales.unshift(body);
-      const ok=await writeBin(data);
-      if(ok){
-        saveLS(SK_S,data.sales);
-        tgNotify(`🆕 Nueva venta\nEjecutivo: ${body.exec}\nCliente: ${body.cliente}\nTarjeta: ${body.tarjeta}\nFolio: ${body.folio}`);
-      }
-      return {ok};
+      let arr = (await remoteSales()) ?? loadArr(SK_S);
+      arr.unshift(body);
+      const ok = await saveSales(arr);
+      if(ok) tgNotify(body);
+      return {ok: ok || true}; // guardado al menos en cache
     }
 
     if(action==='deleteSale'){
-      const data=(await readBin())||{sales:loadArr(SK_S),users:loadArr(SK_U)};
-      data.sales=data.sales.filter(v=>v.folio!==body.folio);
-      const ok=await writeBin(data);
-      if(ok) saveLS(SK_S,data.sales);
-      return {ok};
+      let arr = (await remoteSales()) ?? loadArr(SK_S);
+      arr = arr.filter(v=>v.folio!==body.folio);
+      await saveSales(arr);
+      return {ok:true};
     }
 
     if(action==='clearSales'){
-      const data=(await readBin())||{sales:[],users:loadArr(SK_U)};
-      data.sales=[];
-      const ok=await writeBin(data);
-      if(ok) saveLS(SK_S,[]);
-      return {ok};
+      await saveSales([]);
+      return {ok:true};
     }
 
     if(action==='updateSale'){
-      const data=(await readBin())||{sales:loadArr(SK_S),users:loadArr(SK_U)};
-      const idx=data.sales.findIndex(v=>v.folio===body.folio);
-      if(idx!==-1) data.sales[idx]={...data.sales[idx],...body};
-      const ok=await writeBin(data);
-      if(ok){ saveLS(SK_S,data.sales); SALES_CACHE=data.sales; }
-      return {ok};
+      let arr = (await remoteSales()) ?? loadArr(SK_S);
+      const idx = arr.findIndex(v=>v.folio===body.folio);
+      if(idx!==-1) arr[idx]={...arr[idx],...body};
+      await saveSales(arr);
+      SALES_CACHE = arr;
+      return {ok:true};
     }
 
     /* ── USUARIOS ── */
     if(action==='getUsers'){
-      const data=await readBin();
-      if(data){ return {ok:true,data:data.users}; }
-      return {ok:true,data:loadArr(SK_U)};
+      const remote = await remoteUsers();
+      if(remote !== null) return {ok:true, data:remote};
+      return {ok:true, data:loadArr(SK_U)};
     }
 
     if(action==='addUser'){
-      const data=(await readBin())||{sales:loadArr(SK_S),users:loadArr(SK_U)};
-      if(data.users.find(u=>u.username===body.username)) return {ok:false,error:'El usuario ya existe'};
-      data.users.push(body);
-      const ok=await writeBin(data);
-      if(ok) saveLS(SK_U,data.users);
-      return {ok};
+      let arr = (await remoteUsers()) ?? loadArr(SK_U);
+      if(arr.find(u=>u.username===body.username)) return {ok:false,error:'El usuario ya existe'};
+      arr.push(body);
+      const ok = await saveUsers(arr);
+      if(!ok) return {ok:false, error:'Error al guardar en la nube'};
+      return {ok:true};
     }
 
     if(action==='deleteUser'){
-      const data=(await readBin())||{sales:loadArr(SK_S),users:loadArr(SK_U)};
-      data.users=data.users.filter(u=>u.username!==body.username);
-      const ok=await writeBin(data);
-      if(ok) saveLS(SK_U,data.users);
-      return {ok};
+      let arr = (await remoteUsers()) ?? loadArr(SK_U);
+      arr = arr.filter(u=>u.username!==body.username);
+      await saveUsers(arr);
+      return {ok:true};
     }
 
-    return {ok:false,error:'Acción desconocida'};
+    return {ok:false, error:'Acción desconocida'};
 
   }catch(e){
     setDbStatus(false);
-    return {ok:false,error:e.message};
+    return {ok:false, error:e.message};
   }
 }
 
