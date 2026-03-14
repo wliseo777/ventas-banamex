@@ -301,6 +301,20 @@ tr:hover td{background:rgba(255,255,255,.015);}
   line-height:1.7;color:#d0d0d0;white-space:pre-wrap;word-break:break-word;}
 .rpop-btns{margin-top:1.1rem;display:flex;gap:8px;justify-content:flex-end;}
 
+
+/* ── export/import usuarios ── */
+.xbtn{padding:7px 14px;border-radius:8px;border:1px solid var(--br2);background:var(--s2);
+  color:var(--mu);font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;transition:all .15s;}
+.xbtn:hover{color:var(--tx);border-color:var(--br2);}
+.xbtn.imp{background:var(--gold-f);border-color:rgba(200,168,75,.4);color:var(--gold-l);}
+.xbtn.imp:hover{background:rgba(200,168,75,.2);}
+.xarea{width:100%;background:var(--s2);border:1px solid var(--br2);border-radius:9px;
+  padding:10px 13px;color:var(--tx);font-family:'Courier New',monospace;font-size:11px;
+  resize:vertical;min-height:90px;outline:none;margin-top:8px;}
+.xarea:focus{border-color:var(--gold);}
+.xinfo{font-size:12px;color:var(--mu);line-height:1.6;margin-bottom:1rem;
+  background:var(--gold-f);border:1px solid rgba(200,168,75,.2);border-radius:8px;padding:10px 13px;}
+
 </style>
 </head>
 <body>
@@ -362,6 +376,31 @@ tr:hover td{background:rgba(255,255,255,.015);}
       </div>
       <div class="slbl">Mis últimas ventas</div>
       <div id="exec-recent"></div>
+    </div>
+
+      <!-- EXPORTAR / IMPORTAR USUARIOS -->
+      <div id="xfer-box" style="display:none;margin-top:1.5rem;">
+        <div class="card" style="margin-bottom:0">
+          <div class="pgtitle" style="font-size:1.3rem;margin-bottom:.5rem">
+            Compartir ejecutivos <span style="color:var(--gold)">entre dispositivos</span>
+          </div>
+          <p class="xinfo">
+            ⚠️ Los usuarios solo existen en este dispositivo.<br>
+            Para que otro celular/compu tenga los ejecutivos: <strong>exporta aquí</strong>, 
+            copia el código y pégalo en el otro dispositivo con <strong>importar</strong>.
+          </p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:.75rem;">
+            <button class="xbtn" id="xport-btn">📋 Exportar usuarios</button>
+            <button class="xbtn imp" id="ximport-btn">📥 Importar usuarios</button>
+          </div>
+          <textarea class="xarea" id="x-area" placeholder="Aquí aparecerá el código de exportación, o pega aquí el código para importar…"></textarea>
+          <div style="display:flex;gap:8px;margin-top:8px;">
+            <button class="xbtn imp" id="xdo-import-btn" style="display:none">✅ Aplicar importación</button>
+            <div class="toast ok" id="x-ok" style="position:static;margin:0;"></div>
+            <div class="toast err" id="x-err" style="position:static;margin:0;"></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -441,142 +480,117 @@ tr:hover td{background:rgba(255,255,255,.015);}
 <script>
 /* ══════════════════════════════════════════
    ALMACENAMIENTO: localStorage + JSONBin nube
+   API Key: completa y funcional
    ══════════════════════════════════════════ */
-const SK_S      = 'bnx_sales_v6';
-const SK_U      = 'bnx_users_v6';
-const SK_BIN_U  = 'bnx_bin_users';
-const SK_BIN_S  = 'bnx_bin_sales';
-const JB_KEY    = '$2a$10$69b59872b7ec241ddc6abbb1';
-const JB_BASE   = 'https://api.jsonbin.io/v3';
+const SK_S     = 'bnx_sales_v6';
+const SK_U     = 'bnx_users_v6';
+const SK_BIN_U = 'bnx_bin_u';
+const SK_BIN_S = 'bnx_bin_s';
+const JB_KEY   = '$2a$10$kne8brrCST2wtHkfBeby0ODPqukyxbWzGEJvA1OVwgwxCrNCAnlJm';
+const JB_COL   = '69b59872b7ec241ddc6abbb1';
+const JB_BASE  = 'https://api.jsonbin.io/v3';
 
 function loadS(k){ try{ return JSON.parse(localStorage.getItem(k))||[]; }catch{ return []; } }
 function saveS(k,d){ localStorage.setItem(k, JSON.stringify(d)); }
 
-/* ── JSONBin helpers ── */
-async function jbGet(binId){
-  const r = await fetch(`${JB_BASE}/b/${binId}/latest`,{
-    headers:{'X-Master-Key':JB_KEY,'X-Bin-Meta':'false'}
-  });
-  if(!r.ok) return null;
-  return await r.json(); // returns the array directly
+async function jbGet(id){
+  try{
+    const r = await fetch(`${JB_BASE}/b/${id}/latest`,{
+      headers:{'X-Master-Key':JB_KEY,'X-Bin-Meta':'false'}
+    });
+    if(!r.ok) return null;
+    const d = await r.json();
+    return Array.isArray(d) ? d : null;
+  }catch{ return null; }
 }
 
-async function jbSet(binId, data){
-  const r = await fetch(`${JB_BASE}/b/${binId}`,{
-    method:'PUT',
-    headers:{'Content-Type':'application/json','X-Master-Key':JB_KEY},
-    body: JSON.stringify(data)
-  });
-  return r.ok;
+async function jbSet(id, data){
+  try{
+    const r = await fetch(`${JB_BASE}/b/${id}`,{
+      method:'PUT',
+      headers:{'Content-Type':'application/json','X-Master-Key':JB_KEY},
+      body: JSON.stringify(data)
+    });
+    return r.ok;
+  }catch{ return false; }
 }
 
-async function jbCreate(name, data){
-  const r = await fetch(`${JB_BASE}/b`,{
-    method:'POST',
-    headers:{
-      'Content-Type':'application/json',
-      'X-Master-Key':JB_KEY,
-      'X-Bin-Name':name,
-      'X-Bin-Private':'false'
-    },
-    body: JSON.stringify(data)
-  });
-  if(!r.ok) return null;
-  const j = await r.json();
-  return j.metadata?.id || null;
+async function jbCreate(name){
+  try{
+    const r = await fetch(`${JB_BASE}/b`,{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'X-Master-Key':JB_KEY,
+        'X-Bin-Name':name,
+        'X-Collection-Id':JB_COL,
+        'X-Bin-Private':'false'
+      },
+      body: JSON.stringify([])
+    });
+    if(!r.ok) return null;
+    const j = await r.json();
+    return j?.metadata?.id || null;
+  }catch{ return null; }
 }
 
-async function getBinId(key, name){
-  let id = localStorage.getItem(key);
+async function getBin(sk, name){
+  let id = localStorage.getItem(sk);
   if(!id){
-    id = await jbCreate(name, []);
-    if(id) localStorage.setItem(key, id);
+    id = await jbCreate(name);
+    if(id) localStorage.setItem(sk, id);
   }
-  return id;
+  return id || null;
 }
 
-/* ── API wrapper (localStorage + JSONBin) ── */
 async function api(action, body={}){
   try{
     /* ── VENTAS ── */
     if(action==='getSales'){
-      const id = await getBinId(SK_BIN_S,'bnx-ventas');
-      if(id){
-        const remote = await jbGet(id);
-        if(Array.isArray(remote)){ saveS(SK_S,remote); return {ok:true,data:remote}; }
-      }
+      const id = await getBin(SK_BIN_S,'bnx-ventas');
+      if(id){ const d=await jbGet(id); if(d){ saveS(SK_S,d); return {ok:true,data:d}; } }
       return {ok:true, data:loadS(SK_S)};
     }
     if(action==='addSale'){
-      const arr = loadS(SK_S);
-      arr.unshift(body);
-      saveS(SK_S,arr);
-      const id = await getBinId(SK_BIN_S,'bnx-ventas');
-      if(id) await jbSet(id,arr);
+      const a=loadS(SK_S); a.unshift(body); saveS(SK_S,a);
+      const id=await getBin(SK_BIN_S,'bnx-ventas'); if(id) jbSet(id,a);
       return {ok:true};
     }
     if(action==='deleteSale'){
-      const arr = loadS(SK_S).filter(v=>v.folio!==body.folio);
-      saveS(SK_S,arr);
-      const id = await getBinId(SK_BIN_S,'bnx-ventas');
-      if(id) await jbSet(id,arr);
+      const a=loadS(SK_S).filter(v=>v.folio!==body.folio); saveS(SK_S,a);
+      const id=await getBin(SK_BIN_S,'bnx-ventas'); if(id) jbSet(id,a);
       return {ok:true};
     }
     if(action==='clearSales'){
       saveS(SK_S,[]);
-      const id = await getBinId(SK_BIN_S,'bnx-ventas');
-      if(id) await jbSet(id,[]);
-      return {ok:true};
-    }
-    if(action==='updateSaleStatus'){
-      const arr = loadS(SK_S);
-      const idx = arr.findIndex(v=>v.folio===body.folio);
-      if(idx!==-1){ arr[idx].status=body.status; arr[idx].statusNota=body.statusNota; }
-      saveS(SK_S,arr);
-      const id = await getBinId(SK_BIN_S,'bnx-ventas');
-      if(id) await jbSet(id,arr);
+      const id=await getBin(SK_BIN_S,'bnx-ventas'); if(id) jbSet(id,[]);
       return {ok:true};
     }
     /* ── USUARIOS ── */
     if(action==='getUsers'){
-      const id = await getBinId(SK_BIN_U,'bnx-usuarios');
-      if(id){
-        const remote = await jbGet(id);
-        if(Array.isArray(remote)){ saveS(SK_U,remote); return {ok:true,data:remote}; }
-      }
+      const id = await getBin(SK_BIN_U,'bnx-usuarios');
+      if(id){ const d=await jbGet(id); if(d){ saveS(SK_U,d); return {ok:true,data:d}; } }
       return {ok:true, data:loadS(SK_U)};
     }
     if(action==='addUser'){
-      const id = await getBinId(SK_BIN_U,'bnx-usuarios');
-      let arr = [];
-      if(id){
-        const remote = await jbGet(id);
-        if(Array.isArray(remote)) arr=remote;
-      } else {
-        arr = loadS(SK_U);
-      }
-      if(arr.find(u=>u.username===body.username)) return {ok:false,error:'El usuario ya existe'};
-      arr.push(body);
-      saveS(SK_U,arr);
-      if(id) await jbSet(id,arr);
+      const id=await getBin(SK_BIN_U,'bnx-usuarios');
+      let a = id ? (await jbGet(id)||loadS(SK_U)) : loadS(SK_U);
+      if(a.find(u=>u.username===body.username)) return {ok:false,error:'El usuario ya existe'};
+      a.push(body); saveS(SK_U,a);
+      if(id) await jbSet(id,a);
       return {ok:true};
     }
     if(action==='deleteUser'){
-      const id = await getBinId(SK_BIN_U,'bnx-usuarios');
-      let arr = loadS(SK_U).filter(u=>u.username!==body.username);
-      if(id){
-        const remote = await jbGet(id);
-        if(Array.isArray(remote)) arr=remote.filter(u=>u.username!==body.username);
-        await jbSet(id,arr);
-      }
-      saveS(SK_U,arr);
+      const id=await getBin(SK_BIN_U,'bnx-usuarios');
+      let a = id ? (await jbGet(id)||loadS(SK_U)) : loadS(SK_U);
+      a = a.filter(u=>u.username!==body.username); saveS(SK_U,a);
+      if(id) await jbSet(id,a);
       return {ok:true};
     }
     return {ok:false,error:'Acción desconocida'};
-  }catch(e){
-    return {ok:false,error:e.message};
-  }
+  }catch(e){ return {ok:false,error:e.message}; }
 }
+
 
 /* ── UTILS ── */
 const ADM_U='admin', ADM_P='admin123';
@@ -644,7 +658,8 @@ async function goPage(p){
   if(tb)tb.classList.add('on');
   if(p==='exec'){setTodayDate();refreshFolio();renderRecent();}
   if(p==='dash')await loadAndRenderDash();
-  if(p==='users')await loadAndRenderUsers();
+  if(p==='users'){await loadAndRenderUsers();document.getElementById('xfer-box').style.display='block';}
+  else {const xb=document.getElementById('xfer-box');if(xb)xb.style.display='none';}
 }
 
 /* ── EJECUTIVO ── */
@@ -1011,8 +1026,6 @@ function saveStatus(){
   closeStatusModal();
   if(CU.role==='admin'){SALES_CACHE=all;renderDashTable();}
   else renderRecent();
-  // sync to cloud in background
-  api('updateSaleStatus',{folio:_stFolio, status:chosen, statusNota:nota});
 }
 
 function openReasonPopup(folio){
@@ -1028,10 +1041,54 @@ function openReasonPopup(folio){
   document.getElementById('ov-rp').classList.add('show');
 }
 
+
+/* ══ EXPORTAR / IMPORTAR USUARIOS ══ */
+function exportUsers(){
+  const users = loadS(SK_U);
+  if(!users.length){showToast('x-err','No hay ejecutivos para exportar','err');return;}
+  const code = btoa(JSON.stringify(users));
+  document.getElementById('x-area').value = code;
+  document.getElementById('xdo-import-btn').style.display='none';
+  showToast('x-ok','Código generado — cópialo y pégalo en el otro dispositivo','ok');
+}
+
+function showImportArea(){
+  document.getElementById('x-area').value='';
+  document.getElementById('x-area').placeholder='Pega aquí el código de exportación…';
+  document.getElementById('xdo-import-btn').style.display='inline-flex';
+  document.getElementById('x-area').focus();
+}
+
+function doImport(){
+  const raw = (document.getElementById('x-area').value||'').trim();
+  if(!raw){showToast('x-err','Pega el código primero','err');return;}
+  try{
+    const users = JSON.parse(atob(raw));
+    if(!Array.isArray(users)) throw new Error('formato inválido');
+    const existing = loadS(SK_U);
+    let added=0, skipped=0;
+    users.forEach(u=>{
+      if(!existing.find(e=>e.username===u.username)){existing.push(u);added++;}
+      else skipped++;
+    });
+    saveS(SK_U, existing);
+    USERS_CACHE = existing;
+    loadAndRenderUsers();
+    document.getElementById('x-area').value='';
+    document.getElementById('xdo-import-btn').style.display='none';
+    showToast('x-ok',`✅ ${added} ejecutivo(s) importados${skipped?' · '+skipped+' ya existían':''}`, 'ok');
+  }catch(e){
+    showToast('x-err','Código inválido — asegúrate de copiar todo completo','err');
+  }
+}
+
 /* ── EVENT DELEGATION ── */
 document.addEventListener('click',async function(e){
   if(e.target.id==='login-btn'){doLogin();return;}
   if(e.target.id==='logout-btn'){doLogout();return;}
+  if(e.target.id==='xport-btn'){exportUsers();return;}
+  if(e.target.id==='ximport-btn'){showImportArea();return;}
+  if(e.target.id==='xdo-import-btn'){doImport();return;}
   if(e.target.id==='reg-btn'){registrarVenta();return;}
   if(e.target.id==='refresh-btn'){await loadAndRenderDash();return;}
   if(e.target.id==='add-user-btn'){addUser();return;}
