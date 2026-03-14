@@ -71,10 +71,11 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 1.5r
 .card{background:var(--s1);border:1px solid var(--br2);border-radius:16px;padding:1.75rem;}
 .field{display:flex;flex-direction:column;gap:6px;margin-bottom:1rem;}
 .field label{font-size:11px;font-weight:500;color:var(--mu);text-transform:uppercase;letter-spacing:.06em;}
-.field input,.field select{background:var(--s2);border:1px solid var(--br2);border-radius:8px;padding:11px 14px;color:var(--tx);font-family:'Outfit',sans-serif;font-size:14px;outline:none;transition:border-color .15s;width:100%;}
-.field input:focus,.field select:focus{border-color:var(--red);}
+.field input,.field select,.field textarea{background:var(--s2);border:1px solid var(--br2);border-radius:8px;padding:11px 14px;color:var(--tx);font-family:'Outfit',sans-serif;font-size:14px;outline:none;transition:border-color .15s;width:100%;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--red);}
 .field select option{background:#1e1e1e;}
-.field input::placeholder{color:#444;}
+.field input::placeholder,.field textarea::placeholder{color:#444;}
+.field textarea{resize:vertical;min-height:70px;line-height:1.5;}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .frow{display:flex;gap:10px;align-items:flex-end;margin-bottom:1rem;}
 .frow .field{flex:1;margin-bottom:0;}
@@ -104,12 +105,17 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 1.5r
 .cv-gr{color:var(--green);}
 
 /* SYNC BAR */
-.sync-bar{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--s2);border-radius:8px;font-size:12px;color:var(--mu);margin-bottom:1rem;}
+.sync-bar{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--s2);border-radius:8px;font-size:12px;color:var(--mu);margin-bottom:1rem;flex-wrap:wrap;}
 .sync-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 .sync-dot.ok{background:var(--green);}
 .sync-dot.err{background:var(--red);}
 .sync-dot.loading{background:var(--gold-l);animation:pulse 1s infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+/* Telegram status indicator */
+.tg-status{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:600;margin-left:auto;}
+.tg-ok{background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);color:var(--green);}
+.tg-err{background:var(--red-f);border:1px solid rgba(200,16,46,.3);color:#f88;}
+.tg-loading{background:rgba(200,168,75,.13);border:1px solid rgba(200,168,75,.3);color:var(--gold-l);}
 
 /* TABLE */
 .tctrl{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:1rem;}
@@ -229,6 +235,7 @@ tr:hover td{background:rgba(255,255,255,.015);}
 .cd-reqs{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:7px;}
 .cd-req{background:var(--s2);border-radius:8px;padding:8px 12px;font-size:12px;color:#ccc;display:flex;gap:8px;align-items:flex-start;}
 .cd-nota{background:var(--gold-f);border:1px solid rgba(200,168,75,.25);border-radius:8px;padding:10px 14px;font-size:11px;color:#bbb;line-height:1.6;margin-top:1rem;}
+
 /* ── STATUS BADGES en ventas ── */
 .st-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;transition:opacity .15s;white-space:nowrap;}
 .st-badge:hover{opacity:.8;}
@@ -236,10 +243,11 @@ tr:hover td{background:rgba(255,255,255,.015);}
 .st-decl{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.4);color:#ef4444;}
 .st-pre{background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.4);color:#a855f7;}
 .st-ok{background:var(--green-f);border:1px solid rgba(34,197,94,.3);color:var(--green);}
-/* ── STATUS MODAL ── */
+
+/* ── STATUS MODAL mejorado ── */
 .st-modal{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:999;padding:1rem;}
 .st-modal.show{display:flex;}
-.st-box{background:var(--s1);border:1px solid var(--br2);border-radius:18px;padding:2rem;max-width:420px;width:100%;}
+.st-box{background:var(--s1);border:1px solid var(--br2);border-radius:18px;padding:2rem;max-width:460px;width:100%;max-height:90vh;overflow-y:auto;}
 .st-box h3{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.03em;margin-bottom:.3rem;}
 .st-box p{font-size:13px;color:var(--mu);margin-bottom:1.25rem;line-height:1.6;}
 .st-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:1.25rem;}
@@ -249,22 +257,38 @@ tr:hover td{background:rgba(255,255,255,.015);}
 .st-opt input[type=radio]{accent-color:var(--gold);width:16px;height:16px;flex-shrink:0;}
 .st-opt-label{font-size:13px;font-weight:500;}
 .st-opt-sub{font-size:11px;color:var(--mu);margin-top:2px;}
-.st-nota-wrap{margin-bottom:1rem;}
-.st-nota-wrap label{font-size:11px;font-weight:500;color:var(--mu);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px;}
-.st-nota-wrap textarea{width:100%;background:var(--s2);border:1px solid var(--br2);border-radius:8px;padding:10px 14px;color:var(--tx);font-family:'Outfit',sans-serif;font-size:13px;resize:vertical;min-height:80px;outline:none;}
-.st-nota-wrap textarea:focus{border-color:var(--gold);}
-.st-btns{display:flex;gap:8px;justify-content:flex-end;}
+
+/* ── COMENTARIOS POR ESTADO ── */
+.st-comments-section{margin-bottom:1rem;}
+.st-comments-header{font-size:11px;font-weight:600;color:var(--mu);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.st-comment-block{background:var(--s2);border:1px solid var(--br);border-radius:10px;padding:12px 14px;margin-bottom:8px;}
+.st-comment-block.highlighted{border-color:rgba(200,168,75,.4);background:rgba(200,168,75,.05);}
+.st-comment-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;display:flex;align-items:center;gap:5px;}
+.st-comment-label.pend{color:#fbbf24;}
+.st-comment-label.pre{color:#a855f7;}
+.st-comment-label.decl{color:#ef4444;}
+.st-comment-label.ok{color:var(--green);}
+.st-comment-block textarea{width:100%;background:rgba(0,0,0,.2);border:1px solid var(--br2);border-radius:7px;padding:9px 12px;color:var(--tx);font-family:'Outfit',sans-serif;font-size:13px;resize:vertical;min-height:65px;outline:none;line-height:1.5;}
+.st-comment-block textarea:focus{border-color:var(--gold);}
+.st-comment-block textarea::placeholder{color:#444;}
+.st-comment-hint{font-size:10px;color:var(--mu);margin-top:4px;line-height:1.4;}
+.st-req-badge{display:inline-block;padding:1px 6px;background:var(--red-f);border-radius:4px;color:#f88;font-size:9px;font-weight:600;margin-left:4px;}
+
+.st-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:1.25rem;}
 .st-save{padding:10px 22px;background:var(--red);border:none;border-radius:8px;color:#fff;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;}
 .st-save:hover{background:var(--red-d);}
 .st-cancel{padding:10px 18px;background:transparent;border:1px solid var(--br2);border-radius:8px;color:var(--mu);font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;}
 .st-cancel:hover{color:var(--tx);}
+
 /* ── STATUS DETAIL POPUP ── */
 .st-detail-pop{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:999;padding:1rem;}
 .st-detail-pop.show{display:flex;}
-.st-detail-box{background:var(--s1);border:1px solid var(--br2);border-radius:18px;padding:2rem;max-width:400px;width:100%;}
+.st-detail-box{background:var(--s1);border:1px solid var(--br2);border-radius:18px;padding:2rem;max-width:420px;width:100%;}
 .st-detail-box h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;margin-bottom:1rem;}
 .st-detail-txt{font-size:14px;line-height:1.7;color:#ccc;background:var(--s2);border-radius:10px;padding:14px;}
 
+/* Nota inline en tabla */
+.nota-preview{font-size:10px;color:var(--mu);margin-top:2px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 </style>
 </head>
 <body>
@@ -316,7 +340,6 @@ tr:hover td{background:rgba(255,255,255,.015);}
           </div>
           <div class="field"><label>Fecha de venta</label><input type="date" id="f-fecha"></div>
         </div>
-        <!-- NUEVOS CAMPOS OPCIONALES -->
         <div class="row2">
           <div class="field"><label>RFC del cliente (opcional)</label><input type="text" id="f-rfc" placeholder="Ej. GOMJ850101MDF"></div>
           <div class="field"><label>Ingresos mensuales (opcional)</label><input type="number" id="f-ingresos" placeholder="Ej. 25000" min="0"></div>
@@ -325,7 +348,11 @@ tr:hover td{background:rgba(255,255,255,.015);}
           <div class="field"><label>Tarjeta de referencia (opcional)</label><input type="text" id="f-tarjetaRef" placeholder="Ej. Clásica Banamex"></div>
           <div class="field"><label>Línea de crédito ref. (opcional)</label><input type="number" id="f-ldcRef" placeholder="Ej. 30000" min="0"></div>
         </div>
-        <!-- FIN NUEVOS CAMPOS -->
+        <!-- COMENTARIO INICIAL -->
+        <div class="field">
+          <label>Comentario inicial (opcional)</label>
+          <textarea id="f-comentario" placeholder="Ej. Cliente con tarjeta Oro vigente, le falta documentación, llamar jueves…" rows="2"></textarea>
+        </div>
         <div class="frow">
           <div class="field"><label>Folio (automático si lo dejas vacío)</label><input type="text" id="f-folio" placeholder="BNX-000001" maxlength="20"></div>
           <div class="folio-pill" id="folio-pill">—</div>
@@ -354,7 +381,11 @@ tr:hover td{background:rgba(255,255,255,.015);}
     <div class="wide">
       <div class="pgtitle gt">Dashboard <span>ventas</span></div>
       <p class="pgsub">Todas las ventas de tu equipo en tiempo real</p>
-      <div class="sync-bar"><div class="sync-dot loading" id="sync-dot"></div><span id="sync-txt">Cargando…</span></div>
+      <div class="sync-bar">
+        <div class="sync-dot loading" id="sync-dot"></div>
+        <span id="sync-txt">Cargando…</span>
+        <span class="tg-status tg-loading" id="tg-status">⏳ Telegram…</span>
+      </div>
       <div class="sgrid">
         <div class="sc"><div class="sc-l">Total ventas</div><div class="sc-v cv-g" id="s-tot">—</div></div>
         <div class="sc"><div class="sc-l">Ejecutivos activos</div><div class="sc-v cv-r" id="s-exe">—</div></div>
@@ -377,7 +408,7 @@ tr:hover td{background:rgba(255,255,255,.015);}
         <table>
           <thead><tr>
             <th>Folio</th><th>Ejecutivo</th><th>Cliente</th><th>Teléfono</th>
-            <th>Tarjeta</th><th>Estado</th><th>Fecha venta</th><th>Registrado</th><th></th>
+            <th>Tarjeta</th><th>Estado</th><th>Comentario</th><th>Fecha venta</th><th>Registrado</th><th></th>
           </tr></thead>
           <tbody id="t-body"></tbody>
         </table>
@@ -413,20 +444,34 @@ tr:hover td{background:rgba(255,255,255,.015);}
 </div>
 
 <script>
-/* ── TELEGRAM CONFIG ── */
+/* ════════════════════════════════════════════════════
+   TELEGRAM CONFIG
+   ════════════════════════════════════════════════════ */
 const TG_TOKEN = '8674156237:AAH_TxLj17k8U08zwTuz1XxrvNLgaqsPNcE';
 const TG_CHAT  = '-1003454541647';
 const TG_URL   = 'https://api.telegram.org/bot' + TG_TOKEN;
 
-/* ── LOCAL CACHE ── */
-const SK_S = 'bnx_sales_v5';
-const SK_U = 'bnx_users_v5';
-const SK_OFFSET = 'bnx_tg_offset';
+/* ════════════════════════════════════════════════════
+   LOCAL STORAGE KEYS
+   SALES y USERS tienen prefijos distintos para que
+   nunca se sobreescriban entre sí en Telegram ni en
+   localStorage. Este era el bug principal.
+   ════════════════════════════════════════════════════ */
+const SK_S      = 'bnx_sales_v6';
+const SK_U      = 'bnx_users_v6';
+const TG_PREFIX_SALES = 'BNX_SALES_V6:';
+const TG_PREFIX_USERS = 'BNX_USERS_V6:';
+const SK_OFFSET_S = 'bnx_tg_offset_sales';
+const SK_OFFSET_U = 'bnx_tg_offset_users';
 
-function loadS(k){ try{ return JSON.parse(localStorage.getItem(k))||[]; }catch{ return []; } }
-function saveS(k,d){ localStorage.setItem(k, JSON.stringify(d)); }
+let TG_CONNECTED = null; // null = desconocido, true = ok, false = error
 
-/* ── TELEGRAM API ── */
+function loadLS(k){ try{ return JSON.parse(localStorage.getItem(k))||[]; }catch{ return []; } }
+function saveLS(k,d){ localStorage.setItem(k, JSON.stringify(d)); }
+
+/* ════════════════════════════════════════════════════
+   TELEGRAM API — con prefijos independientes por tipo
+   ════════════════════════════════════════════════════ */
 async function tgPost(method, params={}){
   const r = await fetch(`${TG_URL}/${method}`, {
     method: 'POST',
@@ -436,18 +481,31 @@ async function tgPost(method, params={}){
   return await r.json();
 }
 
-// Guarda datos en Telegram como mensaje en el grupo
-async function tgSave(type, data){
-  const text = `BNX_${type}:${JSON.stringify(data)}`;
-  await tgPost('sendMessage', { chat_id: TG_CHAT, text });
+async function tgSave(prefix, data){
+  const text = prefix + JSON.stringify(data);
+  const r = await tgPost('sendMessage', { chat_id: TG_CHAT, text });
+  if(r.ok){
+    setTgStatus(true);
+  } else {
+    setTgStatus(false);
+    console.warn('Telegram save error:', r);
+  }
+  return r.ok;
 }
 
-// Lee el estado más reciente desde Telegram
-async function tgLoad(type){
-  const offset = parseInt(localStorage.getItem(SK_OFFSET)||'0');
-  const r = await tgPost('getUpdates', { offset: offset > 0 ? offset : undefined, limit: 100 });
-  if(!r.ok) return null;
-  const prefix = `BNX_${type}:`;
+/* Lee el ÚLTIMO mensaje con el prefijo correcto.
+   Usa un offset independiente por tipo para no
+   mezclar ventas con usuarios. */
+async function tgLoad(prefix, offsetKey){
+  const offset = parseInt(localStorage.getItem(offsetKey)||'0');
+  let params = { limit: 100 };
+  if(offset > 0) params.offset = offset;
+  const r = await tgPost('getUpdates', params);
+  if(!r.ok){
+    setTgStatus(false);
+    return null;
+  }
+  setTgStatus(true);
   let latest = null;
   let maxId = offset;
   for(const u of (r.result||[])){
@@ -457,65 +515,94 @@ async function tgLoad(type){
       try{ latest = JSON.parse(txt.slice(prefix.length)); }catch{}
     }
   }
-  if(maxId > offset) localStorage.setItem(SK_OFFSET, maxId);
+  if(maxId > offset) localStorage.setItem(offsetKey, maxId);
   return latest;
 }
 
-/* ── API wrapper ── */
+function setTgStatus(ok){
+  TG_CONNECTED = ok;
+  const el = document.getElementById('tg-status');
+  if(!el) return;
+  if(ok){
+    el.className = 'tg-status tg-ok';
+    el.textContent = '✓ Telegram conectado';
+  } else {
+    el.className = 'tg-status tg-err';
+    el.textContent = '✕ Telegram desconectado';
+  }
+}
+
+/* ════════════════════════════════════════════════════
+   API WRAPPER — ahora usa prefijos separados para
+   ventas y usuarios
+   ════════════════════════════════════════════════════ */
 async function api(action, body={}){
   try{
     if(action==='getSales'){
-      const remote = await tgLoad('SALES');
-      if(remote !== null){ saveS(SK_S, remote); return {ok:true, data:remote}; }
-      return {ok:true, data: loadS(SK_S)};
+      const remote = await tgLoad(TG_PREFIX_SALES, SK_OFFSET_S);
+      if(remote !== null){ saveLS(SK_S, remote); return {ok:true, data:remote}; }
+      return {ok:true, data: loadLS(SK_S)};
     }
     if(action==='addSale'){
-      const arr = loadS(SK_S);
+      const arr = loadLS(SK_S);
       arr.unshift(body);
-      saveS(SK_S, arr);
-      await tgSave('SALES', arr);
+      saveLS(SK_S, arr);
+      await tgSave(TG_PREFIX_SALES, arr);
       return {ok:true};
     }
     if(action==='deleteSale'){
-      const arr = loadS(SK_S).filter(v=>v.folio!==body.folio);
-      saveS(SK_S, arr);
-      await tgSave('SALES', arr);
+      const arr = loadLS(SK_S).filter(v=>v.folio!==body.folio);
+      saveLS(SK_S, arr);
+      await tgSave(TG_PREFIX_SALES, arr);
       return {ok:true};
     }
     if(action==='clearSales'){
-      saveS(SK_S, []);
-      await tgSave('SALES', []);
+      saveLS(SK_S, []);
+      await tgSave(TG_PREFIX_SALES, []);
       return {ok:true};
     }
+    if(action==='updateSale'){
+      const arr = loadLS(SK_S);
+      const idx = arr.findIndex(v=>v.folio===body.folio);
+      if(idx!==-1) arr[idx] = {...arr[idx], ...body};
+      saveLS(SK_S, arr);
+      await tgSave(TG_PREFIX_SALES, arr);
+      SALES_CACHE = arr;
+      return {ok:true};
+    }
+    // ── USUARIOS: prefijo completamente separado ──
     if(action==='getUsers'){
-      const remote = await tgLoad('USERS');
-      if(remote !== null){ saveS(SK_U, remote); return {ok:true, data:remote}; }
-      return {ok:true, data: loadS(SK_U)};
+      const remote = await tgLoad(TG_PREFIX_USERS, SK_OFFSET_U);
+      if(remote !== null){ saveLS(SK_U, remote); return {ok:true, data:remote}; }
+      return {ok:true, data: loadLS(SK_U)};
     }
     if(action==='addUser'){
-      const arr = loadS(SK_U);
+      const arr = loadLS(SK_U);
       if(arr.find(u=>u.username===body.username)) return {ok:false, error:'El usuario ya existe'};
       arr.push(body);
-      saveS(SK_U, arr);
-      await tgSave('USERS', arr);
+      saveLS(SK_U, arr);
+      await tgSave(TG_PREFIX_USERS, arr);
       return {ok:true};
     }
     if(action==='deleteUser'){
-      const arr = loadS(SK_U).filter(u=>u.username!==body.username);
-      saveS(SK_U, arr);
-      await tgSave('USERS', arr);
+      const arr = loadLS(SK_U).filter(u=>u.username!==body.username);
+      saveLS(SK_U, arr);
+      await tgSave(TG_PREFIX_USERS, arr);
       return {ok:true};
     }
     return {ok:false, error:'Acción desconocida'};
   }catch(e){
+    setTgStatus(false);
     return {ok:false, error:e.message};
   }
 }
 
-/* ── UTILS ── */
+/* ════════════════════════════════════════════════════
+   UTILS
+   ════════════════════════════════════════════════════ */
 const ADM_U='admin', ADM_P='admin123';
 let CU=null, SALES_CACHE=[], USERS_CACHE=[];
-let currentSaleForStatus = null; // Variable para el modal de estado
+let currentSaleForStatus = null;
 
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function fmt(ts){if(!ts)return '—';const d=new Date(ts);return d.toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});}
@@ -525,7 +612,9 @@ function genFolio(){return 'BNX-'+String(Date.now()).slice(-6);}
 function spin(on){document.getElementById('spinner').classList.toggle('show',on);}
 function showToast(id,msg,type){const el=document.getElementById(id);if(!el)return;el.textContent=msg;el.className='toast '+type+' show';clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),4000);}
 
-/* ── AUTH ── */
+/* ════════════════════════════════════════════════════
+   AUTH
+   ════════════════════════════════════════════════════ */
 async function doLogin(){
   const u=(document.getElementById('l-user').value||'').trim().toLowerCase();
   const p=document.getElementById('l-pass').value;
@@ -583,7 +672,9 @@ async function goPage(p){
   if(p==='users')await loadAndRenderUsers();
 }
 
-/* ── EJECUTIVO ── */
+/* ════════════════════════════════════════════════════
+   EJECUTIVO
+   ════════════════════════════════════════════════════ */
 function setTodayDate(){const el=document.getElementById('f-fecha');if(el&&!el.value)el.value=new Date().toISOString().slice(0,10);}
 function refreshFolio(){const el=document.getElementById('folio-pill');if(el)el.textContent=genFolio();}
 
@@ -592,9 +683,8 @@ async function registrarVenta(){
   const tel=(document.getElementById('f-tel').value||'').trim();
   const tarjeta=document.getElementById('f-tarjeta').value;
   const fecha=document.getElementById('f-fecha').value;
+  const comentario=(document.getElementById('f-comentario').value||'').trim();
   let folio=(document.getElementById('f-folio').value||'').trim();
-
-  // Nuevos campos
   const rfc = (document.getElementById('f-rfc').value||'').trim();
   const ingresos = (document.getElementById('f-ingresos').value||'').trim();
   const tarjetaRef = (document.getElementById('f-tarjetaRef').value||'').trim();
@@ -616,19 +706,22 @@ async function registrarVenta(){
     tarjeta,
     fecha,
     registrado: new Date().toISOString(),
-    // Nuevos campos
     rfc: rfc || null,
     ingresos: ingresos || null,
     tarjetaRef: tarjetaRef || null,
     ldcRef: ldcRef || null,
-    // Estado por defecto
     estado: 'pendiente',
-    notaEstado: 'Pendiente de contacto inicial'
+    // comentarios por estado: objeto separado para cada estado
+    comentarios: {
+      pendiente: comentario || '',
+      preasignado: '',
+      declino: '',
+      vendida: ''
+    }
   });
   spin(false);
   document.getElementById('reg-btn').disabled=false;
   if(!r.ok){showToast('t-err','Error al guardar: '+r.error,'err');return;}
-  // Limpiar campos
   document.getElementById('f-cliente').value='';
   document.getElementById('f-tel').value='';
   document.getElementById('f-tarjeta').value='';
@@ -638,26 +731,55 @@ async function registrarVenta(){
   document.getElementById('f-ingresos').value='';
   document.getElementById('f-tarjetaRef').value='';
   document.getElementById('f-ldcRef').value='';
+  document.getElementById('f-comentario').value='';
   refreshFolio();
   showToast('t-ok','✓ Venta guardada — Folio '+folio,'ok');
   renderRecent();
 }
 
-function renderRecent(){
-  const list=document.getElementById('exec-recent');
-  const data=loadS(SK_S).filter(v=>v.username===CU.username).slice(0,6);
-  if(!data.length){list.innerHTML='<p style="color:var(--mu);font-size:13px">Aún no tienes ventas registradas.</p>';return;}
-  list.innerHTML=data.map(v=>`<div class="ri">
-    <div style="flex:1;min-width:0">
-      <div class="ri-n">${esc(v.cliente)} ${v.rfc ? '📄' : ''} ${v.ingresos ? '💰' : ''}</div>
-      <div class="ri-m">${esc(v.tarjeta)}${v.tel?' · '+esc(v.tel):''} · ${fmtDate(v.fecha)}</div>
-    </div>
-    <span class="ri-f">${esc(v.folio)}</span>
-    <span class="st-badge st-${estadoClase(v.estado)}" onclick="openStatusModalFromFolio('${v.folio}')">${estadoTexto(v.estado, v.notaEstado)}</span>
-  </div>`).join('');
+function estadoClase(estado) {
+  return { 'pendiente': 'pend', 'declino': 'decl', 'preasignado': 'pre', 'vendida': 'ok' }[estado] || 'pend';
 }
 
-/* ── DASHBOARD ── */
+function estadoTexto(estado) {
+  const textos = { 'pendiente': '📞 Pendiente', 'declino': '❌ Declinó', 'preasignado': '⭐ Preasignado', 'vendida': '✅ Vendida' };
+  return textos[estado] || '📞 Pendiente';
+}
+
+// Obtener el comentario activo del estado actual
+function getComentarioActivo(sale) {
+  if(!sale.comentarios) {
+    // Compatibilidad con registros viejos que usaban notaEstado
+    return sale.notaEstado || '';
+  }
+  return sale.comentarios[sale.estado || 'pendiente'] || '';
+}
+
+function renderRecent(){
+  const list=document.getElementById('exec-recent');
+  // Recargar desde localStorage para ver cambios recientes
+  const localSales = loadLS(SK_S);
+  const data = localSales.filter(v=>v.username===CU.username).slice(0,6);
+  if(!data.length){list.innerHTML='<p style="color:var(--mu);font-size:13px">Aún no tienes ventas registradas.</p>';return;}
+  list.innerHTML=data.map(v=>{
+    const comentario = getComentarioActivo(v);
+    return `<div class="ri">
+      <div style="flex:1;min-width:0">
+        <div class="ri-n">${esc(v.cliente)}${v.rfc?' 📄':''}${v.ingresos?' 💰':''}</div>
+        <div class="ri-m">${esc(v.tarjeta)}${v.tel?' · '+esc(v.tel):''} · ${fmtDate(v.fecha)}</div>
+        ${comentario?`<div class="nota-preview" title="${esc(comentario)}">💬 ${esc(comentario)}</div>`:''}
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
+        <span class="ri-f">${esc(v.folio)}</span>
+        <span class="st-badge st-${estadoClase(v.estado)}" onclick="openStatusModalFromFolio('${esc(v.folio)}')">${estadoTexto(v.estado)}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ════════════════════════════════════════════════════
+   DASHBOARD
+   ════════════════════════════════════════════════════ */
 function setSyncStatus(s,msg){
   const dot=document.getElementById('sync-dot');
   const txt=document.getElementById('sync-txt');
@@ -668,6 +790,8 @@ function setSyncStatus(s,msg){
 
 async function loadAndRenderDash(){
   setSyncStatus('loading','Cargando datos…');
+  const tgEl = document.getElementById('tg-status');
+  if(tgEl){ tgEl.className='tg-status tg-loading'; tgEl.textContent='⏳ Telegram…'; }
   const r=await api('getSales');
   if(!r.ok){setSyncStatus('err','Error: '+r.error);return;}
   SALES_CACHE=r.data||[];
@@ -675,35 +799,32 @@ async function loadAndRenderDash(){
   renderDashTable();
 }
 
-function estadoClase(estado) {
-  return { 'pendiente': 'pend', 'declino': 'decl', 'preasignado': 'pre', 'vendida': 'ok' }[estado] || 'pend';
-}
-function estadoTexto(estado, nota) {
-  const textos = { 'pendiente': '📞 Pendiente', 'declino': '❌ Declinó', 'preasignado': '⭐ Preasignado', 'vendida': '✅ Vendida' };
-  const texto = textos[estado] || '📞 Pendiente';
-  if (nota) {
-    return `<span onclick="showStatusNote('${nota.replace(/'/g, "\\'")}')" style="cursor:help;">${texto} ⓘ</span>`;
-  }
-  return texto;
-}
-
-window.showStatusNote = function(nota) {
-  document.getElementById('st-detail-txt').textContent = nota;
-  document.getElementById('st-detail-pop').classList.add('show');
-};
-
 window.openStatusModalFromFolio = function(folio) {
-  const sale = SALES_CACHE.find(v => v.folio === folio);
+  // Buscar primero en SALES_CACHE, si no en localStorage
+  let sale = SALES_CACHE.find(v => v.folio === folio);
+  if(!sale) sale = loadLS(SK_S).find(v => v.folio === folio);
   if (sale) openStatusModal(sale);
 };
 
 function openStatusModal(sale) {
   currentSaleForStatus = sale;
-  document.getElementById('st-modal-client').textContent = `Cliente: ${sale.cliente} (Folio: ${sale.folio})`;
-  // Precargar el estado actual si existe
-  const radio = document.querySelector(`input[name="st-radio"][value="${sale.estado || 'pendiente'}"]`);
+  document.getElementById('st-modal-client').textContent = `Cliente: ${sale.cliente} — Folio: ${sale.folio}`;
+
+  // Precargar el estado actual
+  const estado = sale.estado || 'pendiente';
+  const radio = document.querySelector(`input[name="st-radio"][value="${estado}"]`);
   if (radio) radio.checked = true;
-  document.getElementById('st-nota').value = sale.notaEstado || '';
+
+  // Rellenar comentarios por estado
+  const comentarios = sale.comentarios || {};
+  // Compatibilidad con registros viejos
+  const legacyNota = sale.notaEstado || '';
+
+  document.getElementById('st-nota-pend').value  = comentarios.pendiente   || (estado==='pendiente'   ? legacyNota : '');
+  document.getElementById('st-nota-pre').value   = comentarios.preasignado || (estado==='preasignado' ? legacyNota : '');
+  document.getElementById('st-nota-decl').value  = comentarios.declino     || (estado==='declino'     ? legacyNota : '');
+  document.getElementById('st-nota-ok').value    = comentarios.vendida     || (estado==='vendida'     ? legacyNota : '');
+
   document.getElementById('st-modal').classList.add('show');
 }
 
@@ -729,21 +850,29 @@ function renderDashTable(){
     empty.style.display='block';
   } else {
     empty.style.display='none';
-    tbody.innerHTML=data.map(v=>`<tr>
-      <td class="tdf">${esc(v.folio)}</td>
-      <td class="tdb">${esc(v.exec)}</td>
-      <td>${esc(v.cliente)}</td>
-      <td class="tdm">${esc(v.tel||'—')}</td>
-      <td><span class="badge b-r">${esc(v.tarjeta)}</span></td>
-      <td>
-        <span class="st-badge st-${estadoClase(v.estado)}" onclick="openStatusModalFromFolio('${v.folio}')">
-          ${estadoTexto(v.estado, v.notaEstado)}
-        </span>
-      </td>
-      <td class="tdm">${fmtDate(v.fecha)}</td>
-      <td class="tdm">${fmt(v.registrado)}</td>
-      <td><button class="delbtn" data-folio="${esc(v.folio)}">✕</button></td>
-    </tr>`).join('');
+    tbody.innerHTML=data.map(v=>{
+      const comentario = getComentarioActivo(v);
+      return `<tr>
+        <td class="tdf">${esc(v.folio)}</td>
+        <td class="tdb">${esc(v.exec)}</td>
+        <td>${esc(v.cliente)}</td>
+        <td class="tdm">${esc(v.tel||'—')}</td>
+        <td><span class="badge b-r">${esc(v.tarjeta)}</span></td>
+        <td>
+          <span class="st-badge st-${estadoClase(v.estado)}" onclick="openStatusModalFromFolio('${esc(v.folio)}')">
+            ${estadoTexto(v.estado)}
+          </span>
+        </td>
+        <td class="tdm" style="max-width:180px;">
+          ${comentario
+            ? `<span style="cursor:pointer;color:#ccc;" onclick="showStatusNote('${comentario.replace(/'/g,"\\'")}')" title="${esc(comentario)}">💬 ${esc(comentario.slice(0,40))}${comentario.length>40?'…':''}</span>`
+            : '<span style="color:#444">—</span>'}
+        </td>
+        <td class="tdm">${fmtDate(v.fecha)}</td>
+        <td class="tdm">${fmt(v.registrado)}</td>
+        <td><button class="delbtn" data-folio="${esc(v.folio)}">✕</button></td>
+      </tr>`;
+    }).join('');
   }
 
   // Ranking
@@ -756,6 +885,11 @@ function renderDashTable(){
     :'<p style="color:var(--mu);font-size:13px">Sin datos aún.</p>';
 }
 
+window.showStatusNote = function(nota) {
+  document.getElementById('st-detail-txt').textContent = nota;
+  document.getElementById('st-detail-pop').classList.add('show');
+};
+
 async function delSale(folio){
   if(!confirm('¿Eliminar la venta con folio '+folio+'?'))return;
   spin(true);const r=await api('deleteSale',{folio});spin(false);
@@ -765,7 +899,9 @@ async function delSale(folio){
   setSyncStatus('ok','Sincronizado · '+SALES_CACHE.length+' ventas');
 }
 
-/* ── USUARIOS ── */
+/* ════════════════════════════════════════════════════
+   USUARIOS
+   ════════════════════════════════════════════════════ */
 async function loadAndRenderUsers(){
   spin(true);const r=await api('getUsers');spin(false);
   if(!r.ok){showToast('u-err','Error al cargar usuarios','err');return;}
@@ -798,7 +934,9 @@ async function addUser(){
   await loadAndRenderUsers();
 }
 
-/* ── BENEFICIOS ── */
+/* ════════════════════════════════════════════════════
+   BENEFICIOS
+   ════════════════════════════════════════════════════ */
 const CARDS=[
   {id:'joy',color:'tc-joy',name:'Joy Banamex',badge:'Sin anualidad',
    num:'•••• •••• •••• 1234',
@@ -991,8 +1129,9 @@ function showCardDetail(id){
   wrap.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
-
-/* ── EVENT DELEGATION ── */
+/* ════════════════════════════════════════════════════
+   EVENT DELEGATION
+   ════════════════════════════════════════════════════ */
 document.addEventListener('click',async function(e){
   if(e.target.id==='login-btn'){doLogin();return;}
   if(e.target.id==='logout-btn'){doLogout();return;}
@@ -1008,8 +1147,11 @@ document.addEventListener('click',async function(e){
   }
   if(e.target.id==='export-btn'){
     if(!SALES_CACHE.length){alert('No hay ventas para exportar.');return;}
-    const csv=['Folio,Ejecutivo,Cliente,Teléfono,Tarjeta,Estado,Fecha Venta,Registrado,RFC,Ingresos,TarjetaRef,LDCRef',
-      ...SALES_CACHE.map(v=>`"${v.folio}","${v.exec}","${v.cliente}","${v.tel||''}","${v.tarjeta}","${v.estado||'pendiente'}","${fmtDate(v.fecha)}","${fmt(v.registrado)}","${v.rfc||''}","${v.ingresos||''}","${v.tarjetaRef||''}","${v.ldcRef||''}"`)
+    const csv=['Folio,Ejecutivo,Cliente,Teléfono,Tarjeta,Estado,Comentario,Fecha Venta,Registrado,RFC,Ingresos,TarjetaRef,LDCRef',
+      ...SALES_CACHE.map(v=>{
+        const com = getComentarioActivo(v);
+        return `"${v.folio}","${v.exec}","${v.cliente}","${v.tel||''}","${v.tarjeta}","${v.estado||'pendiente'}","${com.replace(/"/g,"'")}","${fmtDate(v.fecha)}","${fmt(v.registrado)}","${v.rfc||''}","${v.ingresos||''}","${v.tarjetaRef||''}","${v.ldcRef||''}"`;
+      })
     ].join('\n');
     const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
     const url=URL.createObjectURL(blob);
@@ -1027,81 +1169,145 @@ document.addEventListener('click',async function(e){
   if(e.target.id==='st-cancel'){
     document.getElementById('st-modal').classList.remove('show');
     currentSaleForStatus = null;
+    return;
   }
   if(e.target.id==='st-save'){
     if (!currentSaleForStatus) return;
     const estadoSeleccionado = document.querySelector('input[name="st-radio"]:checked')?.value;
-    const nota = document.getElementById('st-nota').value.trim();
+    if (!estadoSeleccionado) { alert('Selecciona un estado.'); return; }
 
-    if (!estadoSeleccionado) {
-      alert('Selecciona un estado.');
+    // Validar que pendiente y declino tengan comentario
+    const comentPend = document.getElementById('st-nota-pend').value.trim();
+    const comentDecl = document.getElementById('st-nota-decl').value.trim();
+    if (estadoSeleccionado === 'pendiente' && !comentPend) {
+      alert('Escribe un comentario para el estado "Pendiente" (ej: no contestó, llamar el martes).');
+      document.getElementById('st-nota-pend').focus();
       return;
     }
-    if ((estadoSeleccionado === 'pendiente' || estadoSeleccionado === 'declino') && !nota) {
-      alert('La nota es obligatoria para los estados "Pendiente" y "Declinó".');
+    if (estadoSeleccionado === 'declino' && !comentDecl) {
+      alert('Escribe el motivo de la declinación.');
+      document.getElementById('st-nota-decl').focus();
       return;
     }
 
-    // Actualizar la venta en SALES_CACHE
-    const index = SALES_CACHE.findIndex(v => v.folio === currentSaleForStatus.folio);
-    if (index !== -1) {
-      SALES_CACHE[index].estado = estadoSeleccionado;
-      SALES_CACHE[index].notaEstado = nota;
-      saveS(SK_S, SALES_CACHE);
-      await tgSave('SALES', SALES_CACHE);
-    }
+    const nuevosComentarios = {
+      pendiente:   document.getElementById('st-nota-pend').value.trim(),
+      preasignado: document.getElementById('st-nota-pre').value.trim(),
+      declino:     document.getElementById('st-nota-decl').value.trim(),
+      vendida:     document.getElementById('st-nota-ok').value.trim()
+    };
+
+    spin(true);
+    const r = await api('updateSale', {
+      folio: currentSaleForStatus.folio,
+      estado: estadoSeleccionado,
+      comentarios: nuevosComentarios,
+      // Compatibilidad: también guardamos notaEstado con el comentario activo
+      notaEstado: nuevosComentarios[estadoSeleccionado] || ''
+    });
+    spin(false);
+
+    if(!r.ok){ alert('Error al guardar: '+r.error); return; }
 
     document.getElementById('st-modal').classList.remove('show');
     currentSaleForStatus = null;
+
     // Refrescar la vista actual
     if (document.getElementById('pg-dash').classList.contains('on')) {
       renderDashTable();
     } else {
       renderRecent();
     }
+    return;
   }
   if(e.target.id==='st-detail-close'){
     document.getElementById('st-detail-pop').classList.remove('show');
+    return;
   }
 });
+
 document.addEventListener('keydown',function(e){
   if(e.key==='Enter'&&document.getElementById('login-screen').style.display!=='none')doLogin();
+  if(e.key==='Escape'){
+    document.getElementById('st-modal').classList.remove('show');
+    document.getElementById('st-detail-pop').classList.remove('show');
+  }
 });
 document.addEventListener('input',function(e){
   if(e.target.id==='d-search'||e.target.id==='d-filt')renderDashTable();
+  // Resaltar el bloque de comentario del estado seleccionado
+  if(e.target.name==='st-radio'){
+    // handled via change below
+  }
 });
+document.addEventListener('change',function(e){
+  if(e.target.name==='st-radio') highlightActiveComment(e.target.value);
+});
+function highlightActiveComment(estado){
+  const map = {pendiente:'pend',preasignado:'pre',declino:'decl',vendida:'ok'};
+  document.querySelectorAll('.st-comment-block').forEach(b=>{
+    b.classList.toggle('highlighted', b.dataset.estado === estado);
+  });
+}
 
 /* ── ARRANQUE ── */
 document.getElementById('login-screen').style.display='flex';
 </script>
 
-<!-- STATUS MODAL -->
+<!-- ════════ STATUS MODAL ════════ -->
 <div class="st-modal" id="st-modal">
   <div class="st-box">
-    <h3>Cambiar estado de venta</h3>
+    <h3>Estado de la venta</h3>
     <p id="st-modal-client">Cliente: —</p>
+
     <div class="st-opts">
-      <label class="st-opt" id="opt-pend">
+      <label class="st-opt">
         <input type="radio" name="st-radio" value="pendiente">
         <div><div class="st-opt-label">📞 Pendiente de llamar</div><div class="st-opt-sub">El cliente aún no ha sido contactado</div></div>
       </label>
-      <label class="st-opt" id="opt-decl">
+      <label class="st-opt">
         <input type="radio" name="st-radio" value="declino">
         <div><div class="st-opt-label">❌ Declinó</div><div class="st-opt-sub">El cliente no quiso la tarjeta</div></div>
       </label>
-      <label class="st-opt" id="opt-pre">
+      <label class="st-opt">
         <input type="radio" name="st-radio" value="preasignado">
         <div><div class="st-opt-label">⭐ Preasignado</div><div class="st-opt-sub">Cliente con oferta de tarjeta ya asignada</div></div>
       </label>
-      <label class="st-opt" id="opt-ok">
+      <label class="st-opt">
         <input type="radio" name="st-radio" value="vendida">
         <div><div class="st-opt-label">✅ Vendida</div><div class="st-opt-sub">Tarjeta contratada exitosamente</div></div>
       </label>
     </div>
-    <div class="st-nota-wrap">
-      <label>Nota / razón (obligatorio para pendiente y declinó)</label>
-      <textarea id="st-nota" placeholder="Ej: No contestó, llamar el martes por la tarde…"></textarea>
+
+    <!-- COMENTARIOS POR ESTADO (uno por cada estado) -->
+    <div class="st-comments-section">
+      <div class="st-comments-header">💬 Comentarios por estado</div>
+
+      <div class="st-comment-block" data-estado="pendiente">
+        <div class="st-comment-label pend">📞 Pendiente <span class="st-req-badge">REQUERIDO</span></div>
+        <textarea id="st-nota-pend" placeholder="Ej: No contestó, llamar el martes por la tarde. Le falta comprobante de domicilio…"></textarea>
+        <div class="st-comment-hint">¿Qué pasó? ¿Cuándo volver a llamar? ¿Qué necesita el cliente?</div>
+      </div>
+
+      <div class="st-comment-block" data-estado="preasignado">
+        <div class="st-comment-label pre">⭐ Preasignado</div>
+        <textarea id="st-nota-pre" placeholder="Ej: Cliente tiene oferta Oro asignada. Línea $45,000. Confirmar entrega viernes…"></textarea>
+        <div class="st-comment-hint">Detalles de la oferta asignada, línea de crédito, condiciones especiales.</div>
+      </div>
+
+      <div class="st-comment-block" data-estado="declino">
+        <div class="st-comment-label decl">❌ Declinó <span class="st-req-badge">REQUERIDO</span></div>
+        <textarea id="st-nota-decl" placeholder="Ej: Ya tiene muchas tarjetas. Prefirió esperar. No calificó por historial…"></textarea>
+        <div class="st-comment-hint">¿Por qué declinó? Esto ayuda a mejorar el proceso.</div>
+      </div>
+
+      <div class="st-comment-block" data-estado="vendida">
+        <div class="st-comment-label ok">✅ Vendida</div>
+        <textarea id="st-nota-ok" placeholder="Ej: Contratada Oro $40,000. Activación en 5 días. Cliente muy satisfecho…"></textarea>
+        <div class="st-comment-hint">Detalles del cierre: tipo, línea, condiciones, observaciones finales.</div>
+      </div>
     </div>
+
     <div class="st-btns">
       <button class="st-cancel" id="st-cancel">Cancelar</button>
       <button class="st-save" id="st-save">Guardar estado</button>
@@ -1109,10 +1315,10 @@ document.getElementById('login-screen').style.display='flex';
   </div>
 </div>
 
-<!-- STATUS DETAIL POPUP -->
+<!-- ════════ STATUS DETAIL POPUP ════════ -->
 <div class="st-detail-pop" id="st-detail-pop">
   <div class="st-detail-box">
-    <h3 id="st-detail-title">Razón</h3>
+    <h3>Comentario</h3>
     <div class="st-detail-txt" id="st-detail-txt"></div>
     <div style="margin-top:1.25rem;text-align:right;">
       <button class="st-cancel" id="st-detail-close">Cerrar</button>
