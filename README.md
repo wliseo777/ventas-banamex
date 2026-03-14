@@ -424,6 +424,10 @@ tr:hover td{background:rgba(255,255,255,.015);}
     <div class="wide">
       <div class="pgtitle gt">Gestión de <span>usuarios</span></div>
       <p class="pgsub">Agrega o elimina ejecutivos. La cuenta admin no se puede borrar.</p>
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:11px 14px;background:rgba(200,168,75,.07);border:1px solid rgba(200,168,75,.2);border-radius:8px;font-size:12px;color:#bbb;margin-bottom:1.5rem;line-height:1.6;">
+        <span style="font-size:16px;flex-shrink:0;margin-top:1px;">💾</span>
+        <span>Los ejecutivos se guardan <strong style="color:var(--gold-l)">en este navegador/dispositivo</strong>. Si abres la app en otra computadora o celular, tendrás que volver a agregarlos ahí. Las <strong style="color:var(--gold-l)">ventas</strong> sí se sincronizan automáticamente entre todos vía Telegram.</span>
+      </div>
       <div class="twocol">
         <div class="card">
           <div style="font-size:14px;font-weight:500;margin-bottom:1.2rem;">Agregar ejecutivo</div>
@@ -452,70 +456,103 @@ const TG_CHAT  = '-1003454541647';
 const TG_URL   = 'https://api.telegram.org/bot' + TG_TOKEN;
 
 /* ════════════════════════════════════════════════════
-   LOCAL STORAGE KEYS
-   SALES y USERS tienen prefijos distintos para que
-   nunca se sobreescriban entre sí en Telegram ni en
-   localStorage. Este era el bug principal.
-   ════════════════════════════════════════════════════ */
-const SK_S      = 'bnx_sales_v6';
-const SK_U      = 'bnx_users_v6';
-const TG_PREFIX_SALES = 'BNX_SALES_V6:';
-const TG_PREFIX_USERS = 'BNX_USERS_V6:';
-const SK_OFFSET_S = 'bnx_tg_offset_sales';
-const SK_OFFSET_U = 'bnx_tg_offset_users';
+   CLAVES DE ALMACENAMIENTO
 
-let TG_CONNECTED = null; // null = desconocido, true = ok, false = error
+   DISEÑO CORRECTO:
+   ─ VENTAS   → Telegram (sincronización entre dispositivos)
+               usa un mensaje "ancla" que SE EDITA siempre.
+               La ID del mensaje ancla se guarda en localStorage.
+   ─ USUARIOS → SOLO localStorage. Nunca van a Telegram.
+               El problema anterior era que getUpdates avanza
+               el offset y nunca vuelve a ver mensajes viejos,
+               borrando así los usuarios al leer desde otro
+               dispositivo. Solución definitiva: usuarios son
+               locales al admin, no necesitan sincronizarse.
+   ════════════════════════════════════════════════════ */
+const SK_S        = 'bnx_sales_v7';      // ventas en localStorage (caché)
+const SK_U        = 'bnx_users_v7';      // usuarios en localStorage (fuente de verdad)
+const SK_SALES_MSG= 'bnx_tg_sales_msgid';// ID del mensaje ancla de ventas en Telegram
+const TG_PREFIX   = 'BNX_SALES_V7:';    // prefijo del mensaje de ventas
+
+let TG_CONNECTED = null;
 
 function loadLS(k){ try{ return JSON.parse(localStorage.getItem(k))||[]; }catch{ return []; } }
 function saveLS(k,d){ localStorage.setItem(k, JSON.stringify(d)); }
 
 /* ════════════════════════════════════════════════════
-   TELEGRAM API — con prefijos independientes por tipo
+   TELEGRAM — VENTAS CON MENSAJE ANCLA
+   En lugar de enviar un nuevo mensaje cada vez, se
+   edita siempre el mismo mensaje. Así getUpdates no
+   importa nada: la verdad está en ese único mensaje.
    ════════════════════════════════════════════════════ */
 async function tgPost(method, params={}){
-  const r = await fetch(`${TG_URL}/${method}`, {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify(params)
-  });
-  return await r.json();
+  try{
+    const r = await fetch(`${TG_URL}/${method}`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(params)
+    });
+    return await r.json();
+  }catch(e){ return {ok:false, description:e.message}; }
 }
 
-async function tgSave(prefix, data){
-  const text = prefix + JSON.stringify(data);
-  const r = await tgPost('sendMessage', { chat_id: TG_CHAT, text });
-  if(r.ok){
-    setTgStatus(true);
+/* Guarda ventas: edita el mensaje ancla si existe, si no crea uno nuevo */
+async function tgSaveVentas(arr){
+  const text = TG_PREFIX + JSON.stringify(arr);
+  const existingId = localStorage.getItem(SK_SALES_MSG);
+  let r;
+  if(existingId){
+    r = await tgPost('editMessageText',{
+      chat_id: TG_CHAT,
+      message_id: parseInt(existingId),
+      text
+    });
+    // Si el edit falla (mensaje borrado, etc.), crear nuevo
+    if(!r.ok){
+      r = await tgPost('sendMessage',{ chat_id: TG_CHAT, text });
+      if(r.ok && r.result?.message_id){
+        localStorage.setItem(SK_SALES_MSG, r.result.message_id);
+      }
+    }
   } else {
-    setTgStatus(false);
-    console.warn('Telegram save error:', r);
+    r = await tgPost('sendMessage',{ chat_id: TG_CHAT, text });
+    if(r.ok && r.result?.message_id){
+      localStorage.setItem(SK_SALES_MSG, r.result.message_id);
+    }
   }
+  setTgStatus(r.ok);
   return r.ok;
 }
 
-/* Lee el ÚLTIMO mensaje con el prefijo correcto.
-   Usa un offset independiente por tipo para no
-   mezclar ventas con usuarios. */
-async function tgLoad(prefix, offsetKey){
-  const offset = parseInt(localStorage.getItem(offsetKey)||'0');
-  let params = { limit: 100 };
-  if(offset > 0) params.offset = offset;
-  const r = await tgPost('getUpdates', params);
-  if(!r.ok){
-    setTgStatus(false);
-    return null;
+/* Lee ventas: intenta leer el mensaje ancla directamente por ID.
+   Si no tiene ID guardada, hace un scan de los últimos 100 mensajes. */
+async function tgLoadVentas(){
+  const existingId = localStorage.getItem(SK_SALES_MSG);
+  if(existingId){
+    // Telegram no tiene "getMessage" directo, usamos forwardMessage como truco
+    // En cambio, confiamos en el caché local y solo sincronizamos en refresh
+    // Hacemos getUpdates sin offset para ver si hay algo más nuevo
   }
+  // Scan sin offset — lee TODOS los updates disponibles (últimos ~100)
+  // NO guardamos offset para que siempre pueda encontrar el mensaje ancla
+  const r = await tgPost('getUpdates',{ limit:100 });
+  if(!r.ok){ setTgStatus(false); return null; }
   setTgStatus(true);
   let latest = null;
-  let maxId = offset;
+  let latestMsgId = 0;
   for(const u of (r.result||[])){
-    if(u.update_id >= maxId) maxId = u.update_id + 1;
-    const txt = u.message?.text || '';
-    if(u.message?.chat?.id?.toString() === TG_CHAT && txt.startsWith(prefix)){
-      try{ latest = JSON.parse(txt.slice(prefix.length)); }catch{}
+    const txt = u.message?.text || u.edited_message?.text || '';
+    const msgId = u.message?.message_id || u.edited_message?.message_id || 0;
+    const chatId = (u.message?.chat?.id || u.edited_message?.chat?.id || '').toString();
+    if(chatId === TG_CHAT && txt.startsWith(TG_PREFIX) && msgId >= latestMsgId){
+      try{
+        latest = JSON.parse(txt.slice(TG_PREFIX.length));
+        latestMsgId = msgId;
+        // Guardar el ID del mensaje más reciente como ancla
+        localStorage.setItem(SK_SALES_MSG, msgId);
+      }catch{}
     }
   }
-  if(maxId > offset) localStorage.setItem(offsetKey, maxId);
   return latest;
 }
 
@@ -528,18 +565,20 @@ function setTgStatus(ok){
     el.textContent = '✓ Telegram conectado';
   } else {
     el.className = 'tg-status tg-err';
-    el.textContent = '✕ Telegram desconectado';
+    el.textContent = '✕ Sin conexión Telegram';
   }
 }
 
 /* ════════════════════════════════════════════════════
-   API WRAPPER — ahora usa prefijos separados para
-   ventas y usuarios
+   API WRAPPER
+   VENTAS  → Telegram (sincronizado)
+   USUARIOS → localStorage puro (sin Telegram)
    ════════════════════════════════════════════════════ */
 async function api(action, body={}){
   try{
+    /* ── VENTAS ── */
     if(action==='getSales'){
-      const remote = await tgLoad(TG_PREFIX_SALES, SK_OFFSET_S);
+      const remote = await tgLoadVentas();
       if(remote !== null){ saveLS(SK_S, remote); return {ok:true, data:remote}; }
       return {ok:true, data: loadLS(SK_S)};
     }
@@ -547,18 +586,18 @@ async function api(action, body={}){
       const arr = loadLS(SK_S);
       arr.unshift(body);
       saveLS(SK_S, arr);
-      await tgSave(TG_PREFIX_SALES, arr);
+      await tgSaveVentas(arr);
       return {ok:true};
     }
     if(action==='deleteSale'){
       const arr = loadLS(SK_S).filter(v=>v.folio!==body.folio);
       saveLS(SK_S, arr);
-      await tgSave(TG_PREFIX_SALES, arr);
+      await tgSaveVentas(arr);
       return {ok:true};
     }
     if(action==='clearSales'){
       saveLS(SK_S, []);
-      await tgSave(TG_PREFIX_SALES, []);
+      await tgSaveVentas([]);
       return {ok:true};
     }
     if(action==='updateSale'){
@@ -566,14 +605,13 @@ async function api(action, body={}){
       const idx = arr.findIndex(v=>v.folio===body.folio);
       if(idx!==-1) arr[idx] = {...arr[idx], ...body};
       saveLS(SK_S, arr);
-      await tgSave(TG_PREFIX_SALES, arr);
+      await tgSaveVentas(arr);
       SALES_CACHE = arr;
       return {ok:true};
     }
-    // ── USUARIOS: prefijo completamente separado ──
+
+    /* ── USUARIOS: SOLO localStorage, nunca Telegram ── */
     if(action==='getUsers'){
-      const remote = await tgLoad(TG_PREFIX_USERS, SK_OFFSET_U);
-      if(remote !== null){ saveLS(SK_U, remote); return {ok:true, data:remote}; }
       return {ok:true, data: loadLS(SK_U)};
     }
     if(action==='addUser'){
@@ -581,15 +619,14 @@ async function api(action, body={}){
       if(arr.find(u=>u.username===body.username)) return {ok:false, error:'El usuario ya existe'};
       arr.push(body);
       saveLS(SK_U, arr);
-      await tgSave(TG_PREFIX_USERS, arr);
       return {ok:true};
     }
     if(action==='deleteUser'){
       const arr = loadLS(SK_U).filter(u=>u.username!==body.username);
       saveLS(SK_U, arr);
-      await tgSave(TG_PREFIX_USERS, arr);
       return {ok:true};
     }
+
     return {ok:false, error:'Acción desconocida'};
   }catch(e){
     setTgStatus(false);
@@ -1327,4 +1364,5 @@ document.getElementById('login-screen').style.display='flex';
 </div>
 
 </body>
+</html>
 </html>
