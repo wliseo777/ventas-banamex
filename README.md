@@ -252,6 +252,69 @@ tr:hover td{background:rgba(255,255,255,.015);}
 .st-detail-txt{font-size:14px;line-height:1.7;color:#ccc;background:var(--s2);border-radius:10px;padding:14px;}
 .nota-preview{font-size:10px;color:var(--mu);margin-top:2px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 @media(max-width:640px){nav{padding:0 .75rem;}.twocol{grid-template-columns:1fr;}.row2{grid-template-columns:1fr;}.estado-selector{grid-template-columns:1fr;}}
+
+/* ===== SHARED SALES ===== */
+.shared-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);color:#93c5fd;margin-top:2px;}
+.shared-out{background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.3);color:#c084fc;}
+
+/* ===== CHAT LAYOUT ===== */
+.chat-wrap{max-width:1100px;margin:0 auto;padding:1.5rem;}
+.chat-layout{display:grid;grid-template-columns:270px 1fr;height:calc(100vh - 130px);min-height:500px;background:var(--s1);border:1px solid var(--br2);border-radius:16px;overflow:hidden;}
+.chat-sidebar{border-right:1px solid var(--br2);display:flex;flex-direction:column;overflow:hidden;}
+.chat-sidebar-head{padding:.85rem 1rem;border-bottom:1px solid var(--br);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.chat-sidebar-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.04em;}
+.chat-new-btn{padding:5px 12px;border-radius:7px;border:1px solid var(--br2);background:transparent;color:var(--mu);font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;transition:all .15s;}
+.chat-new-btn:hover{color:var(--tx);background:var(--s2);}
+.chat-contacts{flex:1;overflow-y:auto;}
+.chat-contact{padding:.75rem 1rem;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:center;gap:10px;transition:background .15s;}
+.chat-contact:hover{background:rgba(255,255,255,.04);}
+.chat-contact.active{background:var(--red-f);border-left:3px solid var(--red);}
+.chat-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;}
+.cav-e{background:var(--red-f);color:#f88;}
+.cav-a{background:var(--gold-f);color:var(--gold-l);}
+.cav-s{background:rgba(168,85,247,.2);color:#a855f7;}
+.cav-all{background:rgba(59,130,246,.15);color:#93c5fd;}
+.chat-ci{flex:1;min-width:0;}
+.chat-cn{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.chat-cl{font-size:11px;color:var(--mu);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.chat-unread{background:var(--red);color:#fff;border-radius:10px;font-size:10px;font-weight:700;padding:1px 6px;min-width:18px;text-align:center;flex-shrink:0;}
+.chat-main{display:flex;flex-direction:column;overflow:hidden;}
+.chat-main-head{padding:.85rem 1.1rem;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.chat-main-title{font-size:14px;font-weight:500;}
+.chat-main-sub{font-size:11px;color:var(--mu);}
+.chat-msgs{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:6px;}
+.chat-day-sep{text-align:center;font-size:10px;color:var(--mu);padding:4px 0;position:relative;}
+.chat-day-sep::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:var(--br);}
+.chat-day-sep span{background:var(--s1);padding:0 8px;position:relative;}
+.chat-msg-wrap{display:flex;flex-direction:column;}
+.chat-msg-wrap.mine{align-items:flex-end;}
+.chat-msg-wrap.theirs{align-items:flex-start;}
+.chat-bname{font-size:10px;color:var(--mu);margin-bottom:2px;padding:0 4px;}
+.chat-bubble{max-width:72%;padding:8px 13px;border-radius:14px;font-size:13px;line-height:1.55;word-break:break-word;}
+.chat-bubble.mine{background:var(--red);color:#fff;border-bottom-right-radius:4px;}
+.chat-bubble.theirs{background:var(--s2);color:var(--tx);border-bottom-left-radius:4px;}
+.chat-btime{font-size:10px;opacity:.55;margin-top:3px;padding:0 4px;}
+.chat-empty-state{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--mu);}
+.chat-empty-state div{font-size:2rem;margin-bottom:4px;}
+.chat-input-area{padding:.75rem 1rem;border-top:1px solid var(--br);display:flex;gap:8px;align-items:flex-end;flex-shrink:0;}
+.chat-input-area textarea{flex:1;background:var(--s2);border:1px solid var(--br2);border-radius:10px;padding:9px 12px;color:var(--tx);font-family:'Outfit',sans-serif;font-size:13px;resize:none;outline:none;max-height:90px;min-height:38px;line-height:1.5;}
+.chat-input-area textarea:focus{border-color:var(--red);}
+.chat-send{padding:9px 18px;background:var(--red);border:none;border-radius:10px;color:#fff;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .15s;}
+.chat-send:hover{background:var(--red-d);}
+.chat-send:disabled{background:#333;color:#666;cursor:not-allowed;}
+/* Admin all-messages view */
+.chat-all-msg{display:flex;flex-direction:column;gap:4px;padding:8px 12px;border-radius:10px;background:var(--s2);margin-bottom:4px;}
+.chat-all-meta{font-size:10px;color:var(--mu);display:flex;gap:6px;align-items:center;}
+.chat-all-from{font-weight:600;color:var(--tx);}
+.chat-all-to{color:var(--gold-l);}
+.chat-all-text{font-size:13px;margin-top:3px;}
+/* Chat modal */
+.chat-modal{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:999;padding:1rem;}
+.chat-modal.show{display:flex;}
+.chat-modal-box{background:var(--s1);border:1px solid var(--br2);border-radius:18px;padding:2rem;max-width:360px;width:100%;}
+.chat-modal-box h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.03em;margin-bottom:1.2rem;}
+.chat-modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:1.25rem;}
+@media(max-width:640px){.chat-layout{grid-template-columns:1fr;}.chat-sidebar{max-height:200px;border-right:none;border-bottom:1px solid var(--br2);}}
 </style>
 </head>
 <body>
@@ -334,6 +397,11 @@ tr:hover td{background:rgba(255,255,255,.015);}
         </div>
 
         <div class="req-alert" id="req-alert"></div>
+
+        <div class="field">
+          <label>Compartir venta con ejecutivo (usuario, opcional)</label>
+          <input type="text" id="f-compartir" placeholder="Ej. jperez — deja vacío si no aplica" autocomplete="off">
+        </div>
 
         <div class="frow">
           <div class="field"><label>Folio (automático si lo dejas vacío)</label><input type="text" id="f-folio" placeholder="BNX-000001" maxlength="20"></div>
@@ -466,6 +534,43 @@ tr:hover td{background:rgba(255,255,255,.015);}
       </div>
     </div>
   </div>
+
+  <!-- CHAT PAGE -->
+  <div id="pg-chat" class="pg">
+    <div class="chat-wrap">
+      <div class="pgtitle">Chat del <span>equipo</span></div>
+      <p class="pgsub" id="chat-sub">Mensajes privados entre ejecutivos</p>
+      <div class="chat-layout">
+        <div class="chat-sidebar">
+          <div class="chat-sidebar-head">
+            <span class="chat-sidebar-title">💬 Chats</span>
+            <button class="chat-new-btn" id="chat-new-btn">+ Nuevo</button>
+          </div>
+          <div class="chat-contacts" id="chat-contacts"></div>
+        </div>
+        <div class="chat-main">
+          <div class="chat-main-head" id="chat-main-head" style="display:none">
+            <div class="chat-av cav-e" id="chat-head-av">?</div>
+            <div>
+              <div class="chat-main-title" id="chat-head-name">—</div>
+              <div class="chat-main-sub" id="chat-head-sub">—</div>
+            </div>
+          </div>
+          <div class="chat-msgs" id="chat-msgs">
+            <div class="chat-empty-state">
+              <div>💬</div>
+              <span>Selecciona una conversación</span>
+              <span style="font-size:12px">o inicia una nueva con "Nuevo"</span>
+            </div>
+          </div>
+          <div class="chat-input-area" id="chat-input-area" style="display:none">
+            <textarea id="chat-input" placeholder="Escribe un mensaje…" rows="1"></textarea>
+            <button class="chat-send" id="chat-send-btn">Enviar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -483,6 +588,8 @@ async function api(action,body={}){
     if(action==='getUsers'){const r=await fetch(`${API_URL}/api/usuarios`,{headers:h});setDbStatus(true);return{ok:true,data:await r.json()};}
     if(action==='addUser'){const r=await fetch(`${API_URL}/api/usuarios`,{method:'POST',headers:h,body:JSON.stringify(body)});setDbStatus(true);return await r.json();}
     if(action==='deleteUser'){await fetch(`${API_URL}/api/usuarios/${body.username}`,{method:'DELETE',headers:h});setDbStatus(true);return{ok:true};}
+    if(action==='getMessages'){const r=await fetch(`${API_URL}/api/mensajes`,{headers:h});setDbStatus(true);return{ok:true,data:await r.json()};}
+    if(action==='sendMessage'){const r=await fetch(`${API_URL}/api/mensajes`,{method:'POST',headers:h,body:JSON.stringify(body)});setDbStatus(true);return await r.json();}
     return{ok:false,error:'Acción desconocida'};
   }catch(e){setDbStatus(false);return{ok:false,error:'Sin conexión: '+e.message};}
 }
@@ -490,6 +597,7 @@ async function api(action,body={}){
 function setDbStatus(ok){const el=document.getElementById('srv-status');if(!el)return;el.className=ok?'srv-status srv-ok':'srv-status srv-err';el.textContent=ok?'✓ Servidor conectado':'✕ Sin conexión';}
 
 let CU=null,SALES_CACHE=[],USERS_CACHE=[],currentSaleForStatus=null;
+let CHAT_MESSAGES=[],CHAT_ACTIVE=null,CHAT_POLL=null;
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function fmt(ts){if(!ts)return'—';const d=new Date(ts);return d.toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});}
 function fmtDate(s){if(!s)return'—';const[y,m,d]=s.split('-');const M=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];return`${parseInt(d)} ${M[parseInt(m)-1]} ${y}`;}
@@ -533,9 +641,9 @@ async function bootApp(){
 function buildNav(){
   const tabs=document.getElementById('n-tabs');
   if(isAdmin()){
-    tabs.innerHTML='<button class="tab gold" data-pg="dash">Dashboard</button><button class="tab gold" data-pg="stats">Estadísticas</button><button class="tab gold" data-pg="ben">Beneficios</button><button class="tab gold" data-pg="users">Usuarios</button>';
+    tabs.innerHTML='<button class="tab gold" data-pg="dash">Dashboard</button><button class="tab gold" data-pg="stats">Estadísticas</button><button class="tab gold" data-pg="ben">Beneficios</button><button class="tab gold" data-pg="users">Usuarios</button><button class="tab gold" data-pg="chat">💬 Chat</button>';
   }else{
-    tabs.innerHTML='<button class="tab" data-pg="exec">Registrar venta</button><button class="tab" data-pg="stats">Estadísticas</button><button class="tab" data-pg="ben">Beneficios</button>';
+    tabs.innerHTML='<button class="tab" data-pg="exec">Registrar venta</button><button class="tab" data-pg="stats">Estadísticas</button><button class="tab" data-pg="ben">Beneficios</button><button class="tab" data-pg="chat">💬 Chat</button>';
   }
   document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>goPage(btn.dataset.pg)));
   const rw=document.getElementById('nu-role-wrap');
@@ -543,6 +651,7 @@ function buildNav(){
 }
 
 async function goPage(p){
+  stopChatPoll();
   document.querySelectorAll('.pg').forEach(el=>el.classList.remove('on'));
   document.querySelectorAll('.tab').forEach(el=>el.classList.remove('on'));
   document.getElementById('pg-'+p)?.classList.add('on');
@@ -551,6 +660,7 @@ async function goPage(p){
   if(p==='stats')await renderStats();
   if(p==='dash')await loadAndRenderDash();
   if(p==='users')await loadAndRenderUsers();
+  if(p==='chat')await initChat();
 }
 
 function setTodayDate(){const el=document.getElementById('f-fecha');if(el&&!el.value)el.value=new Date().toISOString().slice(0,10);}
@@ -580,6 +690,7 @@ async function registrarVenta(){
   const ingresos=(document.getElementById('f-ingresos').value||'').trim();
   const tarjetaRef=(document.getElementById('f-tarjetaRef').value||'').trim();
   const ldcRef=(document.getElementById('f-ldcRef').value||'').trim();
+  const compartirCon=(document.getElementById('f-compartir').value||'').trim().toLowerCase();
   const alertEl=document.getElementById('req-alert');
   alertEl.classList.remove('show');
   if(!cliente){alertEl.textContent='⚠ Escribe el nombre del cliente';alertEl.classList.add('show');return;}
@@ -592,16 +703,18 @@ async function registrarVenta(){
   spin(true);
   const comentarios={pendiente:'',preasignado:'',declino:'',vendida:''};
   comentarios[estado]=comentario;
-  const r=await api('addSale',{folio,exec:CU.name,username:CU.username,cliente,tel,tarjeta,fecha,registrado:new Date().toISOString(),rfc:rfc||null,ingresos:ingresos||null,tarjetaRef:tarjetaRef||null,ldcRef:ldcRef||null,estado,comentarios,notaEstado:comentario});
+  const payload={folio,exec:CU.name,username:CU.username,cliente,tel,tarjeta,fecha,registrado:new Date().toISOString(),rfc:rfc||null,ingresos:ingresos||null,tarjetaRef:tarjetaRef||null,ldcRef:ldcRef||null,estado,comentarios,notaEstado:comentario};
+  if(compartirCon)payload.sharedWith=compartirCon;
+  const r=await api('addSale',payload);
   spin(false);document.getElementById('reg-btn').disabled=false;
   if(!r.ok){alertEl.textContent='Error: '+r.error;alertEl.classList.add('show');return;}
-  ['f-cliente','f-tel','f-folio','f-rfc','f-ingresos','f-tarjetaRef','f-ldcRef','f-comentario'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['f-cliente','f-tel','f-folio','f-rfc','f-ingresos','f-tarjetaRef','f-ldcRef','f-comentario','f-compartir'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('f-tarjeta').value='';
   document.getElementById('f-fecha').value=new Date().toISOString().slice(0,10);
   document.querySelectorAll('input[name="f-estado"]').forEach(r=>r.checked=false);
   ['eopt-pend','eopt-pre','eopt-decl','eopt-ok'].forEach(id=>{const el=document.getElementById(id);if(el)el.className='estado-opt';});
   refreshFolio();
-  showToast('t-ok','✓ Venta registrada — Folio '+folio,'ok');
+  showToast('t-ok','✓ Venta registrada — Folio '+folio+(compartirCon?' · Compartida con @'+compartirCon:''),'ok');
   await renderRecent();
 }
 
@@ -609,9 +722,15 @@ async function renderRecent(){
   const list=document.getElementById('exec-recent');
   const r=await api('getSales');
   if(!r.ok){list.innerHTML='<p style="color:#f88;font-size:13px">Error al cargar.</p>';return;}
-  const data=r.data.filter(v=>v.username===CU.username).slice(0,8);
+  const data=r.data.filter(v=>v.username===CU.username||(v.sharedWith&&v.sharedWith===CU.username)).slice(0,10);
   if(!data.length){list.innerHTML='<p style="color:var(--mu);font-size:13px">Aún no tienes ventas registradas.</p>';return;}
-  list.innerHTML=data.map(v=>{const com=getComentarioActivo(v);return`<div class="ri"><div style="flex:1;min-width:0"><div class="ri-n">${esc(v.cliente)}${v.rfc?' 📄':''}${v.ingresos?' 💰':''}</div><div class="ri-m">${esc(v.tarjeta)}${v.tel?' · '+esc(v.tel):''} · ${fmtDate(v.fecha)}</div>${com?`<div class="nota-preview" title="${esc(com)}">💬 ${esc(com)}</div>`:''}</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;"><span class="ri-f">${esc(v.folio)}</span><span class="st-badge st-${estadoClase(v.estado)}" onclick="openStatusModalFromFolio('${esc(v.folio)}')">${estadoTexto(v.estado)}</span></div></div>`;}).join('');
+  list.innerHTML=data.map(v=>{
+    const com=getComentarioActivo(v);
+    const isMine=v.username===CU.username;
+    const sharedBadge=!isMine?`<span class="shared-badge">📥 De @${esc(v.username)}</span>`:
+      v.sharedWith?`<span class="shared-badge shared-out">📤 @${esc(v.sharedWith)}</span>`:'';
+    return`<div class="ri"><div style="flex:1;min-width:0"><div class="ri-n">${esc(v.cliente)}${v.rfc?' 📄':''}${v.ingresos?' 💰':''}</div><div class="ri-m">${esc(v.tarjeta)}${v.tel?' · '+esc(v.tel):''} · ${fmtDate(v.fecha)}</div>${sharedBadge}${com?`<div class="nota-preview" title="${esc(com)}">💬 ${esc(com)}</div>`:''}</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;"><span class="ri-f">${esc(v.folio)}</span><span class="st-badge st-${estadoClase(v.estado)}" onclick="openStatusModalFromFolio('${esc(v.folio)}')">${estadoTexto(v.estado)}</span></div></div>`;
+  }).join('');
 }
 
 const eLabels={'pendiente':'📞 Pendiente','preasignado':'⭐ Preasignado','declino':'❌ Declinó','vendida':'✅ Vendida'};
@@ -800,6 +919,228 @@ async function addUser(){
   if(!r.ok){showToast('u-err',r.error||'Error','err');return;}
   document.getElementById('nu-name').value='';document.getElementById('nu-user').value='';document.getElementById('nu-pass').value='';
   showToast('u-ok','Usuario "'+name+'" agregado','ok');await loadAndRenderUsers();
+}
+
+/* ===== CHAT SYSTEM ===== */
+function getAllUsers(){
+  const all=[];
+  FIXED_ACCOUNTS.forEach(u=>{if(u.username!==CU.username)all.push({username:u.username,name:u.name,role:u.role});});
+  USERS_CACHE.forEach(u=>{if(u.username!==CU.username&&!all.find(x=>x.username===u.username))all.push({username:u.username,name:u.name,role:u.role});});
+  return all;
+}
+function chatLastRead(contact){return parseInt(localStorage.getItem('cr_'+CU.username+'_'+contact)||'0');}
+function chatMarkRead(contact){localStorage.setItem('cr_'+CU.username+'_'+contact,Date.now());}
+function chatAv(u){
+  const r=u.role;
+  if(r==='superadmin')return{cls:'cav-s',ini:ini(u.name)};
+  if(r==='admin')return{cls:'cav-a',ini:ini(u.name)};
+  return{cls:'cav-e',ini:ini(u.name)};
+}
+function fmtChatTime(ts){
+  if(!ts)return'';
+  const d=new Date(ts);
+  const now=new Date();
+  if(d.toDateString()===now.toDateString())return d.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+  return d.toLocaleDateString('es-MX',{day:'2-digit',month:'short'})+' '+d.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+}
+
+async function initChat(){
+  document.getElementById('chat-sub').textContent=isAdmin()?'Vista completa · todos los mensajes del equipo':'Mensajes privados';
+  if(USERS_CACHE.length===0){const r=await api('getUsers');if(r.ok)USERS_CACHE=r.data||[];}
+  const r=await api('getMessages');
+  CHAT_MESSAGES=r.ok?(r.data||[]):[];
+  renderChatContacts();
+  if(CHAT_ACTIVE)renderChatMessages();
+  startChatPoll();
+
+  // "Nuevo" button
+  document.getElementById('chat-new-btn').onclick=()=>openChatModal();
+  // Send button
+  document.getElementById('chat-send-btn').onclick=()=>sendChatMsg();
+  // Enter key in textarea
+  document.getElementById('chat-input').onkeydown=function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChatMsg();}};
+}
+
+function startChatPoll(){
+  stopChatPoll();
+  CHAT_POLL=setInterval(async()=>{
+    const r=await api('getMessages');
+    if(r.ok){CHAT_MESSAGES=r.data||[];renderChatContacts();if(CHAT_ACTIVE)renderChatMessages(false);}
+  },5000);
+}
+function stopChatPoll(){if(CHAT_POLL){clearInterval(CHAT_POLL);CHAT_POLL=null;}}
+
+function getConversations(){
+  // Returns map: contact username -> {user, messages, lastMsg, unread}
+  const convMap={};
+  const users=getAllUsers();
+  if(isAdmin()){
+    // Admin: show ALL conversations (between any two users including me)
+    CHAT_MESSAGES.forEach(m=>{
+      const other=m.from===CU.username?m.to:m.from;
+      const otherName=m.from===CU.username?m.toName:m.fromName;
+      if(!convMap[other])convMap[other]={username:other,name:otherName,role:'exec',messages:[]};
+      convMap[other].messages.push(m);
+    });
+    // Also add users with no messages for admin to start conversation
+    users.forEach(u=>{if(!convMap[u.username])convMap[u.username]={...u,messages:[]};});
+  } else {
+    // Exec: only conversations involving me
+    CHAT_MESSAGES.forEach(m=>{
+      if(m.from!==CU.username&&m.to!==CU.username)return;
+      const other=m.from===CU.username?m.to:m.from;
+      const otherName=m.from===CU.username?m.toName:m.fromName;
+      if(!convMap[other])convMap[other]={username:other,name:otherName,role:'exec',messages:[]};
+      convMap[other].messages.push(m);
+    });
+  }
+  // Sort by last message time
+  return Object.values(convMap).sort((a,b)=>{
+    const ta=a.messages.length?(new Date(a.messages[a.messages.length-1].timestamp).getTime()):0;
+    const tb=b.messages.length?(new Date(b.messages[b.messages.length-1].timestamp).getTime()):0;
+    return tb-ta;
+  });
+}
+
+function renderChatContacts(){
+  const convs=getConversations();
+  const cont=document.getElementById('chat-contacts');
+  if(!convs.length){cont.innerHTML='<div style="padding:1.5rem;text-align:center;color:var(--mu);font-size:13px">Sin conversaciones aún.<br>Presiona "+ Nuevo" para comenzar.</div>';return;}
+  // Admin: add "Todos los mensajes" at top
+  let html='';
+  if(isAdmin()){
+    const allActive=CHAT_ACTIVE&&CHAT_ACTIVE.username==='__all__';
+    html+=`<div class="chat-contact${allActive?' active':''}" onclick="selectChatContact('__all__','Todos los mensajes','admin')">
+      <div class="chat-av cav-all">📋</div>
+      <div class="chat-ci">
+        <div class="chat-cn">Todos los mensajes</div>
+        <div class="chat-cl">${CHAT_MESSAGES.length} mensajes en total</div>
+      </div>
+    </div>`;
+  }
+  convs.forEach(c=>{
+    if(!c.username)return;
+    const lastMsg=c.messages[c.messages.length-1];
+    const lastText=lastMsg?lastMsg.text.slice(0,40)+(lastMsg.text.length>40?'…':''):'Sin mensajes';
+    const lr=chatLastRead(c.username);
+    const unread=c.messages.filter(m=>m.from!==CU.username&&new Date(m.timestamp).getTime()>lr).length;
+    const av=chatAv(c);
+    const isActive=CHAT_ACTIVE&&CHAT_ACTIVE.username===c.username;
+    html+=`<div class="chat-contact${isActive?' active':''}" onclick="selectChatContact('${esc(c.username)}','${esc(c.name||c.username)}','${c.role||'exec'}')">
+      <div class="chat-av ${av.cls}">${av.ini}</div>
+      <div class="chat-ci">
+        <div class="chat-cn">${esc(c.name||c.username)}${c.role==='admin'||c.role==='superadmin'?'<span style="font-size:9px;background:var(--gold-f);color:var(--gold-l);border-radius:3px;padding:1px 5px;margin-left:5px;font-weight:700;">ADMIN</span>':''}</div>
+        <div class="chat-cl">${esc(lastText)}</div>
+      </div>
+      ${unread>0?`<div class="chat-unread">${unread}</div>`:''}
+    </div>`;
+  });
+  cont.innerHTML=html;
+}
+
+window.selectChatContact=function(username,name,role){
+  CHAT_ACTIVE={username,name,role};
+  chatMarkRead(username);
+  renderChatContacts();
+  renderChatMessages();
+  // Show input (not for "all" view in non-admin)
+  const inputArea=document.getElementById('chat-input-area');
+  const mainHead=document.getElementById('chat-main-head');
+  mainHead.style.display='flex';
+  document.getElementById('chat-head-name').textContent=username==='__all__'?'Todos los mensajes':name;
+  document.getElementById('chat-head-sub').textContent=username==='__all__'?'Vista solo lectura para admins':'@'+username;
+  const av=username==='__all__'?{cls:'cav-all',ini:'📋'}:chatAv({role});
+  document.getElementById('chat-head-av').className='chat-av '+av.cls;
+  document.getElementById('chat-head-av').textContent=av.ini;
+  inputArea.style.display=username==='__all__'?'none':'flex';
+  document.getElementById('chat-input').focus();
+};
+
+function renderChatMessages(scroll=true){
+  const msgEl=document.getElementById('chat-msgs');
+  if(!CHAT_ACTIVE){return;}
+  let msgs;
+  if(CHAT_ACTIVE.username==='__all__'){
+    msgs=[...CHAT_MESSAGES].sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp));
+    if(!msgs.length){msgEl.innerHTML='<div class="chat-empty-state"><div>📭</div><span>Sin mensajes aún</span></div>';return;}
+    msgEl.innerHTML=msgs.map(m=>`<div class="chat-all-msg">
+      <div class="chat-all-meta">
+        <span class="chat-all-from">${esc(m.fromName||m.from)}</span>
+        <span style="color:var(--mu)">→</span>
+        <span class="chat-all-to">${esc(m.toName||m.to)}</span>
+        <span style="margin-left:auto">${fmtChatTime(m.timestamp)}</span>
+      </div>
+      <div class="chat-all-text">${esc(m.text)}</div>
+    </div>`).join('');
+  } else {
+    msgs=CHAT_MESSAGES.filter(m=>(m.from===CU.username&&m.to===CHAT_ACTIVE.username)||(m.from===CHAT_ACTIVE.username&&m.to===CU.username)).sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp));
+    if(!msgs.length){msgEl.innerHTML='<div class="chat-empty-state"><div>💬</div><span>Aún no hay mensajes con '+esc(CHAT_ACTIVE.name)+'</span><span style="font-size:12px">Escribe el primero abajo</span></div>';return;}
+    let html='';let lastDay='';
+    msgs.forEach(m=>{
+      const d=new Date(m.timestamp);
+      const day=d.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
+      if(day!==lastDay){html+=`<div class="chat-day-sep"><span>${day}</span></div>`;lastDay=day;}
+      const isMine=m.from===CU.username;
+      html+=`<div class="chat-msg-wrap ${isMine?'mine':'theirs'}">
+        ${!isMine?`<div class="chat-bname">${esc(m.fromName||m.from)}</div>`:''}
+        <div class="chat-bubble ${isMine?'mine':'theirs'}">${esc(m.text)}</div>
+        <div class="chat-btime">${fmtChatTime(m.timestamp)}</div>
+      </div>`;
+    });
+    msgEl.innerHTML=html;
+  }
+  if(scroll)msgEl.scrollTop=msgEl.scrollHeight;
+}
+
+async function sendChatMsg(){
+  if(!CHAT_ACTIVE||CHAT_ACTIVE.username==='__all__')return;
+  const input=document.getElementById('chat-input');
+  const text=(input.value||'').trim();
+  if(!text)return;
+  const toUser=getAllUsers().find(u=>u.username===CHAT_ACTIVE.username)||{username:CHAT_ACTIVE.username,name:CHAT_ACTIVE.name};
+  const btn=document.getElementById('chat-send-btn');
+  btn.disabled=true;
+  const msg={from:CU.username,fromName:CU.name,to:CHAT_ACTIVE.username,toName:CHAT_ACTIVE.name||toUser.name,text,timestamp:new Date().toISOString()};
+  input.value='';
+  const r=await api('sendMessage',msg);
+  btn.disabled=false;
+  if(r&&r.ok!==false){
+    CHAT_MESSAGES.push(msg);
+    chatMarkRead(CHAT_ACTIVE.username);
+    renderChatContacts();
+    renderChatMessages();
+  }else{
+    input.value=text;
+    alert('Error al enviar el mensaje. Intenta de nuevo.');
+  }
+}
+
+function openChatModal(){
+  const users=getAllUsers();
+  if(!users.length){alert('No hay otros usuarios registrados aún.');return;}
+  const opts=users.map(u=>`<option value="${esc(u.username)}" data-name="${esc(u.name)}" data-role="${u.role||'exec'}">${esc(u.name)} (@${esc(u.username)})</option>`).join('');
+  // Show inline modal
+  let existing=document.getElementById('chat-contact-modal');
+  if(existing)existing.remove();
+  const modal=document.createElement('div');
+  modal.className='chat-modal show';modal.id='chat-contact-modal';
+  modal.innerHTML=`<div class="chat-modal-box">
+    <h3>Nueva conversación</h3>
+    <div class="field"><label>Selecciona un ejecutivo</label><select id="chat-select-user">${opts}</select></div>
+    <div class="chat-modal-btns">
+      <button class="st-cancel" id="chat-modal-cancel">Cancelar</button>
+      <button class="st-save" id="chat-modal-ok">Abrir chat</button>
+    </div>
+  </div>`;
+  document.body.appendChild(modal);
+  document.getElementById('chat-modal-cancel').onclick=()=>modal.remove();
+  document.getElementById('chat-modal-ok').onclick=()=>{
+    const sel=document.getElementById('chat-select-user');
+    const opt=sel.options[sel.selectedIndex];
+    if(!opt)return;
+    modal.remove();
+    selectChatContact(opt.value,opt.dataset.name,opt.dataset.role);
+  };
 }
 
 const CARDS=[
