@@ -829,7 +829,7 @@ async function goPage(p){
   if(p==='stats')await renderStats();
   if(p==='dash')await loadDash();
   if(p==='users')await loadUsers();
-  if(p==='chat')initChat();
+  if(p==='chat')await initChat();
 }
 function setTodayDate(){const el=document.getElementById('f-fecha');if(el&&!el.value)el.value=new Date().toISOString().slice(0,10);}
 function refreshFolio(){const el=document.getElementById('folio-pill');if(el)el.textContent=genFolio();}
@@ -1141,140 +1141,156 @@ async function addUser(){
 }
 
 /* ── CHAT ── */
+let _chatPasteReady=false;
+
 function stopChatPoll(){if(CHAT_POLL){clearInterval(CHAT_POLL);CHAT_POLL=null;}}
 function startChatPoll(){
   stopChatPoll();
-  CHAT_POLL=setInterval(()=>{renderChatContacts(false);if(CHAT_ACTIVE)renderChatMessages(false);updateChatDot();},3000);
+  CHAT_POLL=setInterval(()=>{
+    if(document.getElementById('pg-chat')?.classList.contains('on')){
+      renderChatContacts(false);
+      if(CHAT_ACTIVE)renderChatMessages(false);
+      updateChatDot();
+    }
+  },3000);
 }
 function updateChatDot(){
-  const dot=document.getElementById('nav-chat-dot');if(!dot)return;
-  const allMsgs=chatLoad();const now=Date.now();
-  const hasUnread=getAllUsers().some(u=>{
-    const lr=chatLastRead(u.username);
-    return allMsgs.some(m=>m&&m.to===CU.username&&m.from===u.username&&new Date(m.ts).getTime()>lr);
-  })||groupsLoad().filter(g=>g.members&&g.members.includes(CU.username)).some(g=>{
-    const lr=chatLastRead(g.id);
-    return allMsgs.some(m=>m&&m.to===g.id&&m.from!==CU.username&&new Date(m.ts).getTime()>lr);
-  });
-  dot.classList.toggle('show',hasUnread);
+  const dot=document.getElementById('nav-chat-dot');if(!dot||!CU)return;
+  try{
+    const all=chatLoad();
+    const dm=getAllUsers().some(u=>{const lr=chatLastRead(u.username);return all.some(m=>m&&m.to===CU.username&&m.from===u.username&&new Date(m.ts).getTime()>lr);});
+    const grp=groupsLoad().filter(g=>g&&g.members&&g.members.includes(CU.username)).some(g=>{const lr=chatLastRead(g.id);return all.some(m=>m&&m.to===g.id&&m.from!==CU.username&&new Date(m.ts).getTime()>lr);});
+    dot.classList.toggle('show',dm||grp);
+  }catch(e){}
 }
-function initChat(){
-  if(USERS_CACHE.length===0)api('getUsers').then(r=>{if(r.ok){USERS_CACHE=r.data||[];renderChatContacts();}});
-  document.getElementById('chat-sub').textContent=isAdmin()?'Vista completa — todos los mensajes y grupos del equipo':'Mensajes privados y grupos';
-  const grpBtn=document.getElementById('chat-grp-btn');if(grpBtn)grpBtn.classList.toggle('show',isAdmin());
-  renderChatContacts();if(CHAT_ACTIVE)renderChatMessages();startChatPoll();
+
+async function initChat(){
+  document.getElementById('chat-sub').textContent=isAdmin()?'Vista completa — todos los mensajes del equipo':'Mensajes privados y grupos';
+  const grpBtn=document.getElementById('chat-grp-btn');
+  if(grpBtn)grpBtn.classList.toggle('show',isAdmin());
+  // AWAIT users before rendering — this was the main bug
+  if(USERS_CACHE.length===0){
+    const r=await api('getUsers');
+    if(r.ok)USERS_CACHE=r.data||[];
+  }
+  renderChatContacts();
+  if(CHAT_ACTIVE)renderChatMessages();
+  startChatPoll();
+  // Wire buttons
   document.getElementById('chat-new-btn').onclick=openNewChatModal;
-  if(isAdmin())document.getElementById('chat-grp-btn').onclick=openGrpModal;
+  if(isAdmin()&&document.getElementById('chat-grp-btn'))
+    document.getElementById('chat-grp-btn').onclick=openGrpModal;
   document.getElementById('chat-send-btn').onclick=sendChatMsg;
-  const ti=document.getElementById('chat-input');
-  ti.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChatMsg();}};
-  // Image input
+  document.getElementById('chat-input').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChatMsg();}};
   document.getElementById('chat-img-input').onchange=function(){
     const f=this.files[0];if(!f)return;
-    const reader=new FileReader();
-    reader.onload=e2=>{
-      CHAT_IMG_DATA=e2.target.result;
-      document.getElementById('chat-img-prev-thumb').src=CHAT_IMG_DATA;
-      document.getElementById('chat-img-preview').classList.add('show');
-    };
-    reader.readAsDataURL(f);this.value='';
+    const rd=new FileReader();
+    rd.onload=ev=>{CHAT_IMG_DATA=ev.target.result;document.getElementById('chat-img-prev-thumb').src=CHAT_IMG_DATA;document.getElementById('chat-img-preview').classList.add('show');};
+    rd.readAsDataURL(f);this.value='';
   };
   document.getElementById('chat-img-clear').onclick=()=>{CHAT_IMG_DATA=null;document.getElementById('chat-img-preview').classList.remove('show');};
-  // Paste image
-  document.addEventListener('paste',function(e){
-    if(!CHAT_ACTIVE||CHAT_ACTIVE.isAll)return;
-    const items=e.clipboardData?.items;if(!items)return;
-    for(const item of items){
-      if(item.type.startsWith('image/')){
-        const f=item.getAsFile();const reader=new FileReader();
-        reader.onload=e2=>{CHAT_IMG_DATA=e2.target.result;document.getElementById('chat-img-prev-thumb').src=CHAT_IMG_DATA;document.getElementById('chat-img-preview').classList.add('show');};
-        reader.readAsDataURL(f);e.preventDefault();break;
-      }
-    }
-  });
-  // Chat modal buttons
   document.getElementById('chat-modal-cancel').onclick=()=>document.getElementById('chat-modal').classList.remove('show');
   document.getElementById('chat-modal-ok').onclick=()=>{
     const sel=document.getElementById('chat-select-user');if(!sel.value)return;
     const opt=sel.options[sel.selectedIndex];
     document.getElementById('chat-modal').classList.remove('show');
-    selectChatContact(sel.value,opt.text.split(' (@')[0],opt.dataset.role||'exec',null);
+    selectChatContact(sel.value,opt.text.split(' (@')[0],opt.dataset.role||'exec');
   };
   document.getElementById('grp-modal-cancel').onclick=()=>document.getElementById('grp-modal').classList.remove('show');
   document.getElementById('grp-modal-ok').onclick=createGroup;
+  // Paste — register only once
+  if(!_chatPasteReady){
+    _chatPasteReady=true;
+    document.addEventListener('paste',function(e){
+      if(!CHAT_ACTIVE||CHAT_ACTIVE.isAll)return;
+      if(!document.getElementById('pg-chat')?.classList.contains('on'))return;
+      const items=e.clipboardData?.items;if(!items)return;
+      for(const item of items){
+        if(item.type.startsWith('image/')){
+          const f=item.getAsFile();if(!f)continue;
+          const rd=new FileReader();
+          rd.onload=ev=>{CHAT_IMG_DATA=ev.target.result;document.getElementById('chat-img-prev-thumb').src=CHAT_IMG_DATA;document.getElementById('chat-img-preview').classList.add('show');};
+          rd.readAsDataURL(f);e.preventDefault();break;
+        }
+      }
+    });
+  }
 }
+
 function getChatContacts(){
-  const msgs=chatLoad();const groups=groupsLoad().filter(g=>g&&g.members&&(isAdmin()||g.members.includes(CU.username)));
+  let msgs=[];try{msgs=chatLoad();}catch(e){}
+  let groups=[];try{groups=groupsLoad().filter(g=>g&&g.id&&g.members&&(isAdmin()||g.members.includes(CU.username)));}catch(e){}
   const convMap={};
-  // Direct messages involving current user (or all if admin)
-  msgs.filter(m=>{
-    if(!m||!m.to||!m.from)return false;
-    if(isAdmin())return!(m.to||'').startsWith('grp_');
-    return(m.from===CU.username||m.to===CU.username)&&!(m.to||'').startsWith('grp_');
-  }).forEach(m=>{
+  msgs.forEach(m=>{
+    if(!m||!m.from||!m.to)return;
+    if((m.to||'').startsWith('grp_'))return;
+    const involveMe=m.from===CU.username||m.to===CU.username;
+    if(!isAdmin()&&!involveMe)return;
     const other=m.from===CU.username?m.to:m.from;
-    const otherName=m.from===CU.username?m.toName:m.fromName;
-    if(!convMap[other])convMap[other]={type:'dm',username:other,name:otherName,msgs:[]};
+    const otherName=m.from===CU.username?(m.toName||m.to):(m.fromName||m.from);
+    if(!convMap[other])convMap[other]={type:'dm',username:other,name:otherName,role:'exec',msgs:[]};
     convMap[other].msgs.push(m);
   });
-  // Add all users even if no messages yet
-  getAllUsers().forEach(u=>{if(!convMap[u.username])convMap[u.username]={type:'dm',username:u.username,name:u.name,role:u.role,msgs:[]};});
-  const res=Object.values(convMap).sort((a,b)=>{
+  getAllUsers().forEach(u=>{
+    if(!convMap[u.username])convMap[u.username]={type:'dm',username:u.username,name:u.name,role:u.role||'exec',msgs:[]};
+    else convMap[u.username].role=convMap[u.username].role||u.role||'exec';
+  });
+  const dmList=Object.values(convMap).sort((a,b)=>{
     const ta=a.msgs.length?new Date(a.msgs[a.msgs.length-1].ts).getTime():0;
     const tb=b.msgs.length?new Date(b.msgs[b.msgs.length-1].ts).getTime():0;
     return tb-ta;
   });
-  // Add groups
-  groups.forEach(g=>{
-    const gmsgs=msgs.filter(m=>m.to===g.id);
-    res.unshift({type:'group',id:g.id,name:g.name,members:g.members,msgs:gmsgs});
-  });
-  return res;
+  const grpList=groups.map(g=>({type:'group',id:g.id,name:g.name,members:g.members,msgs:msgs.filter(m=>m&&m.to===g.id)}));
+  return [...grpList,...dmList];
 }
+
 function renderChatContacts(scroll=true){
-  const cont=document.getElementById('chat-contacts');
+  const cont=document.getElementById('chat-contacts');if(!cont)return;
   const convs=getChatContacts();
   let html='';
   if(isAdmin()){
     const allActive=CHAT_ACTIVE&&CHAT_ACTIVE.isAll;
+    const totalDMs=chatLoad().filter(m=>m&&m.to&&!(m.to||'').startsWith('grp_')).length;
     html+=`<div class="chat-contact${allActive?' active':''}" onclick="selectChatAll()">
       <div class="chat-av cav-all">📋</div>
-      <div class="chat-ci"><div class="chat-cn">Todos los mensajes</div><div class="chat-cl">${chatLoad().filter(m=>m&&m.to&&!(m.to||'').startsWith('grp_')).length} mensajes</div></div>
+      <div class="chat-ci"><div class="chat-cn">Todos los mensajes</div><div class="chat-cl">${totalDMs} mensajes en total</div></div>
     </div>`;
   }
+  if(!convs.length){html+='<div style="padding:1.5rem 1rem;text-align:center;color:var(--mu);font-size:13px">No hay usuarios registrados aún.<br><span style="font-size:11px">Pide al admin que agregue usuarios.</span></div>';}
   convs.forEach(c=>{
     if(c.type==='group'){
-      const lastMsg=c.msgs[c.msgs.length-1];
-      const lastTxt=lastMsg?(lastMsg.text?(lastMsg.text.length>36?lastMsg.text.slice(0,36)+'…':lastMsg.text):'🖼 Imagen'):'Sin mensajes';
+      const lm=c.msgs[c.msgs.length-1];
+      const prev=lm?(lm.text?(lm.text.length>34?lm.text.slice(0,34)+'…':lm.text):'🖼 Imagen'):'Sin mensajes aún';
       const lr=chatLastRead(c.id);
-      const unread=c.msgs.filter(m=>m.from!==CU.username&&new Date(m.ts).getTime()>lr).length;
-      const isActive=CHAT_ACTIVE&&CHAT_ACTIVE.groupId===c.id;
-      html+=`<div class="chat-contact${isActive?' active':''}" onclick="selectChatGroup('${esc(c.id)}','${esc(c.name)}')">
+      const unread=c.msgs.filter(m=>m&&m.from!==CU.username&&new Date(m.ts).getTime()>lr).length;
+      const isAct=CHAT_ACTIVE&&CHAT_ACTIVE.groupId===c.id;
+      html+=`<div class="chat-contact${isAct?' active':''}" onclick="selectChatGroup('${esc(c.id)}','${esc(c.name)}')">
         <div class="chat-av cav-grp">👥</div>
-        <div class="chat-ci"><div class="chat-cn">${esc(c.name)} <span style="font-size:9px;color:var(--mu);font-weight:400">(${c.members.length})</span></div><div class="chat-cl">${esc(lastTxt)}</div></div>
+        <div class="chat-ci"><div class="chat-cn">${esc(c.name)} <span style="font-size:9px;color:var(--mu)">(${c.members.length})</span></div><div class="chat-cl">${esc(prev)}</div></div>
         ${unread>0?`<div class="chat-unread">${unread}</div>`:''}
       </div>`;
     }else{
-      const lastMsg=c.msgs[c.msgs.length-1];
-      const lastTxt=lastMsg?(lastMsg.text?(lastMsg.text.length>36?lastMsg.text.slice(0,36)+'…':lastMsg.text):'🖼 Imagen'):'Sin mensajes';
+      const lm=c.msgs[c.msgs.length-1];
+      const prev=lm?(lm.text?(lm.text.length>34?lm.text.slice(0,34)+'…':lm.text):'🖼 Imagen'):'Escribe el primer mensaje';
       const lr=chatLastRead(c.username);
-      const unread=c.msgs.filter(m=>m.to===CU.username&&m.from===c.username&&new Date(m.ts).getTime()>lr).length;
-      const isActive=CHAT_ACTIVE&&CHAT_ACTIVE.username===c.username;
-      html+=`<div class="chat-contact${isActive?' active':''}" onclick="selectChatContact('${esc(c.username)}','${esc(c.name||c.username)}','${c.role||'exec'}',null)">
-        <div class="chat-av cav-e">${ini(c.name||c.username)}</div>
-        <div class="chat-ci"><div class="chat-cn">${esc(c.name||c.username)}</div><div class="chat-cl">${esc(lastTxt)}</div></div>
+      const unread=c.msgs.filter(m=>m&&m.to===CU.username&&m.from===c.username&&new Date(m.ts).getTime()>lr).length;
+      const isAct=CHAT_ACTIVE&&CHAT_ACTIVE.username===c.username;
+      const avCls=c.role==='superadmin'?'cav-s':c.role==='admin'?'cav-a':'cav-e';
+      html+=`<div class="chat-contact${isAct?' active':''}" onclick="selectChatContact('${esc(c.username)}','${esc(c.name||c.username)}','${c.role||'exec'}')">
+        <div class="chat-av ${avCls}">${ini(c.name||c.username)}</div>
+        <div class="chat-ci"><div class="chat-cn">${esc(c.name||c.username)}</div><div class="chat-cl">${esc(prev)}</div></div>
         ${unread>0?`<div class="chat-unread">${unread}</div>`:''}
       </div>`;
     }
   });
-  if(!html&&!isAdmin())html='<div style="padding:2rem;text-align:center;color:var(--mu);font-size:13px">Sin conversaciones. Pulsa "+ Nuevo".</div>';
   cont.innerHTML=html;
 }
+
 window.selectChatAll=function(){
   CHAT_ACTIVE={isAll:true};
   document.getElementById('chat-main-head').style.display='flex';
   document.getElementById('chat-head-name').textContent='Todos los mensajes';
-  document.getElementById('chat-head-sub').textContent='Vista completa — solo lectura';
+  document.getElementById('chat-head-sub').textContent='Vista solo lectura — administradores';
   document.getElementById('chat-head-av').className='chat-av cav-all';
   document.getElementById('chat-head-av').textContent='📋';
   document.getElementById('chat-input-area').style.display='none';
@@ -1282,19 +1298,19 @@ window.selectChatAll=function(){
   renderChatContacts(false);renderChatMessages();
 };
 window.selectChatGroup=function(gid,gname){
-  CHAT_ACTIVE={groupId:gid,name:gname};
-  chatMarkRead(gid);
+  CHAT_ACTIVE={groupId:gid,name:gname};chatMarkRead(gid);
   document.getElementById('chat-main-head').style.display='flex';
   document.getElementById('chat-head-name').textContent=gname;
   const g=groupsLoad().find(x=>x.id===gid);
-  document.getElementById('chat-head-sub').textContent=g?g.members.length+' miembros':'Grupo';
+  document.getElementById('chat-head-sub').textContent=g?(g.members.length+' miembros'):'Grupo';
   document.getElementById('chat-head-av').className='chat-av cav-grp';
   document.getElementById('chat-head-av').textContent='👥';
   document.getElementById('chat-input-area').style.display='flex';
-  renderChatContacts(false);renderChatMessages();document.getElementById('chat-input').focus();
+  renderChatContacts(false);renderChatMessages();
+  setTimeout(()=>document.getElementById('chat-input')?.focus(),80);
   updateChatDot();
 };
-window.selectChatContact=function(username,name,role,pk){
+window.selectChatContact=function(username,name,role){
   CHAT_ACTIVE={username,name,role};chatMarkRead(username);
   document.getElementById('chat-main-head').style.display='flex';
   document.getElementById('chat-head-name').textContent=name;
@@ -1302,89 +1318,102 @@ window.selectChatContact=function(username,name,role,pk){
   document.getElementById('chat-head-av').className='chat-av '+(role==='superadmin'?'cav-s':role==='admin'?'cav-a':'cav-e');
   document.getElementById('chat-head-av').textContent=ini(name);
   document.getElementById('chat-input-area').style.display='flex';
-  renderChatContacts(false);renderChatMessages();document.getElementById('chat-input').focus();
+  renderChatContacts(false);renderChatMessages();
+  setTimeout(()=>document.getElementById('chat-input')?.focus(),80);
   updateChatDot();
 };
+
 function renderChatMessages(scroll=true){
-  const msgEl=document.getElementById('chat-msgs');
-  if(!CHAT_ACTIVE)return;
-  let msgs;
+  const msgEl=document.getElementById('chat-msgs');if(!msgEl||!CHAT_ACTIVE)return;
+  let msgs=[];try{msgs=chatLoad();}catch(e){}
   if(CHAT_ACTIVE.isAll){
-    msgs=chatLoad().filter(m=>m&&m.to&&m.from&&!(m.to||'').startsWith('grp_')).sort((a,b)=>new Date(a.ts)-new Date(b.ts));
-    if(!msgs.length){msgEl.innerHTML='<div class="chat-empty-state"><div class="ce-icon">📭</div><p>Sin mensajes todavía</p></div>';return;}
-    msgEl.innerHTML=msgs.map(m=>`<div class="chat-all-msg">
-      <div class="chat-all-meta"><span class="chat-all-from">${esc(m.fromName||m.from)}</span><span>→</span><span class="chat-all-to">${esc(m.toName||m.to)}</span><span style="margin-left:auto;color:var(--mu)">${fmtTime(m.ts)}</span></div>
-      <div class="chat-all-text">${m.text?esc(m.text):''}${m.img?`<img src="${m.img}" onclick="openLightbox(this.src)" style="max-width:180px;border-radius:6px;display:block;margin-top:4px;cursor:zoom-in" alt="">`:''}</div>
+    const dm=msgs.filter(m=>m&&m.to&&m.from&&!(m.to||'').startsWith('grp_')).sort((a,b)=>new Date(a.ts)-new Date(b.ts));
+    if(!dm.length){msgEl.innerHTML='<div class="chat-empty-state"><div class="ce-icon">📭</div><p>Sin mensajes todavía</p></div>';return;}
+    msgEl.innerHTML=dm.map(m=>`<div class="chat-all-msg">
+      <div class="chat-all-meta"><span class="chat-all-from">${esc(m.fromName||m.from)}</span><span style="margin:0 3px">→</span><span class="chat-all-to">${esc(m.toName||m.to)}</span><span style="margin-left:auto;color:var(--mu);font-size:10px">${fmtTime(m.ts)}</span></div>
+      <div class="chat-all-text">${m.text?esc(m.text):''}${m.img?`<img src="${m.img}" onclick="openLightbox(this.src)" style="max-width:200px;border-radius:6px;display:block;margin-top:4px;cursor:zoom-in" alt="">`:''}</div>
     </div>`).join('');
   }else if(CHAT_ACTIVE.groupId){
-    msgs=chatLoad().filter(m=>m.to===CHAT_ACTIVE.groupId).sort((a,b)=>new Date(a.ts)-new Date(b.ts));
-    if(!msgs.length){msgEl.innerHTML=`<div class="chat-empty-state"><div class="ce-icon">👥</div><p>Sé el primero en escribir en ${esc(CHAT_ACTIVE.name)}</p></div>`;return;}
-    msgEl.innerHTML=buildMsgBubbles(msgs);
+    const gm=msgs.filter(m=>m&&m.to===CHAT_ACTIVE.groupId).sort((a,b)=>new Date(a.ts)-new Date(b.ts));
+    if(!gm.length){msgEl.innerHTML=`<div class="chat-empty-state"><div class="ce-icon">👥</div><p>Sé el primero en escribir en <strong>${esc(CHAT_ACTIVE.name)}</strong></p></div>`;return;}
+    msgEl.innerHTML=buildBubbles(gm);
   }else{
     const to=CHAT_ACTIVE.username;
-    msgs=chatLoad().filter(m=>(m.from===CU.username&&m.to===to)||(m.from===to&&m.to===CU.username)).sort((a,b)=>new Date(a.ts)-new Date(b.ts));
-    if(!msgs.length){msgEl.innerHTML=`<div class="chat-empty-state"><div class="ce-icon">✉️</div><p>Escríbele a ${esc(CHAT_ACTIVE.name)}</p></div>`;return;}
-    msgEl.innerHTML=buildMsgBubbles(msgs);
+    const dm=msgs.filter(m=>m&&m.from&&m.to&&((m.from===CU.username&&m.to===to)||(m.from===to&&m.to===CU.username))).sort((a,b)=>new Date(a.ts)-new Date(b.ts));
+    if(!dm.length){msgEl.innerHTML=`<div class="chat-empty-state"><div class="ce-icon">✉️</div><p>Escríbele a <strong>${esc(CHAT_ACTIVE.name)}</strong></p><small>Sé el primero en enviar un mensaje</small></div>`;return;}
+    msgEl.innerHTML=buildBubbles(dm);
   }
-  if(scroll)msgEl.scrollTop=msgEl.scrollHeight;
+  if(scroll)setTimeout(()=>{if(msgEl)msgEl.scrollTop=msgEl.scrollHeight;},50);
 }
-function buildMsgBubbles(msgs){
+
+function buildBubbles(msgs){
   let html='',lastDay='';
   msgs.forEach(m=>{
-    const d=new Date(m.ts);
-    const day=d.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
-    if(day!==lastDay){html+=`<div class="chat-day-sep"><span>${day}</span></div>`;lastDay=day;}
+    if(!m||!m.ts)return;
+    let day='';try{day=new Date(m.ts).toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});}catch(e){}
+    if(day&&day!==lastDay){html+=`<div class="chat-day-sep"><span>${day}</span></div>`;lastDay=day;}
     const isMine=m.from===CU.username;
-    const textPart=m.text?`<span>${esc(m.text)}</span>`:'';
-    const imgPart=m.img?`<img src="${m.img}" onclick="openLightbox(this.src)" alt="" style="max-width:100%;border-radius:8px;display:block;margin-top:${m.text?'6px':'0'};cursor:zoom-in">`:'';
-    const content=textPart+imgPart||'&nbsp;';
+    const tp=m.text?`<span style="white-space:pre-wrap">${esc(m.text)}</span>`:'';
+    const ip=m.img?`<img src="${m.img}" onclick="openLightbox(this.src)" alt="" style="max-width:100%;border-radius:8px;display:block;margin-top:${m.text?'6':'0'}px;cursor:zoom-in">`:'';
     html+=`<div class="chat-msg-wrap ${isMine?'mine':'theirs'}">
       ${!isMine?`<div class="chat-bname">${esc(m.fromName||m.from)}</div>`:''}
-      <div class="chat-bubble ${isMine?'mine':'theirs'}">${content}</div>
+      <div class="chat-bubble ${isMine?'mine':'theirs'}">${tp}${ip}</div>
       <div class="chat-btime">${fmtTime(m.ts)}</div>
     </div>`;
   });
-  return html;
+  return html||'';
 }
-window.openShareModal=openShareModal;
+
 window.openLightbox=function(src){const lb=document.getElementById('img-lightbox');document.getElementById('img-lightbox-src').src=src;lb.style.display='flex';};
+window.openShareModal=openShareModal;
+
 function sendChatMsg(){
   if(!CHAT_ACTIVE||CHAT_ACTIVE.isAll)return;
   const input=document.getElementById('chat-input');
   const text=(input.value||'').trim();
   if(!text&&!CHAT_IMG_DATA)return;
-  const toUser=CHAT_ACTIVE.groupId||CHAT_ACTIVE.username;
-  const toName=CHAT_ACTIVE.groupId?CHAT_ACTIVE.name:CHAT_ACTIVE.name;
-  const msg={id:Date.now()+'_'+Math.random().toString(36).slice(2),from:CU.username,fromName:CU.name,to:toUser,toName,ts:new Date().toISOString()};
-  if(text)msg.text=text;if(CHAT_IMG_DATA)msg.img=CHAT_IMG_DATA;
-  input.value='';CHAT_IMG_DATA=null;document.getElementById('chat-img-preview').classList.remove('show');
-  chatSend(msg);
-  chatMarkRead(toUser);renderChatContacts(false);renderChatMessages();
+  const toId=CHAT_ACTIVE.groupId||CHAT_ACTIVE.username;
+  const msg={id:Date.now()+'_'+Math.random().toString(36).slice(2,8),from:CU.username,fromName:CU.name,to:toId,toName:CHAT_ACTIVE.name||'',ts:new Date().toISOString()};
+  if(text)msg.text=text;
+  if(CHAT_IMG_DATA)msg.img=CHAT_IMG_DATA;
+  input.value='';CHAT_IMG_DATA=null;
+  document.getElementById('chat-img-preview').classList.remove('show');
+  try{chatSend(msg);}catch(e){
+    try{const old=chatLoad();if(old.length>200)chatSave(old.slice(old.length-150));chatSend(msg);}
+    catch(e2){alert('No se pudo enviar: almacenamiento lleno.');}
+  }
+  chatMarkRead(toId);
+  renderChatContacts(false);
+  renderChatMessages(true);
 }
-function openNewChatModal(){
-  const users=getAllUsers();if(!users.length){alert('No hay otros usuarios registrados.');return;}
+
+async function openNewChatModal(){
+  if(USERS_CACHE.length===0){spin(true);const r=await api('getUsers');spin(false);if(r.ok)USERS_CACHE=r.data||[];}
+  const users=getAllUsers();
+  if(!users.length){alert('No hay otros usuarios registrados.\nPide al administrador que agregue usuarios primero.');return;}
   document.getElementById('chat-select-user').innerHTML=users.map(u=>`<option value="${esc(u.username)}" data-role="${u.role||'exec'}">${esc(u.name)} (@${esc(u.username)})</option>`).join('');
   document.getElementById('chat-modal').classList.add('show');
 }
-function openGrpModal(){
-  if(!isAdmin()){return;}
+window.openNewChatModal=openNewChatModal;
+
+async function openGrpModal(){
+  if(!isAdmin())return;
+  if(USERS_CACHE.length===0){spin(true);const r=await api('getUsers');spin(false);if(r.ok)USERS_CACHE=r.data||[];}
   document.getElementById('grp-name-input').value='';
   const users=getAllUsers();
-  document.getElementById('grp-member-list').innerHTML=users.map(u=>`
-    <div class="grp-member-item" data-u="${esc(u.username)}" onclick="this.classList.toggle('picked')">
-      <div class="gmi-av">${ini(u.name)}</div>
-      <div class="gmi-name">${esc(u.name)} <span style="font-size:10px;color:var(--mu2)">@${esc(u.username)}</span></div>
-    </div>`).join('');
+  document.getElementById('grp-member-list').innerHTML=users.length
+    ?users.map(u=>`<div class="grp-member-item" data-u="${esc(u.username)}" onclick="this.classList.toggle('picked')"><div class="gmi-av">${ini(u.name)}</div><div class="gmi-name">${esc(u.name)} <span style="font-size:10px;color:var(--mu2)">@${esc(u.username)}</span></div></div>`).join('')
+    :'<p style="color:var(--mu);font-size:13px">No hay usuarios para agregar.</p>';
   document.getElementById('grp-modal').classList.add('show');
 }
+
 function createGroup(){
   const name=(document.getElementById('grp-name-input').value||'').trim();
   if(!name){alert('Escribe un nombre para el grupo.');return;}
   const picked=[...document.querySelectorAll('.grp-member-item.picked')].map(el=>el.dataset.u);
   if(!picked.length){alert('Selecciona al menos un miembro.');return;}
-  const members=[CU.username,...picked];
-  const group={id:'grp_'+Date.now(),name,members,createdBy:CU.username,createdAt:new Date().toISOString()};
-  const groups=groupsLoad();groups.push(group);groupsSave(groups);
+  const group={id:'grp_'+Date.now(),name,members:[CU.username,...picked],createdBy:CU.username,createdAt:new Date().toISOString()};
+  const gs=groupsLoad();gs.push(group);groupsSave(gs);
   document.getElementById('grp-modal').classList.remove('show');
   renderChatContacts();
   selectChatGroup(group.id,group.name);
