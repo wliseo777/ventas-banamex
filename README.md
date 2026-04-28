@@ -911,9 +911,18 @@ async function renderRecent(){
 }
 
 /* ── SHARE ── */
-function openShareModal(folio){
+async function openShareModal(folio){
   SHARE_FOLIO=folio;SHARE_PICKED=null;
-  const sale=SALES_CACHE.find(v=>v.folio===folio)||{folio};
+  // Try to find in cache, otherwise fetch
+  let sale=SALES_CACHE.find(v=>v.folio===folio);
+  if(!sale){
+    spin(true);
+    const r=await api('getSales');spin(false);
+    if(r.ok){SALES_CACHE=r.data||[];sale=SALES_CACHE.find(v=>v.folio===folio)||{folio};}
+    else sale={folio};
+  }
+  // Ensure users are loaded
+  if(USERS_CACHE.length===0){spin(true);const r=await api('getUsers');spin(false);if(r.ok)USERS_CACHE=r.data||[];}
   document.getElementById('share-modal-info').textContent='Folio: '+folio+(sale.cliente?' · '+sale.cliente:'');
   const uArea=document.getElementById('share-unshare-area');
   if(sale.sharedWith){
@@ -921,29 +930,42 @@ function openShareModal(folio){
     document.getElementById('share-current-user').textContent=sale.sharedWith;
   }else{uArea.style.display='none';}
   const users=getAllUsers();
-  if(!users.length){api('getUsers').then(r=>{if(r.ok){USERS_CACHE=r.data||[];openShareModal(folio);}});return;}
-  document.getElementById('share-user-list').innerHTML=users.map(u=>`
-    <div class="user-pick-item" data-u="${esc(u.username)}" onclick="pickShareUser(this,'${esc(u.username)}')">
-      <div class="upi-av">${ini(u.name)}</div>
-      <div><div class="upi-name">${esc(u.name)}</div><div class="upi-user">@${esc(u.username)}</div></div>
-    </div>`).join('');
+  if(!users.length){document.getElementById('share-user-list').innerHTML='<p style="color:var(--mu);font-size:13px">No hay otros ejecutivos registrados.</p>';}
+  else{
+    document.getElementById('share-user-list').innerHTML=users.map(u=>`
+      <div class="user-pick-item" data-u="${esc(u.username)}" onclick="pickShareUser('${esc(u.username)}')">
+        <div class="upi-av">${ini(u.name)}</div>
+        <div><div class="upi-name">${esc(u.name)}</div><div class="upi-user">@${esc(u.username)}</div></div>
+      </div>`).join('');
+  }
   document.getElementById('share-modal').classList.add('show');
 }
-window.pickShareUser=function(el,u){document.querySelectorAll('.user-pick-item').forEach(x=>x.classList.remove('picked'));el.classList.add('picked');SHARE_PICKED=u;};
+window.pickShareUser=function(username){
+  document.querySelectorAll('.user-pick-item').forEach(x=>x.classList.remove('picked'));
+  const el=document.querySelector(`.user-pick-item[data-u="${username}"]`);
+  if(el)el.classList.add('picked');
+  SHARE_PICKED=username;
+};
 async function doShareSale(remove=false){
   if(!SHARE_FOLIO)return;
-  if(!remove&&!SHARE_PICKED){alert('Selecciona un ejecutivo.');return;}
+  if(!remove&&!SHARE_PICKED){alert('Selecciona un ejecutivo de la lista.');return;}
   spin(true);
-  const payload={folio:SHARE_FOLIO};
-  payload.sharedWith=remove?null:SHARE_PICKED;
+  const payload={folio:SHARE_FOLIO,sharedWith:remove?null:SHARE_PICKED};
   const r=await api('updateSale',payload);
   spin(false);
-  if(!r.ok){alert('Error: '+(r.error||'inténtalo'));return;}
+  if(!r.ok){alert('Error al guardar: '+(r.error||'inténtalo de nuevo'));return;}
   document.getElementById('share-modal').classList.remove('show');
+  // Update local cache
   const idx=SALES_CACHE.findIndex(v=>v.folio===SHARE_FOLIO);
   if(idx>-1)SALES_CACHE[idx].sharedWith=remove?null:SHARE_PICKED;
-  if(remove){showToast('t-ok','✓ Compartido eliminado','ok');}
-  else{const u=getAllUsers().find(x=>x.username===SHARE_PICKED);showToast('t-ok','✓ Compartida con '+(u?u.name:'@'+SHARE_PICKED),'ok');}
+  // Show toast + refresh
+  const toastId=document.getElementById('t-ok')?'t-ok':'u-ok';
+  if(remove){
+    showToast(toastId,'✓ Compartido eliminado correctamente','ok');
+  }else{
+    const u=getAllUsers().find(x=>x.username===SHARE_PICKED);
+    showToast(toastId,'✓ Venta compartida con '+(u?u.name:'@'+SHARE_PICKED),'ok');
+  }
   if(document.getElementById('pg-exec').classList.contains('on'))await renderRecent();
   if(document.getElementById('pg-dash').classList.contains('on'))renderDashTable();
 }
@@ -1129,10 +1151,10 @@ function updateChatDot(){
   const allMsgs=chatLoad();const now=Date.now();
   const hasUnread=getAllUsers().some(u=>{
     const lr=chatLastRead(u.username);
-    return allMsgs.some(m=>m.to===CU.username&&m.from===u.username&&new Date(m.ts).getTime()>lr);
-  })||groupsLoad().filter(g=>g.members.includes(CU.username)).some(g=>{
+    return allMsgs.some(m=>m&&m.to===CU.username&&m.from===u.username&&new Date(m.ts).getTime()>lr);
+  })||groupsLoad().filter(g=>g.members&&g.members.includes(CU.username)).some(g=>{
     const lr=chatLastRead(g.id);
-    return allMsgs.some(m=>m.to===g.id&&new Date(m.ts).getTime()>lr);
+    return allMsgs.some(m=>m&&m.to===g.id&&m.from!==CU.username&&new Date(m.ts).getTime()>lr);
   });
   dot.classList.toggle('show',hasUnread);
 }
@@ -1182,12 +1204,13 @@ function initChat(){
   document.getElementById('grp-modal-ok').onclick=createGroup;
 }
 function getChatContacts(){
-  const msgs=chatLoad();const groups=groupsLoad().filter(g=>isAdmin()||g.members.includes(CU.username));
+  const msgs=chatLoad();const groups=groupsLoad().filter(g=>g&&g.members&&(isAdmin()||g.members.includes(CU.username)));
   const convMap={};
   // Direct messages involving current user (or all if admin)
   msgs.filter(m=>{
-    if(isAdmin())return!m.to.startsWith('grp_');
-    return(m.from===CU.username||m.to===CU.username)&&!m.to.startsWith('grp_');
+    if(!m||!m.to||!m.from)return false;
+    if(isAdmin())return!(m.to||'').startsWith('grp_');
+    return(m.from===CU.username||m.to===CU.username)&&!(m.to||'').startsWith('grp_');
   }).forEach(m=>{
     const other=m.from===CU.username?m.to:m.from;
     const otherName=m.from===CU.username?m.toName:m.fromName;
@@ -1216,13 +1239,13 @@ function renderChatContacts(scroll=true){
     const allActive=CHAT_ACTIVE&&CHAT_ACTIVE.isAll;
     html+=`<div class="chat-contact${allActive?' active':''}" onclick="selectChatAll()">
       <div class="chat-av cav-all">📋</div>
-      <div class="chat-ci"><div class="chat-cn">Todos los mensajes</div><div class="chat-cl">${chatLoad().filter(m=>!m.to.startsWith('grp_')).length} mensajes</div></div>
+      <div class="chat-ci"><div class="chat-cn">Todos los mensajes</div><div class="chat-cl">${chatLoad().filter(m=>m&&m.to&&!(m.to||'').startsWith('grp_')).length} mensajes</div></div>
     </div>`;
   }
   convs.forEach(c=>{
     if(c.type==='group'){
       const lastMsg=c.msgs[c.msgs.length-1];
-      const lastTxt=lastMsg?lastMsg.text?lastMsg.text.slice(0,36)+'…':'🖼 Imagen':'Sin mensajes';
+      const lastTxt=lastMsg?(lastMsg.text?(lastMsg.text.length>36?lastMsg.text.slice(0,36)+'…':lastMsg.text):'🖼 Imagen'):'Sin mensajes';
       const lr=chatLastRead(c.id);
       const unread=c.msgs.filter(m=>m.from!==CU.username&&new Date(m.ts).getTime()>lr).length;
       const isActive=CHAT_ACTIVE&&CHAT_ACTIVE.groupId===c.id;
@@ -1233,7 +1256,7 @@ function renderChatContacts(scroll=true){
       </div>`;
     }else{
       const lastMsg=c.msgs[c.msgs.length-1];
-      const lastTxt=lastMsg?lastMsg.text?lastMsg.text.slice(0,36)+(lastMsg.text.length>36?'…':''):'🖼 Imagen':'Sin mensajes';
+      const lastTxt=lastMsg?(lastMsg.text?(lastMsg.text.length>36?lastMsg.text.slice(0,36)+'…':lastMsg.text):'🖼 Imagen'):'Sin mensajes';
       const lr=chatLastRead(c.username);
       const unread=c.msgs.filter(m=>m.to===CU.username&&m.from===c.username&&new Date(m.ts).getTime()>lr).length;
       const isActive=CHAT_ACTIVE&&CHAT_ACTIVE.username===c.username;
@@ -1287,7 +1310,7 @@ function renderChatMessages(scroll=true){
   if(!CHAT_ACTIVE)return;
   let msgs;
   if(CHAT_ACTIVE.isAll){
-    msgs=chatLoad().filter(m=>!m.to.startsWith('grp_')).sort((a,b)=>new Date(a.ts)-new Date(b.ts));
+    msgs=chatLoad().filter(m=>m&&m.to&&m.from&&!(m.to||'').startsWith('grp_')).sort((a,b)=>new Date(a.ts)-new Date(b.ts));
     if(!msgs.length){msgEl.innerHTML='<div class="chat-empty-state"><div class="ce-icon">📭</div><p>Sin mensajes todavía</p></div>';return;}
     msgEl.innerHTML=msgs.map(m=>`<div class="chat-all-msg">
       <div class="chat-all-meta"><span class="chat-all-from">${esc(m.fromName||m.from)}</span><span>→</span><span class="chat-all-to">${esc(m.toName||m.to)}</span><span style="margin-left:auto;color:var(--mu)">${fmtTime(m.ts)}</span></div>
@@ -1312,7 +1335,9 @@ function buildMsgBubbles(msgs){
     const day=d.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
     if(day!==lastDay){html+=`<div class="chat-day-sep"><span>${day}</span></div>`;lastDay=day;}
     const isMine=m.from===CU.username;
-    const content=(m.text?`<span>${esc(m.text)}</span>`:'')+(m.img?`<img src="${m.img}" onclick="openLightbox(this.src)" alt="" style="cursor:zoom-in">`:' ');
+    const textPart=m.text?`<span>${esc(m.text)}</span>`:'';
+    const imgPart=m.img?`<img src="${m.img}" onclick="openLightbox(this.src)" alt="" style="max-width:100%;border-radius:8px;display:block;margin-top:${m.text?'6px':'0'};cursor:zoom-in">`:'';
+    const content=textPart+imgPart||'&nbsp;';
     html+=`<div class="chat-msg-wrap ${isMine?'mine':'theirs'}">
       ${!isMine?`<div class="chat-bname">${esc(m.fromName||m.from)}</div>`:''}
       <div class="chat-bubble ${isMine?'mine':'theirs'}">${content}</div>
@@ -1321,6 +1346,7 @@ function buildMsgBubbles(msgs){
   });
   return html;
 }
+window.openShareModal=openShareModal;
 window.openLightbox=function(src){const lb=document.getElementById('img-lightbox');document.getElementById('img-lightbox-src').src=src;lb.style.display='flex';};
 function sendChatMsg(){
   if(!CHAT_ACTIVE||CHAT_ACTIVE.isAll)return;
