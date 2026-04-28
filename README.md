@@ -39,7 +39,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 1.5r
 .n-right{display:flex;align-items:center;gap:8px;}
 .n-user{font-size:12px;color:var(--mu);background:var(--s2);border:1px solid var(--br);border-radius:6px;padding:5px 10px;}
 .n-user strong{color:var(--tx);}
-.n-tabs{display:flex;gap:4px;}
+.n-tabs{display:flex;gap:4px;flex-wrap:wrap;}
 .tab{padding:5px 14px;border-radius:6px;border:none;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;background:transparent;color:var(--mu);}
 .tab:hover{color:var(--tx);background:var(--s2);}
 .tab.on{background:var(--red);color:#fff;}
@@ -48,7 +48,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 1.5r
 .out-btn:hover{color:var(--tx);}
 .pg{display:none;}
 .pg.on{display:block;}
-.wrap{max-width:560px;margin:0 auto;padding:2rem 1.5rem;}
+.wrap{max-width:580px;margin:0 auto;padding:2rem 1.5rem;}
 .wide{max-width:1150px;margin:0 auto;padding:2rem 1.5rem;}
 .pgtitle{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:.03em;line-height:1;margin-bottom:.35rem;}
 .pgtitle span{color:var(--red);}
@@ -82,7 +82,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 1.5r
 .ri-n{font-weight:500;}
 .ri-m{color:var(--mu);font-size:12px;}
 .ri-f{font-family:monospace;font-size:11px;color:var(--gold-l);white-space:nowrap;}
-.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:1.5rem;}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1.5rem;}
 .sc{background:var(--s1);border:1px solid var(--br);border-radius:12px;padding:1rem 1.1rem;}
 .sc-l{font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.06em;font-weight:500;}
 .sc-v{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:.03em;margin-top:2px;}
@@ -145,23 +145,29 @@ tr:hover td{background:rgba(255,255,255,.015);}
 .ur{font-size:11px;color:var(--mu);margin-top:2px;}
 .del-u{border:none;border-radius:6px;padding:5px 10px;font-family:'Outfit',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;background:var(--red-f);color:#f88;white-space:nowrap;}
 .del-u:hover{background:var(--red);color:#fff;}
-/* STATS */
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:1.5rem;}
-.stat-card{background:var(--s1);border:1px solid var(--br2);border-radius:12px;padding:1rem 1.2rem;}
-.stat-label{font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.06em;font-weight:500;margin-bottom:6px;}
-.stat-val{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.03em;}
-.stat-sub{font-size:11px;color:var(--mu);margin-top:2px;}
+.estado-selector{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem;}
+.estado-opt{display:flex;align-items:center;gap:8px;background:var(--s2);border:2px solid var(--br2);border-radius:10px;padding:10px 12px;cursor:pointer;transition:border-color .15s,background .15s;}
+.estado-opt input[type=radio]{accent-color:var(--gold);width:15px;height:15px;flex-shrink:0;}
+.estado-opt.sel-pend{border-color:#fbbf24!important;background:rgba(251,191,36,.07);}
+.estado-opt.sel-pre{border-color:#a855f7!important;background:rgba(168,85,247,.07);}
+.estado-opt.sel-decl{border-color:#ef4444!important;background:rgba(239,68,68,.07);}
+.estado-opt.sel-ok{border-color:var(--green)!important;background:rgba(34,197,94,.07);}
+.estado-lbl{font-size:13px;font-weight:500;}
+.estado-sub{font-size:10px;color:var(--mu);}
+.req-alert{background:var(--red-f);border:1px solid rgba(200,16,46,.3);border-radius:8px;padding:10px 14px;font-size:12px;color:#f88;margin-bottom:1rem;display:none;}
+.req-alert.show{display:block;}
+.stats-section{background:var(--s1);border:1px solid var(--br2);border-radius:14px;padding:1.25rem;margin-bottom:1.25rem;}
+.stats-section-title{font-size:12px;font-weight:600;color:var(--mu);text-transform:uppercase;letter-spacing:.07em;margin-bottom:1rem;}
 .mini-table{width:100%;border-collapse:collapse;font-size:12px;}
-.mini-table th{padding:6px 10px;text-align:left;color:var(--mu);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--br);}
-.mini-table td{padding:6px 10px;border-bottom:1px solid var(--br);}
+.mini-table th{padding:7px 10px;text-align:left;color:var(--mu);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--br);font-weight:600;}
+.mini-table td{padding:7px 10px;border-bottom:1px solid var(--br);}
 .mini-table tr:last-child td{border-bottom:none;}
-/* BENEFICIOS */
-.ben-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.5rem;}
-.btab{padding:6px 14px;border-radius:20px;border:1px solid var(--br2);background:transparent;color:var(--mu);font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;transition:all .15s;white-space:nowrap;}
-.btab.on{border-color:var(--gold);color:var(--gold-l);background:var(--gold-f);}
-.ben-panel{display:none;}
-.ben-panel.on{display:block;}
-.ben-hero{background:var(--s1);border:1px solid var(--br2);border-radius:16px;padding:1.5rem;}
+.mini-table tr:hover td{background:rgba(255,255,255,.02);}
+.exec-accordion{margin-bottom:8px;border:1px solid var(--br2);border-radius:10px;overflow:hidden;}
+.exec-acc-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;background:var(--s2);font-size:13px;font-weight:500;}
+.exec-acc-head:hover{background:rgba(255,255,255,.05);}
+.exec-acc-body{display:none;padding:10px 14px;background:var(--s1);}
+.exec-acc-body.open{display:block;}
 .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.25rem;margin-bottom:2rem;}
 .tc{border-radius:18px;padding:1.5rem 1.6rem;position:relative;overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s;min-height:190px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 8px 32px rgba(0,0,0,.5);}
 .tc:hover{transform:translateY(-5px);box-shadow:0 20px 50px rgba(0,0,0,.7);}
@@ -203,13 +209,13 @@ tr:hover td{background:rgba(255,255,255,.015);}
 .cd-reqs{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:7px;}
 .cd-req{background:var(--s2);border-radius:8px;padding:8px 12px;font-size:12px;color:#ccc;display:flex;gap:8px;align-items:flex-start;}
 .cd-nota{background:var(--gold-f);border:1px solid rgba(200,168,75,.25);border-radius:8px;padding:10px 14px;font-size:11px;color:#bbb;line-height:1.6;margin-top:1rem;}
-/* STATUS */
 .st-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;transition:opacity .15s;white-space:nowrap;}
 .st-badge:hover{opacity:.8;}
 .st-pend{background:rgba(251,191,36,.15);border:1px solid rgba(251,191,36,.4);color:#fbbf24;}
 .st-decl{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.4);color:#ef4444;}
 .st-pre{background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.4);color:#a855f7;}
 .st-ok{background:var(--green-f);border:1px solid rgba(34,197,94,.3);color:var(--green);}
+.st-none{background:rgba(120,120,120,.15);border:1px solid rgba(120,120,120,.3);color:#888;}
 .st-modal{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:999;padding:1rem;}
 .st-modal.show{display:flex;}
 .st-box{background:var(--s1);border:1px solid var(--br2);border-radius:18px;padding:2rem;max-width:460px;width:100%;max-height:90vh;overflow-y:auto;}
@@ -233,7 +239,6 @@ tr:hover td{background:rgba(255,255,255,.015);}
 .st-comment-block textarea{width:100%;background:rgba(0,0,0,.2);border:1px solid var(--br2);border-radius:7px;padding:9px 12px;color:var(--tx);font-family:'Outfit',sans-serif;font-size:13px;resize:vertical;min-height:65px;outline:none;line-height:1.5;}
 .st-comment-block textarea:focus{border-color:var(--gold);}
 .st-comment-block textarea::placeholder{color:#444;}
-.st-comment-hint{font-size:10px;color:var(--mu);margin-top:4px;line-height:1.4;}
 .st-req-badge{display:inline-block;padding:1px 6px;background:var(--red-f);border-radius:4px;color:#f88;font-size:9px;font-weight:600;margin-left:4px;}
 .st-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:1.25rem;}
 .st-save{padding:10px 22px;background:var(--red);border:none;border-radius:8px;color:#fff;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;}
@@ -246,13 +251,12 @@ tr:hover td{background:rgba(255,255,255,.015);}
 .st-detail-box h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;margin-bottom:1rem;}
 .st-detail-txt{font-size:14px;line-height:1.7;color:#ccc;background:var(--s2);border-radius:10px;padding:14px;}
 .nota-preview{font-size:10px;color:var(--mu);margin-top:2px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-@media(max-width:640px){nav{padding:0 1rem;}.twocol{grid-template-columns:1fr;}.row2{grid-template-columns:1fr;}}
+@media(max-width:640px){nav{padding:0 .75rem;}.twocol{grid-template-columns:1fr;}.row2{grid-template-columns:1fr;}.estado-selector{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
 <div class="spinner-overlay" id="spinner"><div class="spinner"></div></div>
 
-<!-- LOGIN -->
 <div id="login-screen">
   <div class="login-box">
     <div class="l-logo">BANAMEX <span>VENTAS</span></div>
@@ -264,7 +268,6 @@ tr:hover td{background:rgba(255,255,255,.015);}
   </div>
 </div>
 
-<!-- APP -->
 <div id="app">
   <nav>
     <div class="n-logo">BANAMEX <span>VENTAS</span></div>
@@ -275,19 +278,18 @@ tr:hover td{background:rgba(255,255,255,.015);}
     </div>
   </nav>
 
-  <!-- EJECUTIVO: Registrar venta -->
   <div id="pg-exec" class="pg">
     <div class="wrap">
       <div class="pgtitle">Nueva <span>venta</span></div>
-      <p class="pgsub">Registra los datos de tu tarjeta vendida</p>
+      <p class="pgsub">Todos los campos marcados con * son obligatorios</p>
       <div class="card">
         <div class="row2">
-          <div class="field"><label>Nombre del cliente</label><input type="text" id="f-cliente" placeholder="Ej. María González"></div>
+          <div class="field"><label>Nombre del cliente *</label><input type="text" id="f-cliente" placeholder="Ej. María González"></div>
           <div class="field"><label>Teléfono del cliente</label><input type="tel" id="f-tel" placeholder="Ej. 5512345678" maxlength="15"></div>
         </div>
         <div class="row2">
           <div class="field">
-            <label>Tipo de tarjeta vendida</label>
+            <label>Tipo de tarjeta *</label>
             <select id="f-tarjeta">
               <option value="">— Selecciona —</option>
               <option>Joy Banamex</option><option>Clásica Banamex</option><option>Teleton Banamex</option>
@@ -295,7 +297,7 @@ tr:hover td{background:rgba(255,255,255,.015);}
               <option>Platinum Banamex</option><option>Explora Banamex</option><option>Otra</option>
             </select>
           </div>
-          <div class="field"><label>Fecha de venta</label><input type="date" id="f-fecha"></div>
+          <div class="field"><label>Fecha de venta *</label><input type="date" id="f-fecha"></div>
         </div>
         <div class="row2">
           <div class="field"><label>RFC del cliente (opcional)</label><input type="text" id="f-rfc" placeholder="Ej. GOMJ850101MDF"></div>
@@ -305,10 +307,34 @@ tr:hover td{background:rgba(255,255,255,.015);}
           <div class="field"><label>Tarjeta de referencia (opcional)</label><input type="text" id="f-tarjetaRef" placeholder="Ej. Clásica Banamex"></div>
           <div class="field"><label>Línea de crédito ref. (opcional)</label><input type="number" id="f-ldcRef" placeholder="Ej. 30000" min="0"></div>
         </div>
-        <div class="field">
-          <label>Comentario inicial (opcional)</label>
-          <textarea id="f-comentario" placeholder="Ej. Cliente con tarjeta Oro vigente, le falta documentación…" rows="2"></textarea>
+
+        <div class="field"><label>Estado de la venta *</label></div>
+        <div class="estado-selector">
+          <label class="estado-opt" id="eopt-pend">
+            <input type="radio" name="f-estado" value="pendiente">
+            <div><div class="estado-lbl">📞 Pendiente</div><div class="estado-sub">Sin contactar aún</div></div>
+          </label>
+          <label class="estado-opt" id="eopt-pre">
+            <input type="radio" name="f-estado" value="preasignado">
+            <div><div class="estado-lbl">⭐ Preasignado</div><div class="estado-sub">Oferta ya asignada</div></div>
+          </label>
+          <label class="estado-opt" id="eopt-decl">
+            <input type="radio" name="f-estado" value="declino">
+            <div><div class="estado-lbl">❌ Declinó</div><div class="estado-sub">No quiso la tarjeta</div></div>
+          </label>
+          <label class="estado-opt" id="eopt-ok">
+            <input type="radio" name="f-estado" value="vendida">
+            <div><div class="estado-lbl">✅ Vendida</div><div class="estado-sub">Contratada exitosamente</div></div>
+          </label>
         </div>
+
+        <div class="field">
+          <label>Comentario de la gestión *</label>
+          <textarea id="f-comentario" placeholder="Describe el resultado de la gestión con este cliente…" rows="3"></textarea>
+        </div>
+
+        <div class="req-alert" id="req-alert"></div>
+
         <div class="frow">
           <div class="field"><label>Folio (automático si lo dejas vacío)</label><input type="text" id="f-folio" placeholder="BNX-000001" maxlength="20"></div>
           <div class="folio-pill" id="folio-pill">—</div>
@@ -322,30 +348,48 @@ tr:hover td{background:rgba(255,255,255,.015);}
     </div>
   </div>
 
-  <!-- ESTADÍSTICAS EJECUTIVO -->
   <div id="pg-stats" class="pg">
     <div class="wide">
-      <div class="pgtitle">Mis <span>estadísticas</span></div>
-      <p class="pgsub">Tu rendimiento día a día</p>
-      <div class="sgrid" id="exec-stats-cards"></div>
-      <div class="slbl">Ventas por tarjeta</div>
-      <div class="twrap" style="margin-bottom:1.5rem;">
-        <table class="mini-table">
-          <thead><tr><th>Tarjeta</th><th>Cantidad</th></tr></thead>
-          <tbody id="exec-stats-tarjeta"></tbody>
-        </table>
+      <div class="pgtitle">Estadísticas <span>equipo</span></div>
+      <p class="pgsub" id="stats-sub">Cargando…</p>
+
+      <div class="stats-section">
+        <div class="stats-section-title">🌐 Globales del equipo</div>
+        <div class="sgrid" id="stats-global-cards"></div>
+        <div class="row2" style="gap:1rem">
+          <div>
+            <div class="slbl" style="margin-top:0">Por tarjeta</div>
+            <div class="twrap"><table class="mini-table"><thead><tr><th>Tarjeta</th><th>Total</th><th>Vendidas</th></tr></thead><tbody id="stats-global-tarjeta"></tbody></table></div>
+          </div>
+          <div>
+            <div class="slbl" style="margin-top:0">Por estado</div>
+            <div class="twrap"><table class="mini-table"><thead><tr><th>Estado</th><th>Cant.</th><th>%</th></tr></thead><tbody id="stats-global-estado"></tbody></table></div>
+          </div>
+        </div>
       </div>
-      <div class="slbl">Ventas por estado</div>
-      <div class="twrap">
-        <table class="mini-table">
-          <thead><tr><th>Estado</th><th>Cantidad</th></tr></thead>
-          <tbody id="exec-stats-estado"></tbody>
-        </table>
+
+      <div class="stats-section" id="stats-mis-section">
+        <div class="stats-section-title">👤 Mis ventas</div>
+        <div class="sgrid" id="stats-mis-cards"></div>
+        <div class="row2" style="gap:1rem">
+          <div>
+            <div class="slbl" style="margin-top:0">Por tarjeta</div>
+            <div class="twrap"><table class="mini-table"><thead><tr><th>Tarjeta</th><th>Cant.</th></tr></thead><tbody id="stats-mis-tarjeta"></tbody></table></div>
+          </div>
+          <div>
+            <div class="slbl" style="margin-top:0">Por estado</div>
+            <div class="twrap"><table class="mini-table"><thead><tr><th>Estado</th><th>Cant.</th></tr></thead><tbody id="stats-mis-estado"></tbody></table></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-section" id="stats-exec-section" style="display:none">
+        <div class="stats-section-title">👥 Por ejecutivo</div>
+        <div id="stats-exec-list"></div>
       </div>
     </div>
   </div>
 
-  <!-- BENEFICIOS -->
   <div id="pg-ben" class="pg">
     <div class="wide">
       <div class="pgtitle">Beneficios de <span>tarjetas</span></div>
@@ -355,7 +399,6 @@ tr:hover td{background:rgba(255,255,255,.015);}
     </div>
   </div>
 
-  <!-- DASHBOARD ADMIN -->
   <div id="pg-dash" class="pg">
     <div class="wide">
       <div class="pgtitle gt">Dashboard <span>ventas</span></div>
@@ -398,23 +441,19 @@ tr:hover td{background:rgba(255,255,255,.015);}
     </div>
   </div>
 
-  <!-- USUARIOS -->
   <div id="pg-users" class="pg">
     <div class="wide">
       <div class="pgtitle gt">Gestión de <span>usuarios</span></div>
-      <p class="pgsub">Agrega, elimina o cambia el rol de los ejecutivos.</p>
+      <p class="pgsub">Agrega o elimina usuarios del equipo.</p>
       <div class="twocol">
         <div class="card">
           <div style="font-size:14px;font-weight:500;margin-bottom:1.2rem;">Agregar usuario</div>
           <div class="field"><label>Nombre completo</label><input type="text" id="nu-name" placeholder="Ej. Juan Pérez"></div>
           <div class="field"><label>Usuario</label><input type="text" id="nu-user" placeholder="Ej. jperez" autocomplete="off"></div>
           <div class="field"><label>Contraseña</label><input type="password" id="nu-pass" placeholder="Mínimo 4 caracteres"></div>
-          <div class="field" id="nu-role-field" style="display:none">
+          <div class="field" id="nu-role-wrap" style="display:none">
             <label>Rol</label>
-            <select id="nu-role">
-              <option value="exec">Ejecutivo</option>
-              <option value="admin">Admin</option>
-            </select>
+            <select id="nu-role"><option value="exec">Ejecutivo</option><option value="admin">Admin</option></select>
           </div>
           <button class="sbtn" id="add-user-btn">Agregar usuario</button>
           <div class="toast ok" id="u-ok"></div>
@@ -430,258 +469,239 @@ tr:hover td{background:rgba(255,255,255,.015);}
 </div>
 
 <script>
-/* ═══════════════════════════════════════
-   CONFIGURACIÓN — cambia esta URL si ngrok cambia
-   ═══════════════════════════════════════ */
-const API_URL = 'https://domelike-rubdown-hatching.ngrok-free.dev';
+const API_URL='https://domelike-rubdown-hatching.ngrok-free.dev';
+const FIXED_ACCOUNTS=[{username:'wliseo',password:'wliseo777',name:'Wliseo',role:'superadmin'}];
 
-/* ═══════════════════════════════════════
-   CUENTAS FIJAS (no se guardan en servidor)
-   ═══════════════════════════════════════ */
-const FIXED_ACCOUNTS = [
-  { username: 'admin',  password: 'admin123', name: 'Administrador', role: 'admin' },
-  { username: 'wliseo', password: 'wliseo777', name: 'Wliseo',       role: 'superadmin' }
-];
-
-/* ═══════════════════════════════════════
-   API
-   ═══════════════════════════════════════ */
-async function api(action, body={}) {
-  try {
-    const headers = { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' };
-    if (action === 'getSales') {
-      const r = await fetch(`${API_URL}/api/ventas`, { headers });
-      const data = await r.json();
-      setDbStatus(true);
-      return { ok: true, data };
-    }
-    if (action === 'addSale') {
-      const r = await fetch(`${API_URL}/api/ventas`, { method: 'POST', headers, body: JSON.stringify(body) });
-      setDbStatus(true);
-      return await r.json();
-    }
-    if (action === 'deleteSale') {
-      await fetch(`${API_URL}/api/ventas/${body.folio}`, { method: 'DELETE', headers });
-      setDbStatus(true);
-      return { ok: true };
-    }
-    if (action === 'clearSales') {
-      await fetch(`${API_URL}/api/ventas`, { method: 'DELETE', headers });
-      setDbStatus(true);
-      return { ok: true };
-    }
-    if (action === 'updateSale') {
-      const r = await fetch(`${API_URL}/api/ventas/${body.folio}`, { method: 'PUT', headers, body: JSON.stringify(body) });
-      setDbStatus(true);
-      return await r.json();
-    }
-    if (action === 'getUsers') {
-      const r = await fetch(`${API_URL}/api/usuarios`, { headers });
-      const data = await r.json();
-      setDbStatus(true);
-      return { ok: true, data };
-    }
-    if (action === 'addUser') {
-      const r = await fetch(`${API_URL}/api/usuarios`, { method: 'POST', headers, body: JSON.stringify(body) });
-      setDbStatus(true);
-      return await r.json();
-    }
-    if (action === 'deleteUser') {
-      await fetch(`${API_URL}/api/usuarios/${body.username}`, { method: 'DELETE', headers });
-      setDbStatus(true);
-      return { ok: true };
-    }
-    return { ok: false, error: 'Acción desconocida' };
-  } catch(e) {
-    setDbStatus(false);
-    return { ok: false, error: 'Sin conexión: ' + e.message };
-  }
+async function api(action,body={}){
+  try{
+    const h={'Content-Type':'application/json','ngrok-skip-browser-warning':'true'};
+    if(action==='getSales'){const r=await fetch(`${API_URL}/api/ventas`,{headers:h});setDbStatus(true);return{ok:true,data:await r.json()};}
+    if(action==='addSale'){const r=await fetch(`${API_URL}/api/ventas`,{method:'POST',headers:h,body:JSON.stringify(body)});setDbStatus(true);return await r.json();}
+    if(action==='deleteSale'){await fetch(`${API_URL}/api/ventas/${body.folio}`,{method:'DELETE',headers:h});setDbStatus(true);return{ok:true};}
+    if(action==='clearSales'){await fetch(`${API_URL}/api/ventas`,{method:'DELETE',headers:h});setDbStatus(true);return{ok:true};}
+    if(action==='updateSale'){const r=await fetch(`${API_URL}/api/ventas/${body.folio}`,{method:'PUT',headers:h,body:JSON.stringify(body)});setDbStatus(true);return await r.json();}
+    if(action==='getUsers'){const r=await fetch(`${API_URL}/api/usuarios`,{headers:h});setDbStatus(true);return{ok:true,data:await r.json()};}
+    if(action==='addUser'){const r=await fetch(`${API_URL}/api/usuarios`,{method:'POST',headers:h,body:JSON.stringify(body)});setDbStatus(true);return await r.json();}
+    if(action==='deleteUser'){await fetch(`${API_URL}/api/usuarios/${body.username}`,{method:'DELETE',headers:h});setDbStatus(true);return{ok:true};}
+    return{ok:false,error:'Acción desconocida'};
+  }catch(e){setDbStatus(false);return{ok:false,error:'Sin conexión: '+e.message};}
 }
 
-function setDbStatus(ok) {
-  const el = document.getElementById('srv-status');
-  if (!el) return;
-  el.className = ok ? 'srv-status srv-ok' : 'srv-status srv-err';
-  el.textContent = ok ? '✓ Servidor conectado' : '✕ Sin conexión';
-}
+function setDbStatus(ok){const el=document.getElementById('srv-status');if(!el)return;el.className=ok?'srv-status srv-ok':'srv-status srv-err';el.textContent=ok?'✓ Servidor conectado':'✕ Sin conexión';}
 
-/* ═══════════════════════════════════════
-   UTILS
-   ═══════════════════════════════════════ */
-let CU=null, SALES_CACHE=[], USERS_CACHE=[];
-let currentSaleForStatus = null;
-
+let CU=null,SALES_CACHE=[],USERS_CACHE=[],currentSaleForStatus=null;
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function fmt(ts){if(!ts)return '—';const d=new Date(ts);return d.toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});}
-function fmtDate(s){if(!s)return '—';const[y,m,d]=s.split('-');const M=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];return `${parseInt(d)} ${M[parseInt(m)-1]} ${y}`;}
+function fmt(ts){if(!ts)return'—';const d=new Date(ts);return d.toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});}
+function fmtDate(s){if(!s)return'—';const[y,m,d]=s.split('-');const M=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];return`${parseInt(d)} ${M[parseInt(m)-1]} ${y}`;}
 function ini(n){return n.trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'?';}
-function genFolio(){return 'BNX-'+String(Date.now()).slice(-6);}
+function genFolio(){return'BNX-'+String(Date.now()).slice(-6);}
 function spin(on){document.getElementById('spinner').classList.toggle('show',on);}
 function showToast(id,msg,type){const el=document.getElementById(id);if(!el)return;el.textContent=msg;el.className='toast '+type+' show';clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),4000);}
 function getComentarioActivo(sale){if(!sale.comentarios)return sale.notaEstado||'';return sale.comentarios[sale.estado||'pendiente']||'';}
-function estadoClase(e){return{'pendiente':'pend','declino':'decl','preasignado':'pre','vendida':'ok'}[e]||'pend';}
-function estadoTexto(e){return{'pendiente':'📞 Pendiente','declino':'❌ Declinó','preasignado':'⭐ Preasignado','vendida':'✅ Vendida'}[e]||'📞 Pendiente';}
+function estadoClase(e){return{'pendiente':'pend','declino':'decl','preasignado':'pre','vendida':'ok'}[e]||'none';}
+function estadoTexto(e){return{'pendiente':'📞 Pendiente','declino':'❌ Declinó','preasignado':'⭐ Preasignado','vendida':'✅ Vendida'}[e]||'⬜ Sin estado';}
+function isAdmin(){return CU&&(CU.role==='admin'||CU.role==='superadmin');}
 
-/* ═══════════════════════════════════════
-   AUTH
-   ═══════════════════════════════════════ */
 async function doLogin(){
   const u=(document.getElementById('l-user').value||'').trim().toLowerCase();
   const p=document.getElementById('l-pass').value;
   const errEl=document.getElementById('login-err');
   errEl.classList.remove('show');
   if(!u||!p){errEl.textContent='Escribe usuario y contraseña';errEl.classList.add('show');return;}
-
-  // Verificar cuentas fijas primero
-  const fixed = FIXED_ACCOUNTS.find(x=>x.username===u && x.password===p);
+  const fixed=FIXED_ACCOUNTS.find(x=>x.username===u&&x.password===p);
   if(fixed){CU={...fixed};await bootApp();return;}
-
-  spin(true);
-  const r=await api('getUsers');
-  spin(false);
+  spin(true);const r=await api('getUsers');spin(false);
   if(!r.ok){errEl.textContent='Error: '+r.error;errEl.classList.add('show');return;}
   USERS_CACHE=r.data||[];
   const found=USERS_CACHE.find(x=>x.username.toLowerCase()===u&&x.password===p);
   if(found){CU={...found};await bootApp();return;}
-  errEl.textContent=USERS_CACHE.length===0?'Sin usuarios. Contacta al superadmin.':'Usuario o contraseña incorrectos';
+  errEl.textContent=USERS_CACHE.length===0?'Sin usuarios. Contacta al administrador.':'Usuario o contraseña incorrectos';
   errEl.classList.add('show');
 }
 
-function doLogout(){
-  CU=null;SALES_CACHE=[];
-  document.getElementById('app').style.display='none';
-  document.getElementById('login-screen').style.display='flex';
-  document.getElementById('l-user').value='';
-  document.getElementById('l-pass').value='';
-}
+function doLogout(){CU=null;SALES_CACHE=[];document.getElementById('app').style.display='none';document.getElementById('login-screen').style.display='flex';document.getElementById('l-user').value='';document.getElementById('l-pass').value='';}
 
 async function bootApp(){
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app').style.display='block';
   document.getElementById('nav-name').textContent=CU.name;
-  buildNav();
-  buildBenPanels();
-  if(CU.role==='superadmin'||CU.role==='admin') await goPage('dash');
+  buildNav();buildBenPanels();
+  if(isAdmin())await goPage('dash');
   else await goPage('exec');
 }
 
 function buildNav(){
   const tabs=document.getElementById('n-tabs');
-  if(CU.role==='superadmin'){
-    tabs.innerHTML='<button class="tab gold" data-pg="dash">Dashboard</button><button class="tab gold" data-pg="ben">Beneficios</button><button class="tab gold" data-pg="users">Usuarios</button>';
-  } else if(CU.role==='admin'){
-    tabs.innerHTML='<button class="tab gold" data-pg="dash">Dashboard</button><button class="tab gold" data-pg="ben">Beneficios</button><button class="tab gold" data-pg="users">Usuarios</button>';
-  } else {
-    tabs.innerHTML='<button class="tab" data-pg="exec">Registrar venta</button><button class="tab" data-pg="stats">Mis estadísticas</button><button class="tab" data-pg="ben">Beneficios</button>';
+  if(isAdmin()){
+    tabs.innerHTML='<button class="tab gold" data-pg="dash">Dashboard</button><button class="tab gold" data-pg="stats">Estadísticas</button><button class="tab gold" data-pg="ben">Beneficios</button><button class="tab gold" data-pg="users">Usuarios</button>';
+  }else{
+    tabs.innerHTML='<button class="tab" data-pg="exec">Registrar venta</button><button class="tab" data-pg="stats">Estadísticas</button><button class="tab" data-pg="ben">Beneficios</button>';
   }
   document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>goPage(btn.dataset.pg)));
-  // Mostrar campo de rol solo para superadmin
-  const roleField = document.getElementById('nu-role-field');
-  if(roleField) roleField.style.display = CU.role==='superadmin' ? 'flex' : 'none';
+  const rw=document.getElementById('nu-role-wrap');
+  if(rw)rw.style.display=CU.role==='superadmin'?'flex':'none';
 }
 
 async function goPage(p){
   document.querySelectorAll('.pg').forEach(el=>el.classList.remove('on'));
   document.querySelectorAll('.tab').forEach(el=>el.classList.remove('on'));
   document.getElementById('pg-'+p)?.classList.add('on');
-  const tb=document.querySelector(`.tab[data-pg="${p}"]`);
-  if(tb)tb.classList.add('on');
+  const tb=document.querySelector(`.tab[data-pg="${p}"]`);if(tb)tb.classList.add('on');
   if(p==='exec'){setTodayDate();refreshFolio();await renderRecent();}
-  if(p==='stats')await renderExecStats();
+  if(p==='stats')await renderStats();
   if(p==='dash')await loadAndRenderDash();
   if(p==='users')await loadAndRenderUsers();
 }
 
-/* ═══════════════════════════════════════
-   EJECUTIVO
-   ═══════════════════════════════════════ */
 function setTodayDate(){const el=document.getElementById('f-fecha');if(el&&!el.value)el.value=new Date().toISOString().slice(0,10);}
 function refreshFolio(){const el=document.getElementById('folio-pill');if(el)el.textContent=genFolio();}
+
+document.addEventListener('change',function(e){
+  if(e.target.name==='f-estado'){
+    const map={pendiente:'eopt-pend',preasignado:'eopt-pre',declino:'eopt-decl',vendida:'eopt-ok'};
+    const selMap={pendiente:'sel-pend',preasignado:'sel-pre',declino:'sel-decl',vendida:'sel-ok'};
+    Object.values(map).forEach(id=>{const el=document.getElementById(id);if(el)el.className='estado-opt';});
+    const sel=map[e.target.value];if(sel){const el=document.getElementById(sel);if(el)el.className='estado-opt '+selMap[e.target.value];}
+  }
+  if(e.target.name==='st-radio')
+    document.querySelectorAll('.st-comment-block').forEach(b=>b.classList.toggle('highlighted',b.dataset.estado===e.target.value));
+});
 
 async function registrarVenta(){
   const cliente=(document.getElementById('f-cliente').value||'').trim();
   const tel=(document.getElementById('f-tel').value||'').trim();
   const tarjeta=document.getElementById('f-tarjeta').value;
   const fecha=document.getElementById('f-fecha').value;
+  const estadoEl=document.querySelector('input[name="f-estado"]:checked');
+  const estado=estadoEl?estadoEl.value:'';
   const comentario=(document.getElementById('f-comentario').value||'').trim();
   let folio=(document.getElementById('f-folio').value||'').trim();
   const rfc=(document.getElementById('f-rfc').value||'').trim();
   const ingresos=(document.getElementById('f-ingresos').value||'').trim();
   const tarjetaRef=(document.getElementById('f-tarjetaRef').value||'').trim();
   const ldcRef=(document.getElementById('f-ldcRef').value||'').trim();
-  if(!cliente){showToast('t-err','Escribe el nombre del cliente','err');return;}
-  if(!tarjeta){showToast('t-err','Selecciona el tipo de tarjeta','err');return;}
-  if(!fecha){showToast('t-err','Selecciona la fecha de venta','err');return;}
+  const alertEl=document.getElementById('req-alert');
+  alertEl.classList.remove('show');
+  if(!cliente){alertEl.textContent='⚠ Escribe el nombre del cliente';alertEl.classList.add('show');return;}
+  if(!tarjeta){alertEl.textContent='⚠ Selecciona el tipo de tarjeta';alertEl.classList.add('show');return;}
+  if(!fecha){alertEl.textContent='⚠ Selecciona la fecha de venta';alertEl.classList.add('show');return;}
+  if(!estado){alertEl.textContent='⚠ Selecciona el estado de la venta';alertEl.classList.add('show');return;}
+  if(!comentario){alertEl.textContent='⚠ Escribe un comentario sobre esta gestión';alertEl.classList.add('show');return;}
   if(!folio)folio=genFolio();
   document.getElementById('reg-btn').disabled=true;
   spin(true);
-  const r=await api('addSale',{folio,exec:CU.name,username:CU.username,cliente,tel,tarjeta,fecha,registrado:new Date().toISOString(),rfc:rfc||null,ingresos:ingresos||null,tarjetaRef:tarjetaRef||null,ldcRef:ldcRef||null,estado:'pendiente',comentarios:{pendiente:comentario||'',preasignado:'',declino:'',vendida:''}});
-  spin(false);
-  document.getElementById('reg-btn').disabled=false;
-  if(!r.ok){showToast('t-err','Error: '+r.error,'err');return;}
+  const comentarios={pendiente:'',preasignado:'',declino:'',vendida:''};
+  comentarios[estado]=comentario;
+  const r=await api('addSale',{folio,exec:CU.name,username:CU.username,cliente,tel,tarjeta,fecha,registrado:new Date().toISOString(),rfc:rfc||null,ingresos:ingresos||null,tarjetaRef:tarjetaRef||null,ldcRef:ldcRef||null,estado,comentarios,notaEstado:comentario});
+  spin(false);document.getElementById('reg-btn').disabled=false;
+  if(!r.ok){alertEl.textContent='Error: '+r.error;alertEl.classList.add('show');return;}
   ['f-cliente','f-tel','f-folio','f-rfc','f-ingresos','f-tarjetaRef','f-ldcRef','f-comentario'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('f-tarjeta').value='';
   document.getElementById('f-fecha').value=new Date().toISOString().slice(0,10);
+  document.querySelectorAll('input[name="f-estado"]').forEach(r=>r.checked=false);
+  ['eopt-pend','eopt-pre','eopt-decl','eopt-ok'].forEach(id=>{const el=document.getElementById(id);if(el)el.className='estado-opt';});
   refreshFolio();
-  showToast('t-ok','✓ Venta guardada — Folio '+folio,'ok');
+  showToast('t-ok','✓ Venta registrada — Folio '+folio,'ok');
   await renderRecent();
 }
 
 async function renderRecent(){
   const list=document.getElementById('exec-recent');
   const r=await api('getSales');
-  if(!r.ok){list.innerHTML='<p style="color:#f88;font-size:13px">Error al cargar ventas.</p>';return;}
-  const data=r.data.filter(v=>v.username===CU.username).slice(0,6);
+  if(!r.ok){list.innerHTML='<p style="color:#f88;font-size:13px">Error al cargar.</p>';return;}
+  const data=r.data.filter(v=>v.username===CU.username).slice(0,8);
   if(!data.length){list.innerHTML='<p style="color:var(--mu);font-size:13px">Aún no tienes ventas registradas.</p>';return;}
-  list.innerHTML=data.map(v=>{
-    const comentario=getComentarioActivo(v);
-    return `<div class="ri"><div style="flex:1;min-width:0"><div class="ri-n">${esc(v.cliente)}${v.rfc?' 📄':''}${v.ingresos?' 💰':''}</div><div class="ri-m">${esc(v.tarjeta)}${v.tel?' · '+esc(v.tel):''} · ${fmtDate(v.fecha)}</div>${comentario?`<div class="nota-preview" title="${esc(comentario)}">💬 ${esc(comentario)}</div>`:''}</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;"><span class="ri-f">${esc(v.folio)}</span><span class="st-badge st-${estadoClase(v.estado)}" onclick="openStatusModalFromFolio('${esc(v.folio)}')">${estadoTexto(v.estado)}</span></div></div>`;
-  }).join('');
+  list.innerHTML=data.map(v=>{const com=getComentarioActivo(v);return`<div class="ri"><div style="flex:1;min-width:0"><div class="ri-n">${esc(v.cliente)}${v.rfc?' 📄':''}${v.ingresos?' 💰':''}</div><div class="ri-m">${esc(v.tarjeta)}${v.tel?' · '+esc(v.tel):''} · ${fmtDate(v.fecha)}</div>${com?`<div class="nota-preview" title="${esc(com)}">💬 ${esc(com)}</div>`:''}</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;"><span class="ri-f">${esc(v.folio)}</span><span class="st-badge st-${estadoClase(v.estado)}" onclick="openStatusModalFromFolio('${esc(v.folio)}')">${estadoTexto(v.estado)}</span></div></div>`;}).join('');
 }
 
-/* ═══════════════════════════════════════
-   ESTADÍSTICAS EJECUTIVO
-   ═══════════════════════════════════════ */
-async function renderExecStats(){
-  const r=await api('getSales');
-  if(!r.ok) return;
-  const misVentas = r.data.filter(v=>v.username===CU.username);
-  const today = new Date().toDateString();
-  const hoy = misVentas.filter(v=>v.registrado&&new Date(v.registrado).toDateString()===today).length;
-  const semana = misVentas.filter(v=>v.registrado&&new Date(v.registrado).getTime()>Date.now()-7*86400000).length;
-  const vendidas = misVentas.filter(v=>v.estado==='vendida').length;
+const eLabels={'pendiente':'📞 Pendiente','preasignado':'⭐ Preasignado','declino':'❌ Declinó','vendida':'✅ Vendida'};
 
-  document.getElementById('exec-stats-cards').innerHTML=`
-    <div class="sc"><div class="sc-l">Total mis ventas</div><div class="sc-v cv-g">${misVentas.length}</div></div>
-    <div class="sc"><div class="sc-l">Hoy</div><div class="sc-v cv-gr">${hoy}</div></div>
-    <div class="sc"><div class="sc-l">Esta semana</div><div class="sc-v">${semana}</div></div>
-    <div class="sc"><div class="sc-l">Vendidas ✅</div><div class="sc-v cv-g">${vendidas}</div></div>
+async function renderStats(){
+  const r=await api('getSales');if(!r.ok)return;
+  const all=r.data;
+  const misVentas=all.filter(v=>v.username===CU.username);
+  const today=new Date().toDateString();
+  document.getElementById('stats-sub').textContent=isAdmin()?'Vista completa del equipo':'Tu rendimiento y estadísticas globales';
+
+  // GLOBALES
+  const vendidas=all.filter(v=>v.estado==='vendida').length;
+  const pct=all.length?Math.round(vendidas/all.length*100):0;
+  document.getElementById('stats-global-cards').innerHTML=`
+    <div class="sc"><div class="sc-l">Total equipo</div><div class="sc-v cv-g">${all.length}</div></div>
+    <div class="sc"><div class="sc-l">Hoy</div><div class="sc-v cv-gr">${all.filter(v=>v.registrado&&new Date(v.registrado).toDateString()===today).length}</div></div>
+    <div class="sc"><div class="sc-l">Esta semana</div><div class="sc-v">${all.filter(v=>v.registrado&&new Date(v.registrado).getTime()>Date.now()-7*86400000).length}</div></div>
+    <div class="sc"><div class="sc-l">Vendidas ✅</div><div class="sc-v cv-g">${vendidas}<span style="font-size:1rem;color:var(--mu)"> (${pct}%)</span></div></div>
   `;
+  const byT={};all.forEach(v=>{if(!byT[v.tarjeta])byT[v.tarjeta]={t:0,v:0};byT[v.tarjeta].t++;if(v.estado==='vendida')byT[v.tarjeta].v++;});
+  document.getElementById('stats-global-tarjeta').innerHTML=Object.entries(byT).sort((a,b)=>b[1].t-a[1].t).map(([t,c])=>`<tr><td>${esc(t)}</td><td><strong>${c.t}</strong></td><td style="color:var(--green)">${c.v}</td></tr>`).join('')||'<tr><td colspan="3" style="color:var(--mu);text-align:center">Sin datos</td></tr>';
+  const byE={pendiente:0,preasignado:0,declino:0,vendida:0};all.forEach(v=>{const e=v.estado||'pendiente';byE[e]=(byE[e]||0)+1;});
+  document.getElementById('stats-global-estado').innerHTML=Object.entries(byE).map(([e,c])=>`<tr><td>${eLabels[e]}</td><td><strong>${c}</strong></td><td style="color:var(--mu)">${all.length?Math.round(c/all.length*100):0}%</td></tr>`).join('');
 
-  // Por tarjeta
-  const byTarjeta={};
-  misVentas.forEach(v=>{byTarjeta[v.tarjeta]=(byTarjeta[v.tarjeta]||0)+1;});
-  document.getElementById('exec-stats-tarjeta').innerHTML=
-    Object.entries(byTarjeta).sort((a,b)=>b[1]-a[1]).map(([t,c])=>`<tr><td>${esc(t)}</td><td><strong>${c}</strong></td></tr>`).join('')||'<tr><td colspan="2" style="color:var(--mu);text-align:center">Sin datos</td></tr>';
+  // MIS STATS
+  const misSec=document.getElementById('stats-mis-section');
+  if(isAdmin()){misSec.style.display='none';}
+  else{
+    misSec.style.display='block';
+    const mv=misVentas;
+    document.getElementById('stats-mis-cards').innerHTML=`
+      <div class="sc"><div class="sc-l">Mis ventas</div><div class="sc-v cv-g">${mv.length}</div></div>
+      <div class="sc"><div class="sc-l">Hoy</div><div class="sc-v cv-gr">${mv.filter(v=>v.registrado&&new Date(v.registrado).toDateString()===today).length}</div></div>
+      <div class="sc"><div class="sc-l">Esta semana</div><div class="sc-v">${mv.filter(v=>v.registrado&&new Date(v.registrado).getTime()>Date.now()-7*86400000).length}</div></div>
+      <div class="sc"><div class="sc-l">Vendidas ✅</div><div class="sc-v cv-g">${mv.filter(v=>v.estado==='vendida').length}</div></div>
+    `;
+    const misByT={};mv.forEach(v=>{misByT[v.tarjeta]=(misByT[v.tarjeta]||0)+1;});
+    document.getElementById('stats-mis-tarjeta').innerHTML=Object.entries(misByT).sort((a,b)=>b[1]-a[1]).map(([t,c])=>`<tr><td>${esc(t)}</td><td><strong>${c}</strong></td></tr>`).join('')||'<tr><td colspan="2" style="color:var(--mu);text-align:center">Sin datos</td></tr>';
+    const misByE={pendiente:0,preasignado:0,declino:0,vendida:0};mv.forEach(v=>{const e=v.estado||'pendiente';misByE[e]=(misByE[e]||0)+1;});
+    document.getElementById('stats-mis-estado').innerHTML=Object.entries(misByE).map(([e,c])=>`<tr><td>${eLabels[e]}</td><td><strong>${c}</strong></td></tr>`).join('');
+  }
 
-  // Por estado
-  const byEstado={pendiente:0,preasignado:0,declino:0,vendida:0};
-  misVentas.forEach(v=>{const e=v.estado||'pendiente';byEstado[e]=(byEstado[e]||0)+1;});
-  const estadoLabels={'pendiente':'📞 Pendiente','preasignado':'⭐ Preasignado','declino':'❌ Declinó','vendida':'✅ Vendida'};
-  document.getElementById('exec-stats-estado').innerHTML=
-    Object.entries(byEstado).map(([e,c])=>`<tr><td>${estadoLabels[e]||e}</td><td><strong>${c}</strong></td></tr>`).join('');
+  // POR EJECUTIVO (solo admins)
+  const execSec=document.getElementById('stats-exec-section');
+  if(isAdmin()){
+    execSec.style.display='block';
+    const byExec={};
+    all.forEach(v=>{if(!byExec[v.exec])byExec[v.exec]=[];byExec[v.exec].push(v);});
+    const list=document.getElementById('stats-exec-list');
+    if(!Object.keys(byExec).length){list.innerHTML='<p style="color:var(--mu);font-size:13px">Sin ventas registradas aún.</p>';return;}
+    list.innerHTML=Object.entries(byExec).sort((a,b)=>b[1].length-a[1].length).map(([name,vs])=>{
+      const vend=vs.filter(v=>v.estado==='vendida').length;
+      const hoyE=vs.filter(v=>v.registrado&&new Date(v.registrado).toDateString()===today).length;
+      const semE=vs.filter(v=>v.registrado&&new Date(v.registrado).getTime()>Date.now()-7*86400000).length;
+      const byTE={};vs.forEach(v=>{byTE[v.tarjeta]=(byTE[v.tarjeta]||0)+1;});
+      const byEE={pendiente:0,preasignado:0,declino:0,vendida:0};vs.forEach(v=>{const e=v.estado||'pendiente';byEE[e]=(byEE[e]||0)+1;});
+      return`<div class="exec-accordion">
+        <div class="exec-acc-head" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.arr').textContent=this.nextElementSibling.classList.contains('open')?'▲':'▼'">
+          <span>${esc(name)}</span>
+          <span style="display:flex;gap:8px;align-items:center">
+            <span class="badge b-b">${vs.length} ventas</span>
+            <span class="badge b-g">${vend} vendidas</span>
+            <span class="arr" style="color:var(--mu);font-size:12px">▼</span>
+          </span>
+        </div>
+        <div class="exec-acc-body">
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-bottom:10px">
+            <div class="sc" style="padding:.6rem .9rem"><div class="sc-l">Total</div><div class="sc-v cv-g" style="font-size:1.5rem">${vs.length}</div></div>
+            <div class="sc" style="padding:.6rem .9rem"><div class="sc-l">Hoy</div><div class="sc-v cv-gr" style="font-size:1.5rem">${hoyE}</div></div>
+            <div class="sc" style="padding:.6rem .9rem"><div class="sc-l">Semana</div><div class="sc-v" style="font-size:1.5rem">${semE}</div></div>
+            <div class="sc" style="padding:.6rem .9rem"><div class="sc-l">Vendidas</div><div class="sc-v cv-g" style="font-size:1.5rem">${vend}</div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div>
+              <div class="slbl" style="margin-top:0">Por tarjeta</div>
+              <table class="mini-table"><thead><tr><th>Tarjeta</th><th>Cant.</th></tr></thead><tbody>${Object.entries(byTE).sort((a,b)=>b[1]-a[1]).map(([t,c])=>`<tr><td>${esc(t)}</td><td><strong>${c}</strong></td></tr>`).join('')}</tbody></table>
+            </div>
+            <div>
+              <div class="slbl" style="margin-top:0">Por estado</div>
+              <table class="mini-table"><thead><tr><th>Estado</th><th>Cant.</th></tr></thead><tbody>${Object.entries(byEE).map(([e,c])=>`<tr><td style="font-size:11px">${eLabels[e]}</td><td><strong>${c}</strong></td></tr>`).join('')}</tbody></table>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }else{execSec.style.display='none';}
 }
 
-/* ═══════════════════════════════════════
-   DASHBOARD ADMIN
-   ═══════════════════════════════════════ */
-function setSyncStatus(s,msg){
-  const dot=document.getElementById('sync-dot');
-  const txt=document.getElementById('sync-txt');
-  if(!dot)return;
-  dot.className='sync-dot '+s;
-  txt.textContent=msg;
-}
+function setSyncStatus(s,msg){const dot=document.getElementById('sync-dot');const txt=document.getElementById('sync-txt');if(!dot)return;dot.className='sync-dot '+s;txt.textContent=msg;}
 
 async function loadAndRenderDash(){
   setSyncStatus('loading','Cargando datos…');
@@ -693,56 +713,43 @@ async function loadAndRenderDash(){
 }
 
 window.openStatusModalFromFolio=function(folio){
-  const sale=SALES_CACHE.find(v=>v.folio===folio)||SALES_CACHE.find(v=>v.folio===folio);
-  if(sale)openStatusModal(sale);
-  else{
-    // buscar en ventas del ejecutivo
-    api('getSales').then(r=>{
-      if(r.ok){const s=r.data.find(v=>v.folio===folio);if(s)openStatusModal(s);}
-    });
-  }
+  let sale=SALES_CACHE.find(v=>v.folio===folio);
+  if(sale){openStatusModal(sale);return;}
+  api('getSales').then(r=>{if(r.ok){const s=r.data.find(v=>v.folio===folio);if(s)openStatusModal(s);}});
 };
 
 function openStatusModal(sale){
   currentSaleForStatus=sale;
   document.getElementById('st-modal-client').textContent=`Cliente: ${sale.cliente} — Folio: ${sale.folio}`;
   const estado=sale.estado||'pendiente';
-  const radio=document.querySelector(`input[name="st-radio"][value="${estado}"]`);
-  if(radio)radio.checked=true;
-  const comentarios=sale.comentarios||{};
-  const legacy=sale.notaEstado||'';
+  const radio=document.querySelector(`input[name="st-radio"][value="${estado}"]`);if(radio)radio.checked=true;
+  const comentarios=sale.comentarios||{};const legacy=sale.notaEstado||'';
   document.getElementById('st-nota-pend').value=comentarios.pendiente||(estado==='pendiente'?legacy:'');
   document.getElementById('st-nota-pre').value=comentarios.preasignado||(estado==='preasignado'?legacy:'');
   document.getElementById('st-nota-decl').value=comentarios.declino||(estado==='declino'?legacy:'');
   document.getElementById('st-nota-ok').value=comentarios.vendida||(estado==='vendida'?legacy:'');
+  document.querySelectorAll('.st-comment-block').forEach(b=>b.classList.toggle('highlighted',b.dataset.estado===estado));
   document.getElementById('st-modal').classList.add('show');
 }
 
 function renderDashTable(){
   const search=(document.getElementById('d-search').value||'').toLowerCase();
   const ft=document.getElementById('d-filt').value;
-  const all=SALES_CACHE;
-  let data=all.slice();
+  const all=SALES_CACHE;let data=all.slice();
   if(search)data=data.filter(v=>(v.exec||'').toLowerCase().includes(search)||(v.cliente||'').toLowerCase().includes(search)||(v.folio||'').toLowerCase().includes(search));
   if(ft)data=data.filter(v=>v.tarjeta===ft);
   document.getElementById('s-tot').textContent=all.length;
   document.getElementById('s-exe').textContent=new Set(all.map(v=>v.username)).size;
   const today=new Date().toDateString();
   document.getElementById('s-hoy').textContent=all.filter(v=>v.registrado&&new Date(v.registrado).toDateString()===today).length;
-  const weekAgo=Date.now()-7*86400000;
-  document.getElementById('s-sem').textContent=all.filter(v=>v.registrado&&new Date(v.registrado).getTime()>weekAgo).length;
-  const tbody=document.getElementById('t-body');
-  const empty=document.getElementById('t-empty');
+  document.getElementById('s-sem').textContent=all.filter(v=>v.registrado&&new Date(v.registrado).getTime()>Date.now()-7*86400000).length;
+  const tbody=document.getElementById('t-body');const empty=document.getElementById('t-empty');
   if(!data.length){tbody.innerHTML='';empty.style.display='block';}
   else{
     empty.style.display='none';
-    tbody.innerHTML=data.map(v=>{
-      const comentario=getComentarioActivo(v);
-      return `<tr><td class="tdf">${esc(v.folio)}</td><td class="tdb">${esc(v.exec)}</td><td>${esc(v.cliente)}</td><td class="tdm">${esc(v.tel||'—')}</td><td><span class="badge b-r">${esc(v.tarjeta)}</span></td><td><span class="st-badge st-${estadoClase(v.estado)}" onclick="openStatusModalFromFolio('${esc(v.folio)}')">${estadoTexto(v.estado)}</span></td><td class="tdm" style="max-width:180px;">${comentario?`<span style="cursor:pointer;color:#ccc;" onclick="showStatusNote('${comentario.replace(/'/g,"\\'")}')" title="${esc(comentario)}">💬 ${esc(comentario.slice(0,40))}${comentario.length>40?'…':''}</span>`:'<span style="color:#444">—</span>'}</td><td class="tdm">${fmtDate(v.fecha)}</td><td class="tdm">${fmt(v.registrado)}</td><td><button class="delbtn" data-folio="${esc(v.folio)}">✕</button></td></tr>`;
-    }).join('');
+    tbody.innerHTML=data.map(v=>{const com=getComentarioActivo(v);return`<tr><td class="tdf">${esc(v.folio)}</td><td class="tdb">${esc(v.exec)}</td><td>${esc(v.cliente)}</td><td class="tdm">${esc(v.tel||'—')}</td><td><span class="badge b-r">${esc(v.tarjeta)}</span></td><td><span class="st-badge st-${estadoClase(v.estado)}" onclick="openStatusModalFromFolio('${esc(v.folio)}')">${estadoTexto(v.estado)}</span></td><td class="tdm" style="max-width:180px;">${com?`<span style="cursor:pointer;color:#ccc;" onclick="showStatusNote('${com.replace(/'/g,"\\'")}')" title="${esc(com)}">💬 ${esc(com.slice(0,40))}${com.length>40?'…':''}</span>`:'<span style="color:#444">—</span>'}</td><td class="tdm">${fmtDate(v.fecha)}</td><td class="tdm">${fmt(v.registrado)}</td><td><button class="delbtn" data-folio="${esc(v.folio)}">✕</button></td></tr>`;}).join('');
   }
-  const counts={};
-  all.forEach(v=>{counts[v.exec]=(counts[v.exec]||0)+1;});
+  const counts={};all.forEach(v=>{counts[v.exec]=(counts[v.exec]||0)+1;});
   const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,12);
   const pc=['rp1','rp2','rp3'];
   document.getElementById('rank-grid').innerHTML=sorted.length?sorted.map(([name,cnt],i)=>`<div class="rcard"><div class="rpos ${pc[i]||''}">${i+1}</div><div><div class="rkn">${esc(name)}</div><div class="rkc">${cnt} venta${cnt!==1?'s':''}</div></div></div>`).join(''):'<p style="color:var(--mu);font-size:13px">Sin datos aún.</p>';
@@ -754,101 +761,62 @@ async function delSale(folio){
   if(!confirm('¿Eliminar la venta con folio '+folio+'?'))return;
   spin(true);const r=await api('deleteSale',{folio});spin(false);
   if(!r.ok){alert('Error: '+r.error);return;}
-  SALES_CACHE=SALES_CACHE.filter(v=>v.folio!==folio);
-  renderDashTable();setSyncStatus('ok','Sincronizado · '+SALES_CACHE.length+' ventas');
+  SALES_CACHE=SALES_CACHE.filter(v=>v.folio!==folio);renderDashTable();setSyncStatus('ok','Sincronizado · '+SALES_CACHE.length+' ventas');
 }
 
-/* ═══════════════════════════════════════
-   EXPORTAR EXCEL (CSV compatible con Excel)
-   ═══════════════════════════════════════ */
 function exportarExcel(){
   if(!SALES_CACHE.length){alert('No hay ventas para exportar.');return;}
   const cols=['Folio','Ejecutivo','Cliente','Teléfono','Tarjeta','Estado','Comentario','Fecha Venta','Registrado','RFC','Ingresos','Tarjeta Ref','LDC Ref'];
-  const rows=SALES_CACHE.map(v=>[
-    v.folio,v.exec,v.cliente,v.tel||'',v.tarjeta,v.estado||'pendiente',
-    getComentarioActivo(v).replace(/"/g,"'"),fmtDate(v.fecha),fmt(v.registrado),
-    v.rfc||'',v.ingresos||'',v.tarjetaRef||'',v.ldcRef||''
-  ].map(c=>`"${c}"`).join(','));
+  const rows=SALES_CACHE.map(v=>[v.folio,v.exec,v.cliente,v.tel||'',v.tarjeta,v.estado||'',getComentarioActivo(v).replace(/"/g,"'"),fmtDate(v.fecha),fmt(v.registrado),v.rfc||'',v.ingresos||'',v.tarjetaRef||'',v.ldcRef||''].map(c=>`"${c}"`).join(','));
   const csv=[cols.map(c=>`"${c}"`).join(','),...rows].join('\n');
   const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;
-  a.download='ventas_banamex_'+new Date().toISOString().slice(0,10)+'.csv';
-  a.click();
-  URL.revokeObjectURL(url);
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='ventas_banamex_'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(url);
 }
 
-/* ═══════════════════════════════════════
-   USUARIOS
-   ═══════════════════════════════════════ */
 async function loadAndRenderUsers(){
   spin(true);const r=await api('getUsers');spin(false);
   if(!r.ok){showToast('u-err','Error al cargar usuarios','err');return;}
-  USERS_CACHE=r.data||[];
-  renderUsersUI();
+  USERS_CACHE=r.data||[];renderUsersUI();
 }
 
 function renderUsersUI(){
-  const isSuperadmin = CU.role==='superadmin';
-  const fixedCards = FIXED_ACCOUNTS.map(u=>{
-    const av = u.role==='superadmin'?'av-s':'av-a';
-    const badge = u.role==='superadmin'?'b-purple':'b-g';
-    const roleLabel = u.role==='superadmin'?'superadmin':'admin';
-    return `<div class="ucard"><div class="uav ${av}">${ini(u.name)}</div><div class="ui"><div class="un">${esc(u.name)}</div><div class="ur"><span class="badge ${badge}">@${esc(u.username)} · ${roleLabel}</span></div></div></div>`;
-  }).join('');
-
-  const userCards = USERS_CACHE.length
-    ? USERS_CACHE.map(u=>{
-        const roleLabel = u.role==='admin'?'admin':'ejecutivo';
-        const badgeClass = u.role==='admin'?'b-g':'b-b';
-        return `<div class="ucard"><div class="uav av-e">${ini(u.name)}</div><div class="ui"><div class="un">${esc(u.name)}</div><div class="ur"><span class="badge ${badgeClass}">@${esc(u.username)} · ${roleLabel}</span></div></div>${isSuperadmin?`<button class="del-u" data-uname="${esc(u.username)}">Eliminar</button>`:''}</div>`;
-      }).join('')
-    : '<p style="color:var(--mu);font-size:13px;margin-top:4px">No hay ejecutivos agregados aún.</p>';
-
-  document.getElementById('ugrid').innerHTML = fixedCards + userCards;
+  const isSup=CU.role==='superadmin';
+  const fixedCards=FIXED_ACCOUNTS.map(u=>`<div class="ucard"><div class="uav av-s">${ini(u.name)}</div><div class="ui"><div class="un">${esc(u.name)}</div><div class="ur"><span class="badge b-purple">@${esc(u.username)} · superadmin</span></div></div></div>`).join('');
+  const userCards=USERS_CACHE.length?USERS_CACHE.map(u=>{const rl=u.role==='admin'?'admin':'ejecutivo';const bc=u.role==='admin'?'b-g':'b-b';return`<div class="ucard"><div class="uav av-e">${ini(u.name)}</div><div class="ui"><div class="un">${esc(u.name)}</div><div class="ur"><span class="badge ${bc}">@${esc(u.username)} · ${rl}</span></div></div>${isSup?`<button class="del-u" data-uname="${esc(u.username)}">Eliminar</button>`:''}</div>`;}).join(''):'<p style="color:var(--mu);font-size:13px;margin-top:4px">No hay usuarios agregados aún.</p>';
+  document.getElementById('ugrid').innerHTML=fixedCards+userCards;
 }
 
 async function addUser(){
   const name=(document.getElementById('nu-name').value||'').trim();
   const username=(document.getElementById('nu-user').value||'').trim().toLowerCase().replace(/\s+/g,'');
   const password=document.getElementById('nu-pass').value;
-  const role = CU.role==='superadmin' ? (document.getElementById('nu-role').value||'exec') : 'exec';
+  const role=CU.role==='superadmin'?(document.getElementById('nu-role').value||'exec'):'exec';
   if(!name||!username||!password){showToast('u-err','Completa todos los campos','err');return;}
   if(password.length<4){showToast('u-err','Contraseña mínimo 4 caracteres','err');return;}
   if(FIXED_ACCOUNTS.find(x=>x.username===username)){showToast('u-err','Ese usuario está reservado','err');return;}
   document.getElementById('add-user-btn').disabled=true;
   spin(true);const r=await api('addUser',{name,username,password,role});spin(false);
   document.getElementById('add-user-btn').disabled=false;
-  if(!r.ok){showToast('u-err',r.error||'Error al agregar','err');return;}
-  document.getElementById('nu-name').value='';
-  document.getElementById('nu-user').value='';
-  document.getElementById('nu-pass').value='';
-  showToast('u-ok','Usuario "'+name+'" agregado','ok');
-  await loadAndRenderUsers();
+  if(!r.ok){showToast('u-err',r.error||'Error','err');return;}
+  document.getElementById('nu-name').value='';document.getElementById('nu-user').value='';document.getElementById('nu-pass').value='';
+  showToast('u-ok','Usuario "'+name+'" agregado','ok');await loadAndRenderUsers();
 }
 
-/* ═══════════════════════════════════════
-   BENEFICIOS
-   ═══════════════════════════════════════ */
 const CARDS=[
-  {id:'joy',color:'tc-joy',name:'Joy Banamex',badge:'Sin anualidad',num:'•••• •••• •••• 1234',cat:'84% sin IVA',tasa:'63.69% anual',anualidad:'Sin comisión*',ingreso:'$15,000',ldc:'Desde $15,000',adicional:'—',pts:'No genera puntos Premia',bens:[{i:'🎬',t:'2x1 en Cinépolis',d:'Boletos en salas tradicionales comprando en cinepolis.com o la app.'},{i:'☕',t:'Bonificación Starbucks',d:'Ahorra $45 al recargar $150 en la app Starbucks Rewards los domingos.'},{i:'🚫',t:'Sin CVV impreso',d:'Más segura para compras en línea. CVV digital cambia en cada compra.'},{i:'📅',t:'Elige tu fecha de corte',d:'Cambia tu fecha de corte una vez al año.'},{i:'🎟️',t:'Preventas exclusivas',d:'Compra tus boletos antes que nadie.'},{i:'🆘',t:'Mastercard Global Service',d:'Reposición de tarjeta en 48 hrs por robo o extravío.'},{i:'🏥',t:'Libra One gratis 1 año',d:'Consulta médica, nutricional y más sin costo el primer año.'}],reqs:['INE/IFE o pasaporte vigente','Comprobante de domicilio no mayor a 3 meses','18 años de edad mínimo','Ingresos desde $15,000 MXN'],nota:'*Realiza al menos $300 en compras al mes para evitar comisión por inactividad.'},
-  {id:'clasica',color:'tc-clasica',name:'Clásica Banamex',badge:'Puntos Premia 5%',num:'•••• •••• •••• 2345',cat:'88.7% sin IVA',tasa:'62.63% anual',anualidad:'$815 sin IVA',ingreso:'$15,000',ldc:'Desde $15,000',adicional:'$405 sin IVA',pts:'5% Puntos Premia en todas tus compras',bens:[{i:'🎁',t:'1er año sin anualidad',d:'Realiza una compra antes del primer corte.'},{i:'⭐',t:'5% Puntos Premia',d:'Acumula en todas tus compras y úsalos como efectivo.'},{i:'⛽',t:'Puntos Dobles en gasolina',d:'Gana el doble de puntos al cargar gasolina todos los días.'},{i:'🏥',t:'3, 6 o 12 Pagos Fijos en Salud',d:'En hospitales, laboratorios y farmacias.'},{i:'🎬',t:'2x1 en Cinépolis',d:'Beneficio Mastercard en salas tradicionales.'},{i:'🎟️',t:'Preventas exclusivas',d:'Acceso anticipado a boletos de eventos.'},{i:'🏥',t:'Libra One gratis 1 año',d:'Asistencias médicas sin costo el primer año.'}],reqs:['INE/IFE o pasaporte vigente','Comprobante de domicilio no mayor a 3 meses','18 años de edad mínimo','Ingresos desde $15,000 MXN'],nota:'Bono bienvenida: 2,000 Puntos Premia al gastar $5,000 en primeros 3 meses.'},
-  {id:'teleton',color:'tc-teleton',name:'Teletón Banamex',badge:'Causa social',num:'•••• •••• •••• 3456',cat:'87.0% sin IVA',tasa:'62.47% anual',anualidad:'$540 sin IVA',ingreso:'$15,000',ldc:'Desde $15,000',adicional:'Sin costo',pts:'No genera puntos Premia',bens:[{i:'❤️',t:'Apoya al Teletón',d:'Cada uso apoya los Centros de Rehabilitación Infantil Teletón.'},{i:'💰',t:'Anualidad más baja',d:'Solo $540 sin IVA. Primer año gratis con una compra.'},{i:'👨‍👩‍👧‍👦',t:'6 tarjetas adicionales sin costo',d:'Para tu familia sin costo extra.'},{i:'🎬',t:'2x1 en Cinépolis',d:'En salas tradicionales de todo el país.'},{i:'🎟️',t:'Preventas exclusivas',d:'Para los mejores eventos de México.'},{i:'🏥',t:'Libra One gratis 1 año',d:'Sin costo el primer año.'}],reqs:['INE/IFE o pasaporte vigente','Comprobante de domicilio no mayor a 3 meses','18 años de edad mínimo','Ingresos desde $15,000 MXN'],nota:'Primer año sin anualidad con una compra antes del primer corte.'},
-  {id:'oro',color:'tc-oro',name:'Oro Banamex',badge:'Puntos Premia 7%',num:'•••• •••• •••• 4567',cat:'85.7% sin IVA',tasa:'60.58% anual',anualidad:'$1,230 sin IVA',ingreso:'$25,000',ldc:'Desde $25,000',adicional:'$620 sin IVA',pts:'7% Puntos Premia en todas tus compras',bens:[{i:'🎁',t:'1er año sin anualidad + bono',d:'Bono de 2,000 Puntos al gastar $5,000 en primeros 3 meses.'},{i:'⭐',t:'7% Puntos Premia',d:'El mayor % de puntos en tarjetas básicas Banamex.'},{i:'⛽',t:'Puntos Dobles en gasolina',d:'El doble de puntos al cargar gasolina todos los días.'},{i:'✈️',t:'3 MSI en viajes y salud',d:'3 meses sin intereses en viajes y salud.'},{i:'🛡️',t:'Seguro de viajes',d:'Hasta $400 USD por robo o daño accidental.'},{i:'🔒',t:'Seguro por fraude',d:'Cobertura hasta el saldo total de la cuenta.'},{i:'🏥',t:'Libra One gratis 1 año',d:'Sin costo el primer año.'}],reqs:['INE/IFE o pasaporte vigente','Comprobante de domicilio no mayor a 3 meses','18 años de edad mínimo','Ingresos desde $25,000 MXN'],nota:'Bono bienvenida: 2,000 Puntos Premia al gastar $5,000 en primeros 3 meses.'},
-  {id:'descubre',color:'tc-descubre',name:'Descubre Banamex',badge:'Puntos Momentos',num:'•••• •••• •••• 5678',cat:'86.0% sin IVA',tasa:'62.31% anual',anualidad:'$1,230 sin IVA',ingreso:'$25,000',ldc:'Desde $25,000',adicional:'$620 sin IVA',pts:'1 Punto Momento por cada $1 USD gastado',bens:[{i:'🎁',t:'1er año sin anualidad + bono',d:'Bono de 2,000 Puntos al gastar $5,000 en primeros 3 meses.'},{i:'🌟',t:'Puntos Momentos',d:'1 Punto Momento por cada dólar gastado.'},{i:'✈️',t:'2x1 en vuelos nacionales',d:'Cancún, Los Cabos, PVR, Acapulco y más.'},{i:'🎩',t:'Mastercard Concierge 24/7',d:'Asistente personal para reservas y eventos.'},{i:'🚗',t:'Elite Valet AICM',d:'50% de descuento en estacionamiento AICM.'},{i:'🍽️',t:'Dining Program',d:'20% de descuento en restaurantes seleccionados.'},{i:'🎟️',t:'Preventas exclusivas',d:'Para los mejores eventos.'}],reqs:['INE/IFE o pasaporte vigente','Comprobante de domicilio no mayor a 3 meses','18 años de edad mínimo','Ingresos desde $25,000 MXN'],nota:'Bono bienvenida: 2,000 Puntos Momentos al gastar $5,000 en primeros 3 meses.'},
-  {id:'platinum',color:'tc-platinum',name:'Platinum Banamex',badge:'Premium · Salas VIP',num:'•••• •••• •••• 6789',cat:'40.7% sin IVA',tasa:'32.02% anual',anualidad:'$2,725 sin IVA',ingreso:'$75,000',ldc:'Desde $50,000',adicional:'$1,360 sin IVA',pts:'10% Puntos Premia en todas tus compras',bens:[{i:'🎁',t:'1er año sin anualidad + bono',d:'Bono de 4,000 Puntos al gastar $15,000 en primeros 3 meses.'},{i:'💎',t:'10% Puntos Premia',d:'El mayor % de puntos de toda la línea Banamex.'},{i:'🛡️',t:'LIBRA Premium gratis de por vida',d:'Asistencias Vial, Legal, Gestoría, Hogar y Médica.'},{i:'✈️',t:'14 accesos anuales a salas VIP',d:'10 accesos Beyond + 4 accesos mundiales.'},{i:'🎩',t:'Mastercard Concierge 24/7',d:'Asistente personal global.'},{i:'🍽️',t:'Dining Program',d:'20% de descuento + bebida de cortesía.'},{i:'📉',t:'CAT preferencial',d:'Solo 40.7% sin IVA — la tasa más baja del segmento.'}],reqs:['INE/IFE o pasaporte vigente','Comprobante de domicilio no mayor a 3 meses','18 años mínimo','Ingresos desde $75,000 MXN','Buen historial crediticio'],nota:'Bono bienvenida: 4,000 Puntos Premia al gastar $15,000 en primeros 3 meses.'},
-  {id:'explora',color:'tc-explora',name:'Explora Banamex',badge:'Viajero frecuente',num:'•••• •••• •••• 7890',cat:'81.2% sin IVA',tasa:'60.27% anual',anualidad:'$2,725 sin IVA',ingreso:'$75,000',ldc:'Desde $50,000',adicional:'$1,360 sin IVA',pts:'1.15 Puntos Momentos por cada $1 USD gastado',bens:[{i:'🎁',t:'1er año sin anualidad + bono',d:'Bono de 4,000 Puntos al gastar $15,000 en primeros 3 meses.'},{i:'🌟',t:'1.15 Puntos Momentos',d:'Por cada dólar gastado.'},{i:'✈️',t:'2x1 en vuelos + bono aniversario',d:'10,000 Puntos Explora en aniversario.'},{i:'🛫',t:'14 accesos anuales a salas VIP',d:'10 accesos Beyond + 4 accesos mundiales.'},{i:'🎩',t:'Mastercard Concierge 24/7',d:'Asistente personal global los 365 días.'},{i:'🚗',t:'Elite Valet AICM',d:'50% de descuento en estacionamiento.'},{i:'🔒',t:'Master Seguro de Viajes hasta $1M USD',d:'Para ti y tu familia.'}],reqs:['INE/IFE o pasaporte vigente','Comprobante de domicilio no mayor a 3 meses','18 años mínimo','Ingresos desde $75,000 MXN','Buen historial crediticio'],nota:'Bono bienvenida: 4,000 Puntos al gastar $15,000 en primeros 3 meses.'}
+  {id:'joy',color:'tc-joy',name:'Joy Banamex',badge:'Sin anualidad',num:'•••• •••• •••• 1234',cat:'84% sin IVA',tasa:'63.69% anual',anualidad:'Sin comisión*',ingreso:'$15,000',ldc:'Desde $15,000',adicional:'—',pts:'No genera puntos Premia',bens:[{i:'🎬',t:'2x1 en Cinépolis',d:'En salas tradicionales comprando en cinepolis.com o la app.'},{i:'☕',t:'Bonificación Starbucks',d:'Ahorra $45 al recargar $150 en la app Starbucks Rewards los domingos.'},{i:'🚫',t:'Sin CVV impreso',d:'CVV digital cambia en cada compra desde la App Banamex.'},{i:'📅',t:'Elige tu fecha de corte',d:'Una vez al año.'},{i:'🎟️',t:'Preventas exclusivas',d:'Compra antes que nadie.'},{i:'🆘',t:'Mastercard Global Service',d:'Reposición en 48 hrs por robo o extravío.'},{i:'🏥',t:'Libra One gratis 1 año',d:'Consulta médica y más sin costo el primer año.'}],reqs:['INE/IFE o pasaporte vigente','Comprobante de domicilio no mayor a 3 meses','18 años mínimo','Ingresos desde $15,000 MXN'],nota:'*Realiza al menos $300 en compras al mes para evitar comisión por inactividad.'},
+  {id:'clasica',color:'tc-clasica',name:'Clásica Banamex',badge:'Puntos Premia 5%',num:'•••• •••• •••• 2345',cat:'88.7% sin IVA',tasa:'62.63% anual',anualidad:'$815 sin IVA',ingreso:'$15,000',ldc:'Desde $15,000',adicional:'$405 sin IVA',pts:'5% Puntos Premia',bens:[{i:'🎁',t:'1er año sin anualidad',d:'Con una compra antes del primer corte.'},{i:'⭐',t:'5% Puntos Premia',d:'Acumula y úsalos como efectivo en cajeros.'},{i:'⛽',t:'Puntos Dobles en gasolina',d:'El doble al cargar gasolina todos los días.'},{i:'🏥',t:'Pagos Fijos en Salud',d:'3, 6 o 12 MSI en hospitales y farmacias.'},{i:'🎬',t:'2x1 en Cinépolis',d:'En salas tradicionales.'},{i:'🎟️',t:'Preventas exclusivas',d:'Para los mejores eventos.'},{i:'🏥',t:'Libra One gratis 1 año',d:'Sin costo el primer año.'}],reqs:['INE/IFE o pasaporte vigente','Comprobante de domicilio no mayor a 3 meses','18 años mínimo','Ingresos desde $15,000 MXN'],nota:'Bono: 2,000 Puntos Premia al gastar $5,000 en primeros 3 meses.'},
+  {id:'teleton',color:'tc-teleton',name:'Teletón Banamex',badge:'Causa social',num:'•••• •••• •••• 3456',cat:'87.0% sin IVA',tasa:'62.47% anual',anualidad:'$540 sin IVA',ingreso:'$15,000',ldc:'Desde $15,000',adicional:'Sin costo',pts:'No genera puntos Premia',bens:[{i:'❤️',t:'Apoya al Teletón',d:'Cada uso apoya los Centros de Rehabilitación.'},{i:'💰',t:'Anualidad más baja',d:'$540 sin IVA. Primer año gratis.'},{i:'👨‍👩‍👧‍👦',t:'6 adicionales sin costo',d:'Para toda tu familia.'},{i:'🎬',t:'2x1 en Cinépolis',d:'En salas tradicionales.'},{i:'🎟️',t:'Preventas exclusivas',d:'Para los mejores eventos.'},{i:'🏥',t:'Libra One gratis 1 año',d:'Sin costo el primer año.'}],reqs:['INE/IFE o pasaporte vigente','Comprobante de domicilio no mayor a 3 meses','18 años mínimo','Ingresos desde $15,000 MXN'],nota:'Primer año sin anualidad con una compra antes del primer corte.'},
+  {id:'oro',color:'tc-oro',name:'Oro Banamex',badge:'Puntos Premia 7%',num:'•••• •••• •••• 4567',cat:'85.7% sin IVA',tasa:'60.58% anual',anualidad:'$1,230 sin IVA',ingreso:'$25,000',ldc:'Desde $25,000',adicional:'$620 sin IVA',pts:'7% Puntos Premia',bens:[{i:'🎁',t:'1er año sin anualidad + bono',d:'Bono de 2,000 Puntos al gastar $5,000 en primeros 3 meses.'},{i:'⭐',t:'7% Puntos Premia',d:'El mayor % en tarjetas básicas.'},{i:'⛽',t:'Puntos Dobles en gasolina',d:'El doble todos los días.'},{i:'✈️',t:'3 MSI en viajes y salud',d:'3 meses sin intereses.'},{i:'🛡️',t:'Seguro de viajes',d:'Hasta $400 USD.'},{i:'🔒',t:'Seguro por fraude',d:'Hasta el saldo total.'},{i:'🏥',t:'Libra One gratis 1 año',d:'Sin costo el primer año.'}],reqs:['INE/IFE o pasaporte vigente','Comprobante de domicilio no mayor a 3 meses','18 años mínimo','Ingresos desde $25,000 MXN'],nota:'Bono: 2,000 Puntos Premia al gastar $5,000 en primeros 3 meses.'},
+  {id:'descubre',color:'tc-descubre',name:'Descubre Banamex',badge:'Puntos Momentos',num:'•••• •••• •••• 5678',cat:'86.0% sin IVA',tasa:'62.31% anual',anualidad:'$1,230 sin IVA',ingreso:'$25,000',ldc:'Desde $25,000',adicional:'$620 sin IVA',pts:'1 Punto Momento por $1 USD',bens:[{i:'🎁',t:'1er año sin anualidad + bono',d:'Bono de 2,000 Puntos al gastar $5,000 en primeros 3 meses.'},{i:'🌟',t:'Puntos Momentos',d:'1 punto por dólar gastado.'},{i:'✈️',t:'2x1 en vuelos nacionales',d:'Cancún, Los Cabos, PVR y más.'},{i:'🎩',t:'Mastercard Concierge 24/7',d:'Asistente personal.'},{i:'🚗',t:'Elite Valet AICM',d:'50% de descuento en estacionamiento.'},{i:'🍽️',t:'Dining Program',d:'20% en restaurantes seleccionados.'},{i:'🎟️',t:'Preventas exclusivas',d:'Para los mejores eventos.'}],reqs:['INE/IFE o pasaporte vigente','Comprobante de domicilio no mayor a 3 meses','18 años mínimo','Ingresos desde $25,000 MXN'],nota:'Bono: 2,000 Puntos Momentos al gastar $5,000 en primeros 3 meses.'},
+  {id:'platinum',color:'tc-platinum',name:'Platinum Banamex',badge:'Premium · Salas VIP',num:'•••• •••• •••• 6789',cat:'40.7% sin IVA',tasa:'32.02% anual',anualidad:'$2,725 sin IVA',ingreso:'$75,000',ldc:'Desde $50,000',adicional:'$1,360 sin IVA',pts:'10% Puntos Premia',bens:[{i:'🎁',t:'1er año sin anualidad + bono',d:'Bono 4,000 Puntos al gastar $15,000 en primeros 3 meses.'},{i:'💎',t:'10% Puntos Premia',d:'El mayor % de la línea.'},{i:'🛡️',t:'LIBRA Premium de por vida',d:'Vial, Legal, Gestoría, Hogar y Médica.'},{i:'✈️',t:'14 accesos VIP anuales',d:'10 Salones Beyond + 4 mundiales.'},{i:'🎩',t:'Mastercard Concierge 24/7',d:'Asistente personal global.'},{i:'🍽️',t:'Dining Program',d:'20% + bebida de cortesía.'},{i:'📉',t:'CAT preferencial',d:'40.7% sin IVA.'}],reqs:['INE/IFE o pasaporte vigente','Comprobante de domicilio no mayor a 3 meses','18 años mínimo','Ingresos desde $75,000 MXN','Buen historial'],nota:'Bono: 4,000 Puntos al gastar $15,000 en primeros 3 meses.'},
+  {id:'explora',color:'tc-explora',name:'Explora Banamex',badge:'Viajero frecuente',num:'•••• •••• •••• 7890',cat:'81.2% sin IVA',tasa:'60.27% anual',anualidad:'$2,725 sin IVA',ingreso:'$75,000',ldc:'Desde $50,000',adicional:'$1,360 sin IVA',pts:'1.15 Puntos Momentos por $1 USD',bens:[{i:'🎁',t:'1er año sin anualidad + bono',d:'Bono 4,000 Puntos al gastar $15,000 en primeros 3 meses.'},{i:'🌟',t:'1.15 Puntos Momentos',d:'Por cada dólar gastado.'},{i:'✈️',t:'2x1 en vuelos + bono aniversario',d:'10,000 Puntos en aniversario.'},{i:'🛫',t:'14 accesos VIP anuales',d:'10 Salones Beyond + 4 mundiales.'},{i:'🎩',t:'Mastercard Concierge 24/7',d:'Asistente los 365 días.'},{i:'🚗',t:'Elite Valet AICM',d:'50% de descuento.'},{i:'🔒',t:'Seguro Viajes hasta $1M USD',d:'Para ti y tu familia.'}],reqs:['INE/IFE o pasaporte vigente','Comprobante de domicilio no mayor a 3 meses','18 años mínimo','Ingresos desde $75,000 MXN','Buen historial'],nota:'Bono: 4,000 Puntos al gastar $15,000 en primeros 3 meses.'}
 ];
 
 let _activeCard=null;
 function buildBenPanels(){document.getElementById('ben-tabs').style.display='none';document.getElementById('ben-panels').innerHTML='<div class="cards-grid" id="cards-grid"></div><div id="card-detail-wrap"></div>';renderCardsGrid();}
 function renderCardsGrid(){const grid=document.getElementById('cards-grid');if(!grid)return;grid.innerHTML=CARDS.map(c=>`<div class="tc ${c.color}${_activeCard===c.id?' sel':''}" data-cid="${c.id}"><div class="tc-badge">${c.badge}</div><div class="tc-logo">BANAMEX</div><div><div class="tc-chip"></div><div class="tc-num">${c.num}</div></div><div style="display:flex;align-items:flex-end;justify-content:space-between;"><div><div class="tc-cardname">Tarjeta de Crédito</div><div class="tc-titular">${c.name}</div></div><div class="tc-mc"><span class="r"></span><span class="y"></span></div></div></div>`).join('');grid.querySelectorAll('.tc').forEach(el=>el.addEventListener('click',()=>showCardDetail(el.dataset.cid)));}
-function showCardDetail(id){_activeCard=id;renderCardsGrid();const c=CARDS.find(x=>x.id===id);const wrap=document.getElementById('card-detail-wrap');wrap.innerHTML=`<div class="card-detail"><div class="cd-top"><div class="tc ${c.color} cd-mini"><div><div class="tc-chip" style="width:28px;height:20px;margin-bottom:.5rem;"></div><div style="font-family:monospace;font-size:10px;color:rgba(255,255,255,.6);">${c.num}</div></div><div style="font-size:11px;color:#fff;font-weight:600;">${c.name}</div></div><div style="flex:1;min-width:0;"><div class="cd-title">${c.name}</div><div class="cd-pts">${c.pts}</div></div><button class="cd-close" id="cd-close">✕ Cerrar</button></div><div class="cd-nums"><div class="cd-n"><div class="cd-nl">CAT Promedio</div><div class="cd-nv red">${c.cat}</div></div><div class="cd-n"><div class="cd-nl">Tasa anual</div><div class="cd-nv red">${c.tasa}</div></div><div class="cd-n"><div class="cd-nl">Anualidad</div><div class="cd-nv gold">${c.anualidad}</div></div><div class="cd-n"><div class="cd-nl">Ingreso mínimo</div><div class="cd-nv green">${c.ingreso}</div></div><div class="cd-n"><div class="cd-nl">Línea de Crédito</div><div class="cd-nv green">${c.ldc}</div></div><div class="cd-n"><div class="cd-nl">Tarjeta adicional</div><div class="cd-nv">${c.adicional}</div></div></div><div class="cd-sec">✨ Beneficios principales</div><ul class="cd-bens">${c.bens.map(b=>`<li><span class="cd-ico">${b.i}</span><div><span class="cd-bt">${b.t}</span>${b.d}</div></li>`).join('')}</ul><div class="cd-sec">📋 Requisitos</div><div class="cd-reqs">${c.reqs.map(r=>`<div class="cd-req"><span>✔</span><span>${r}</span></div>`).join('')}</div><div class="cd-nota">ℹ️ ${c.nota}</div></div>`;document.getElementById('cd-close').addEventListener('click',()=>{_activeCard=null;renderCardsGrid();document.getElementById('card-detail-wrap').innerHTML='';});wrap.scrollIntoView({behavior:'smooth',block:'nearest'});}
+function showCardDetail(id){_activeCard=id;renderCardsGrid();const c=CARDS.find(x=>x.id===id);const wrap=document.getElementById('card-detail-wrap');wrap.innerHTML=`<div class="card-detail"><div class="cd-top"><div class="tc ${c.color} cd-mini"><div><div class="tc-chip" style="width:28px;height:20px;margin-bottom:.5rem;"></div><div style="font-family:monospace;font-size:10px;color:rgba(255,255,255,.6);">${c.num}</div></div><div style="font-size:11px;color:#fff;font-weight:600;">${c.name}</div></div><div style="flex:1;min-width:0;"><div class="cd-title">${c.name}</div><div class="cd-pts">${c.pts}</div></div><button class="cd-close" id="cd-close">✕ Cerrar</button></div><div class="cd-nums"><div class="cd-n"><div class="cd-nl">CAT</div><div class="cd-nv red">${c.cat}</div></div><div class="cd-n"><div class="cd-nl">Tasa anual</div><div class="cd-nv red">${c.tasa}</div></div><div class="cd-n"><div class="cd-nl">Anualidad</div><div class="cd-nv gold">${c.anualidad}</div></div><div class="cd-n"><div class="cd-nl">Ingreso mín.</div><div class="cd-nv green">${c.ingreso}</div></div><div class="cd-n"><div class="cd-nl">Línea</div><div class="cd-nv green">${c.ldc}</div></div><div class="cd-n"><div class="cd-nl">Adicional</div><div class="cd-nv">${c.adicional}</div></div></div><div class="cd-sec">✨ Beneficios</div><ul class="cd-bens">${c.bens.map(b=>`<li><span class="cd-ico">${b.i}</span><div><span class="cd-bt">${b.t}</span>${b.d}</div></li>`).join('')}</ul><div class="cd-sec">📋 Requisitos</div><div class="cd-reqs">${c.reqs.map(r=>`<div class="cd-req"><span>✔</span><span>${r}</span></div>`).join('')}</div><div class="cd-nota">ℹ️ ${c.nota}</div></div>`;document.getElementById('cd-close').addEventListener('click',()=>{_activeCard=null;renderCardsGrid();document.getElementById('card-detail-wrap').innerHTML='';});wrap.scrollIntoView({behavior:'smooth',block:'nearest'});}
 
-/* ═══════════════════════════════════════
-   EVENTOS
-   ═══════════════════════════════════════ */
 document.addEventListener('click',async function(e){
   if(e.target.id==='login-btn'){doLogin();return;}
   if(e.target.id==='logout-btn'){doLogout();return;}
@@ -859,8 +827,7 @@ document.addEventListener('click',async function(e){
   if(e.target.classList.contains('del-u')&&e.target.dataset.uname){
     if(!confirm('¿Eliminar al usuario @'+e.target.dataset.uname+'?'))return;
     spin(true);const r=await api('deleteUser',{username:e.target.dataset.uname});spin(false);
-    if(!r.ok){alert('Error: '+r.error);return;}
-    await loadAndRenderUsers();return;
+    if(!r.ok){alert('Error: '+r.error);return;}await loadAndRenderUsers();return;
   }
   if(e.target.id==='export-btn'){exportarExcel();return;}
   if(e.target.id==='clear-btn'){
@@ -872,22 +839,17 @@ document.addEventListener('click',async function(e){
   if(e.target.id==='st-cancel'){document.getElementById('st-modal').classList.remove('show');currentSaleForStatus=null;return;}
   if(e.target.id==='st-save'){
     if(!currentSaleForStatus)return;
-    const estadoSeleccionado=document.querySelector('input[name="st-radio"]:checked')?.value;
-    if(!estadoSeleccionado){alert('Selecciona un estado.');return;}
-    const comentPend=document.getElementById('st-nota-pend').value.trim();
-    const comentDecl=document.getElementById('st-nota-decl').value.trim();
-    if(estadoSeleccionado==='pendiente'&&!comentPend){alert('Escribe un comentario para el estado Pendiente.');document.getElementById('st-nota-pend').focus();return;}
-    if(estadoSeleccionado==='declino'&&!comentDecl){alert('Escribe el motivo de la declinación.');document.getElementById('st-nota-decl').focus();return;}
-    const nuevosComentarios={pendiente:document.getElementById('st-nota-pend').value.trim(),preasignado:document.getElementById('st-nota-pre').value.trim(),declino:document.getElementById('st-nota-decl').value.trim(),vendida:document.getElementById('st-nota-ok').value.trim()};
-    spin(true);
-    const r=await api('updateSale',{folio:currentSaleForStatus.folio,estado:estadoSeleccionado,comentarios:nuevosComentarios,notaEstado:nuevosComentarios[estadoSeleccionado]||''});
-    spin(false);
-    if(!r.ok){alert('Error al guardar: '+r.error);return;}
-    document.getElementById('st-modal').classList.remove('show');
-    currentSaleForStatus=null;
+    const estadoSel=document.querySelector('input[name="st-radio"]:checked')?.value;
+    if(!estadoSel){alert('Selecciona un estado.');return;}
+    const taMap={pendiente:'pend',preasignado:'pre',declino:'decl',vendida:'ok'};
+    const comentActivo=document.getElementById('st-nota-'+taMap[estadoSel]).value.trim();
+    if(!comentActivo){alert('Escribe un comentario para el estado seleccionado.');return;}
+    const nuevos={pendiente:document.getElementById('st-nota-pend').value.trim(),preasignado:document.getElementById('st-nota-pre').value.trim(),declino:document.getElementById('st-nota-decl').value.trim(),vendida:document.getElementById('st-nota-ok').value.trim()};
+    spin(true);const r=await api('updateSale',{folio:currentSaleForStatus.folio,estado:estadoSel,comentarios:nuevos,notaEstado:nuevos[estadoSel]||''});spin(false);
+    if(!r.ok){alert('Error: '+r.error);return;}
+    document.getElementById('st-modal').classList.remove('show');currentSaleForStatus=null;
     if(document.getElementById('pg-dash').classList.contains('on'))await loadAndRenderDash();
-    else await renderRecent();
-    return;
+    else await renderRecent();return;
   }
   if(e.target.id==='st-detail-close'){document.getElementById('st-detail-pop').classList.remove('show');return;}
 });
@@ -896,37 +858,33 @@ document.addEventListener('keydown',function(e){
   if(e.key==='Escape'){document.getElementById('st-modal')?.classList.remove('show');document.getElementById('st-detail-pop')?.classList.remove('show');}
 });
 document.addEventListener('input',function(e){if(e.target.id==='d-search'||e.target.id==='d-filt')renderDashTable();});
-document.addEventListener('change',function(e){if(e.target.name==='st-radio')document.querySelectorAll('.st-comment-block').forEach(b=>{b.classList.toggle('highlighted',b.dataset.estado===e.target.value);});});
-
 document.getElementById('login-screen').style.display='flex';
 </script>
 
-<!-- STATUS MODAL -->
 <div class="st-modal" id="st-modal">
   <div class="st-box">
-    <h3>Estado de la venta</h3>
+    <h3>Actualizar estado</h3>
     <p id="st-modal-client">Cliente: —</p>
     <div class="st-opts">
-      <label class="st-opt"><input type="radio" name="st-radio" value="pendiente"><div><div class="st-opt-label">📞 Pendiente de llamar</div><div class="st-opt-sub">El cliente aún no ha sido contactado</div></div></label>
-      <label class="st-opt"><input type="radio" name="st-radio" value="declino"><div><div class="st-opt-label">❌ Declinó</div><div class="st-opt-sub">El cliente no quiso la tarjeta</div></div></label>
-      <label class="st-opt"><input type="radio" name="st-radio" value="preasignado"><div><div class="st-opt-label">⭐ Preasignado</div><div class="st-opt-sub">Cliente con oferta de tarjeta ya asignada</div></div></label>
-      <label class="st-opt"><input type="radio" name="st-radio" value="vendida"><div><div class="st-opt-label">✅ Vendida</div><div class="st-opt-sub">Tarjeta contratada exitosamente</div></div></label>
+      <label class="st-opt"><input type="radio" name="st-radio" value="pendiente"><div><div class="st-opt-label">📞 Pendiente</div><div class="st-opt-sub">Sin contactar aún</div></div></label>
+      <label class="st-opt"><input type="radio" name="st-radio" value="declino"><div><div class="st-opt-label">❌ Declinó</div><div class="st-opt-sub">No quiso la tarjeta</div></div></label>
+      <label class="st-opt"><input type="radio" name="st-radio" value="preasignado"><div><div class="st-opt-label">⭐ Preasignado</div><div class="st-opt-sub">Oferta ya asignada</div></div></label>
+      <label class="st-opt"><input type="radio" name="st-radio" value="vendida"><div><div class="st-opt-label">✅ Vendida</div><div class="st-opt-sub">Contratada exitosamente</div></div></label>
     </div>
     <div class="st-comments-section">
-      <div class="st-comments-header">💬 Comentarios por estado</div>
-      <div class="st-comment-block" data-estado="pendiente"><div class="st-comment-label pend">📞 Pendiente <span class="st-req-badge">REQUERIDO</span></div><textarea id="st-nota-pend" placeholder="Ej: No contestó, llamar el martes…"></textarea><div class="st-comment-hint">¿Qué pasó? ¿Cuándo volver a llamar?</div></div>
+      <div class="st-comments-header">💬 Comentario del estado seleccionado <span class="st-req-badge">REQUERIDO</span></div>
+      <div class="st-comment-block" data-estado="pendiente"><div class="st-comment-label pend">📞 Pendiente</div><textarea id="st-nota-pend" placeholder="Ej: No contestó, llamar el martes…"></textarea></div>
       <div class="st-comment-block" data-estado="preasignado"><div class="st-comment-label pre">⭐ Preasignado</div><textarea id="st-nota-pre" placeholder="Ej: Oferta Oro $45,000 asignada…"></textarea></div>
-      <div class="st-comment-block" data-estado="declino"><div class="st-comment-label decl">❌ Declinó <span class="st-req-badge">REQUERIDO</span></div><textarea id="st-nota-decl" placeholder="Ej: Ya tiene muchas tarjetas…"></textarea></div>
+      <div class="st-comment-block" data-estado="declino"><div class="st-comment-label decl">❌ Declinó</div><textarea id="st-nota-decl" placeholder="Ej: Ya tiene muchas tarjetas…"></textarea></div>
       <div class="st-comment-block" data-estado="vendida"><div class="st-comment-label ok">✅ Vendida</div><textarea id="st-nota-ok" placeholder="Ej: Contratada Oro $40,000…"></textarea></div>
     </div>
     <div class="st-btns">
       <button class="st-cancel" id="st-cancel">Cancelar</button>
-      <button class="st-save" id="st-save">Guardar estado</button>
+      <button class="st-save" id="st-save">Guardar</button>
     </div>
   </div>
 </div>
 
-<!-- STATUS DETAIL POPUP -->
 <div class="st-detail-pop" id="st-detail-pop">
   <div class="st-detail-box">
     <h3>Comentario</h3>
