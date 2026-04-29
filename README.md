@@ -138,15 +138,17 @@ nav::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;ba
 table{width:100%;border-collapse:collapse;min-width:750px;}
 thead tr{background:var(--s2);}
 thead tr{background:var(--s3);}
-tbody tr{background:var(--s2);}
-tbody tr:nth-child(even){background:var(--s1);}
-tbody tr:hover{background:var(--s3);}
+tbody tr{background:var(--s2) !important;}
+tbody tr:nth-child(even){background:#161B26 !important;}
+tbody tr:hover{background:var(--s4) !important;}
 th{padding:10px 13px;text-align:left;font-size:10px;font-weight:700;color:#8BA3C0;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--br);white-space:nowrap;}
 tr:last-child td{border-bottom:none;}
-td{padding:9px 13px;font-size:14px;font-weight:600;border-bottom:1px solid var(--br);vertical-align:middle;color:#EBF1FF !important;background:inherit;}
-td *{color:inherit;}
+/* FORCE all table text white — overrides everything */
+table tbody td{padding:9px 13px;font-size:14px;font-weight:600;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:middle;color:#EBF1FF !important;}
+table tbody tr td span:not(.badge):not(.st-badge):not(.st-badge *):not(.b-r):not(.b-b):not(.b-g):not(.b-p):not(.b-c):not(.b-gr){color:#EBF1FF !important;}
+table tbody tr td div,table tbody tr td p{color:#EBF1FF !important;}
 .tdf{font-family:monospace;font-size:12px;color:var(--gold) !important;font-weight:700;}
-.tdb{font-weight:700;color:#EBF1FF !important;}
+.tdb{font-weight:700;color:#ffffff !important;}
 .tdm{color:#a0b8d0 !important;font-size:12px;font-weight:500;}
 .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;letter-spacing:.02em;}
 .b-r{background:var(--red-f);color:#fca5a5;}
