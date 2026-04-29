@@ -1099,18 +1099,24 @@ function renderDashTable(){
   if(!data.length){tbody.innerHTML='';empty.style.display='block';}
   else{
     empty.style.display='none';
-    tbody.innerHTML=data.map(v=>{
+    const _TD='padding:9px 13px;color:#EBF1FF;font-size:13px;font-weight:500;vertical-align:middle;border-bottom:1px solid rgba(255,255,255,.06);';
+    const _TDM='padding:9px 13px;color:#8BA3C0;font-size:12px;vertical-align:middle;border-bottom:1px solid rgba(255,255,255,.06);';
+    tbody.innerHTML=data.map((v,i)=>{
       const com=getComment(v);
-      const shared=v.sharedWith?`<span class="badge b-c">📤 @${esc(v.sharedWith)}</span>`:'<span style="color:#2a364e">—</span>';
-      return`<tr>
-        <td class="tdf">${esc(v.folio)}</td><td class="tdb">${esc(v.exec)}</td><td>${esc(v.cliente)}</td>
-        <td class="tdm">${esc(v.tel||'—')}</td>
-        <td><span class="badge b-r">${esc(v.tarjeta)}</span></td>
-        <td><span class="st-badge st-${eCls(v.estado)}" onclick="openStatusModalFromFolio('${esc(v.folio)}')">${eTxt(v.estado)}</span></td>
-        <td class="tdm" style="max-width:170px">${com?`<span style="cursor:pointer;color:#ccc" onclick="showStatusNote('${com.replace(/'/g,"\\'")}')">💬 ${esc(com.slice(0,35))}${com.length>35?'…':''}</span>`:'<span style="color:#2a364e">—</span>'}</td>
-        <td>${shared}</td>
-        <td class="tdm">${fmtDate(v.fecha)}</td><td class="tdm">${fmt(v.registrado)}</td>
-        <td style="display:flex;gap:4px;align-items:center">
+      const bg=i%2===0?'#0F1219':'#161B26';
+      const shared=v.sharedWith?`<span class="badge b-c">📤 @${esc(v.sharedWith)}</span>`:'<span style="color:#445">—</span>';
+      return`<tr style="background:${bg}" onmouseover="this.style.background='#232B3E'" onmouseout="this.style.background='${bg}'">
+        <td style="${_TD}font-family:monospace;color:#F0C060;font-weight:700;">${esc(v.folio)}</td>
+        <td style="${_TD}font-weight:700;">${esc(v.exec)}</td>
+        <td style="${_TD}">${esc(v.cliente)}</td>
+        <td style="${_TDM}">${esc(v.tel||'—')}</td>
+        <td style="${_TD}"><span class="badge b-r">${esc(v.tarjeta)}</span></td>
+        <td style="${_TD}"><span class="st-badge st-${eCls(v.estado)}" onclick="openStatusModalFromFolio('${esc(v.folio)}')">${eTxt(v.estado)}</span></td>
+        <td style="${_TDM}max-width:170px;">${com?`<span style="cursor:pointer;color:#c4b5fd" onclick="showStatusNote('${com.replace(/'/g,"\\'")}')">💬 ${esc(com.slice(0,35))}${com.length>35?'…':''}</span>`:'<span style="color:#445">—</span>'}</td>
+        <td style="${_TD}">${shared}</td>
+        <td style="${_TDM}">${fmtDate(v.fecha)}</td>
+        <td style="${_TDM}">${fmt(v.registrado)}</td>
+        <td style="${_TD}display:flex;gap:4px;align-items:center;">
           <button class="share-btn-tbl" onclick="openShareModal('${esc(v.folio)}')" title="${v.sharedWith?'Reasignar/Quitar':'Compartir'}">📤</button>
           <button class="delbtn" data-folio="${esc(v.folio)}">✕</button>
         </td>
