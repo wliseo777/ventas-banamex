@@ -138,9 +138,8 @@ nav::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;ba
 table{width:100%;border-collapse:collapse;min-width:750px;}
 thead tr{background:var(--s2);}
 th{padding:10px 13px;text-align:left;font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--br);white-space:nowrap;}
-td{padding:9px 13px;font-size:12px;border-bottom:1px solid var(--br);vertical-align:middle;}
 tr:last-child td{border-bottom:none;}
-tr:hover td{background:rgba(255,255,255,.012);}
+tr:hover td{background:rgba(255,255,255,.04);}
 .tdf{font-family:monospace;font-size:11px;color:var(--gold);font-weight:700;}
 .tdb{font-weight:700;color:var(--tx);}
 .tdm{color:#a0b4cc;font-size:11px;}
@@ -198,17 +197,17 @@ td{padding:9px 13px;font-size:13px;border-bottom:1px solid var(--br);vertical-al
 .req-alert.show{display:block;}
 
 /* ─ STATS SECTION ─ */
-.stats-section{background:var(--s1);border:1px solid var(--br2);border-radius:14px;padding:1.3rem;margin-bottom:1.2rem;}
+.stats-section{background:var(--s2);border:1px solid var(--br2);border-radius:14px;padding:1.3rem;margin-bottom:1.2rem;}
 .stats-section-title{font-size:11px;font-weight:700;color:var(--mu2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1rem;}
 .mini-table{width:100%;border-collapse:collapse;font-size:12px;}
-.mini-table th{padding:7px 10px;text-align:left;color:var(--mu);font-size:10px;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--br);font-weight:700;}
+.mini-table th{padding:7px 10px;text-align:left;color:var(--mu2);font-size:10px;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--br);font-weight:700;background:var(--s3);}
 .mini-table td{padding:7px 10px;border-bottom:1px solid var(--br);color:var(--tx);font-size:13px;}
 .mini-table tr:last-child td{border-bottom:none;}
 .mini-table tr:hover td{background:rgba(255,255,255,.02);}
 .exec-accordion{margin-bottom:7px;border:1px solid var(--br2);border-radius:10px;overflow:hidden;}
 .exec-acc-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;background:var(--s2);font-size:13px;font-weight:500;}
 .exec-acc-head:hover{background:rgba(255,255,255,.03);}
-.exec-acc-body{display:none;padding:10px 14px;background:var(--s1);}
+.exec-acc-body{display:none;padding:10px 14px;background:var(--s2);}
 .exec-acc-body.open{display:block;}
 
 /* ─ BADGES ─ */
@@ -403,6 +402,11 @@ td{padding:9px 13px;font-size:13px;border-bottom:1px solid var(--br);vertical-al
 .grp-member-item.picked{border-color:var(--green);background:var(--green-f);}
 .grp-member-item .gmi-av{width:28px;height:28px;border-radius:50%;background:var(--red-f);color:#fca5a5;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
 .grp-member-item .gmi-name{font-size:13px;font-weight:600;}
+
+/* ─ DELETE CHAT/GROUP ─ */
+.conv-del-btn{background:transparent;border:none;color:#2a364e;cursor:pointer;font-size:13px;padding:2px 5px;border-radius:4px;transition:color .15s;flex-shrink:0;opacity:0;}
+.chat-contact:hover .conv-del-btn{opacity:1;}
+.conv-del-btn:hover{color:var(--red);}
 
 /* ─ NOTIFICATION TOAST ─ */
 .notif-toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--s1);border:1px solid var(--pri);border-radius:14px;padding:1rem 1.2rem;max-width:320px;z-index:9999;display:none;box-shadow:0 10px 40px rgba(0,0,0,.6);animation:slideIn .3s ease;}
@@ -1176,12 +1180,26 @@ async function api_sendMessage(msg){
 /* ── CHAT (API-based — idéntico al original que funciona) ── */
 let CHAT_MESSAGES=[];
 let _chatImgData=null,_chatPasteReady=false;
-const LS_GROUPS='wliseos_grps_v1';
+/* ── HIDDEN CONVS (localStorage) ── */
+const LS_HIDDEN='wliseos_hidden_v1';
+function hiddenLoad(){try{return JSON.parse(localStorage.getItem(LS_HIDDEN)||'{}');}catch{return{};}}
+function hideConv(key){const h=hiddenLoad();h[CU.username+'_'+key]=Date.now();localStorage.setItem(LS_HIDDEN,JSON.stringify(h));}
+function isHidden(key){const h=hiddenLoad();return !!(h[CU.username+'_'+key]);}
+function unhide(key){const h=hiddenLoad();delete h[CU.username+'_'+key];localStorage.setItem(LS_HIDDEN,JSON.stringify(h));}
 
-/* ── GROUPS ── */
-function grpsLoad(){try{return JSON.parse(localStorage.getItem(LS_GROUPS)||'[]');}catch{return[];}}
-function grpsSave(g){try{localStorage.setItem(LS_GROUPS,JSON.stringify(g));}catch(e){}}
-function myGroups(){return grpsLoad().filter(g=>g&&g.members&&g.members.includes(CU?.username));}
+/* ── GROUPS (via API — syncs across devices) ── */
+function myGroups(){
+  // Groups are stored as special messages type='group_create' in the API
+  const created={};
+  CHAT_MESSAGES.forEach(m=>{
+    if(!m||!m.type)return;
+    if(m.type==='group_create'&&m.members&&m.members.includes(CU.username)){
+      if(!created[m.groupId])created[m.groupId]={id:m.groupId,name:m.groupName,members:m.members,createdBy:m.from};
+    }
+    if(m.type==='group_delete'&&created[m.groupId])delete created[m.groupId];
+  });
+  return Object.values(created);
+}
 
 /* ── BROWSER NOTIFICATIONS ── */
 async function reqNotifPerm(){if('Notification' in window&&Notification.permission==='default')await Notification.requestPermission();}
@@ -1196,15 +1214,22 @@ function showNotifToast(fromName,text){
   clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),5000);
 }
 function fireNotification(fromName,text,groupName){
-  const title=groupName?`${groupName} — ${fromName}`:`Mensaje de ${fromName}`;
-  // Browser notification
-  if('Notification' in window&&Notification.permission==='granted'){
-    const n=new Notification(title,{body:text.length>100?text.slice(0,100)+'…':text,icon:'',tag:'wliseos-chat'});
-    n.onclick=()=>{window.focus();goPage('chat');n.close();};
-    setTimeout(()=>n.close(),6000);
+  const title=groupName?`👥 ${groupName}: ${fromName}`:`💬 ${fromName}`;
+  const body=(text||'📎 Imagen').slice(0,120);
+  // In-app toast ALWAYS (no permission needed)
+  showNotifToast(title,body);
+  // Browser notification - only if page is not focused
+  if(document.hidden||!document.hasFocus()){
+    if('Notification' in window&&Notification.permission==='granted'){
+      try{
+        const n=new Notification(title,{body,icon:'/favicon.ico',badge:'/favicon.ico',tag:'wliseos-msg-'+Date.now()});
+        n.onclick=()=>{window.focus();goPage('chat');n.close();};
+        setTimeout(()=>{try{n.close();}catch(e){}},7000);
+      }catch(e){}
+    }else if('Notification' in window&&Notification.permission!=='denied'){
+      Notification.requestPermission().then(p=>{if(p==='granted')fireNotification(fromName,text,groupName);});
+    }
   }
-  // In-app toast (always show)
-  showNotifToast(groupName?`${fromName} en ${groupName}`:fromName,text||'📎 Imagen');
 }
 
 function getAllChatUsers(){
@@ -1269,28 +1294,27 @@ async function initChat(){
 function startChatPoll(){
   stopChatPoll();
   CHAT_POLL=setInterval(async()=>{
-    const prevCount=CHAT_MESSAGES.length;
-    const prevIds=new Set(CHAT_MESSAGES.map(m=>m.timestamp+'_'+m.from));
+    const prevIds=new Set(CHAT_MESSAGES.map(m=>m.timestamp+'__'+m.from+'__'+(m.to||'')));
     const r=await api_getMessages();
     if(r.ok){
       const newMsgs=r.data||[];
-      // Find truly new messages for this user
+      // Detect new real chat messages (not group_create/delete meta)
       const incoming=newMsgs.filter(m=>{
         if(!m||!m.from||!m.to)return false;
-        if(m.from===CU.username)return false; // own message
-        // DM to me
-        if(m.to===CU.username&&!prevIds.has(m.timestamp+'_'+m.from))return true;
-        // Group message
-        const myGrps=myGroups().map(g=>g.id);
-        if(myGrps.includes(m.to)&&!prevIds.has(m.timestamp+'_'+m.from))return true;
-        return false;
+        if(m.from===CU.username)return false;
+        if(m.type==='group_create'||m.type==='group_delete')return false;
+        const uid=m.timestamp+'__'+m.from+'__'+(m.to||'');
+        if(prevIds.has(uid))return false;
+        if(m.to===CU.username)return true;
+        const myGrpIds=myGroups().map(g=>g.id);
+        return myGrpIds.includes(m.to);
       });
-      // Fire notification for each new incoming message
       incoming.forEach(m=>{
-        const grp=myGroups().find(g=>g.id===m.to);
-        const isOnChatPage=document.getElementById('pg-chat')?.classList.contains('on');
-        const isActiveConv=CHAT_ACTIVE&&(CHAT_ACTIVE.username===m.from||(CHAT_ACTIVE.groupId&&CHAT_ACTIVE.groupId===m.to));
-        if(!isActiveConv||!isOnChatPage){
+        const grps=myGroups();
+        const grp=grps.find(g=>g.id===m.to);
+        const chatOpen=document.getElementById('pg-chat')?.classList.contains('on');
+        const activeConv=CHAT_ACTIVE&&(CHAT_ACTIVE.username===m.from||(CHAT_ACTIVE.groupId&&CHAT_ACTIVE.groupId===m.to));
+        if(!activeConv||!chatOpen){
           fireNotification(m.fromName||m.from,m.text||'📎 Imagen',grp?grp.name:null);
         }
       });
@@ -1321,17 +1345,20 @@ function updateChatDot(){
 
 function getConversations(){
   const convMap={};
-  const grpMap={};
   const users=getAllChatUsers();
-  const groups=myGroups();
+  const groups=myGroups(); // from API messages type=group_create
   const grpIds=new Set(groups.map(g=>g.id));
-  // Initialize groups
+  const grpMap={};
   groups.forEach(g=>{grpMap[g.id]={...g,messages:[]};});
+
   CHAT_MESSAGES.forEach(m=>{
     if(!m||!m.from||!m.to)return;
-    // Group message
-    if(grpIds.has(m.to)){grpMap[m.to]?.messages.push(m);return;}
-    if(isAdmin()&&m.to.startsWith('grp_')&&!grpIds.has(m.to))return; // skip unknown groups for admin DM view
+    if(m.type==='group_create'||m.type==='group_delete')return; // skip meta
+    // Group chat message
+    if(grpIds.has(m.to)){if(grpMap[m.to])grpMap[m.to].messages.push(m);return;}
+    if((m.to||'').startsWith('grp_'))return; // unknown group, skip
+    if(m.to==='__groups__')return; // meta messages
+    // DM
     const myMsg=m.from===CU.username||m.to===CU.username;
     if(!isAdmin()&&!myMsg)return;
     const other=m.from===CU.username?m.to:m.from;
@@ -1340,17 +1367,13 @@ function getConversations(){
     convMap[other].messages.push(m);
   });
   users.forEach(u=>{if(!convMap[u.username])convMap[u.username]={...u,messages:[]};});
-  const dmList=Object.values(convMap).sort((a,b)=>{
+
+  const sort=(a,b)=>{
     const ta=a.messages.length?new Date(a.messages[a.messages.length-1].timestamp).getTime():0;
     const tb=b.messages.length?new Date(b.messages[b.messages.length-1].timestamp).getTime():0;
     return tb-ta;
-  });
-  const grpList=Object.values(grpMap).sort((a,b)=>{
-    const ta=a.messages.length?new Date(a.messages[a.messages.length-1].timestamp).getTime():0;
-    const tb=b.messages.length?new Date(b.messages[b.messages.length-1].timestamp).getTime():0;
-    return tb-ta;
-  });
-  return{groups:grpList,dms:dmList};
+  };
+  return{groups:Object.values(grpMap).sort(sort),dms:Object.values(convMap).sort(sort)};
 }
 
 function renderChatContacts(){
@@ -1365,19 +1388,21 @@ function renderChatContacts(){
     </div>`;
   }
   // Groups first
-  groups.forEach(g=>{
+  groups.filter(g=>!isHidden('grp_'+g.id)).forEach(g=>{
     const lm=g.messages[g.messages.length-1];
-    const prev=lm?(lm.text?(lm.text.length>34?lm.text.slice(0,34)+'…':lm.text):'🖼 Imagen'):'Sin mensajes';
+    const prev=lm?(lm.text?(lm.text.length>30?lm.text.slice(0,30)+'…':lm.text):'🖼 Imagen'):'Sin mensajes';
     const lr=chatLastRead(g.id);
     const unread=g.messages.filter(m=>m.from!==CU.username&&new Date(m.timestamp).getTime()>lr).length;
     const isAct=CHAT_ACTIVE&&CHAT_ACTIVE.groupId===g.id;
+    const canDel=isAdmin()||g.createdBy===CU.username;
     html+=`<div class="chat-contact${isAct?' active':''}" onclick="selectChatGroup('${esc(g.id)}','${esc(g.name)}')">
       <div class="chat-av cav-grp">👥</div>
       <div class="chat-ci">
-        <div class="chat-cn">${esc(g.name)}<span class="grp-badge">${g.members.length} miembros</span></div>
+        <div class="chat-cn">${esc(g.name)}<span class="grp-badge">${g.members.length}</span></div>
         <div class="chat-cl">${lm?`${esc(lm.fromName||lm.from)}: ${esc(prev)}`:prev}</div>
       </div>
       ${unread>0?`<div class="chat-unread">${unread}</div>`:''}
+      ${canDel?`<button class="conv-del-btn" onclick="event.stopPropagation();deleteGroup('${esc(g.id)}','${esc(g.name)}')" title="Eliminar grupo">🗑</button>`:''}
     </div>`;
   });
   if(!dms.length&&!groups.length){
@@ -1385,10 +1410,9 @@ function renderChatContacts(){
     return;
   }
   // DMs
-  dms.forEach(c=>{
-    if(!c.username)return;
+  dms.filter(c=>c.username&&!isHidden('dm_'+c.username)).forEach(c=>{
     const lm=c.messages[c.messages.length-1];
-    const lastText=lm?(lm.text?(lm.text.length>34?lm.text.slice(0,34)+'…':lm.text):'🖼 Imagen'):'Escribe el primer mensaje';
+    const lastText=lm?(lm.text?(lm.text.length>30?lm.text.slice(0,30)+'…':lm.text):'🖼 Imagen'):'Escribe el primer mensaje';
     const lr=chatLastRead(c.username);
     const unread=c.messages.filter(m=>m.from===c.username&&m.to===CU.username&&new Date(m.timestamp).getTime()>lr).length;
     const isActive=CHAT_ACTIVE&&CHAT_ACTIVE.username===c.username;
@@ -1399,6 +1423,7 @@ function renderChatContacts(){
         <div class="chat-cl">${esc(lastText)}</div>
       </div>
       ${unread>0?`<div class="chat-unread">${unread}</div>`:''}
+      <button class="conv-del-btn" onclick="event.stopPropagation();deleteConv('${esc(c.username)}')" title="Ocultar conversación">🗑</button>
     </div>`;
   });
   cont.innerHTML=html;
@@ -1408,7 +1433,7 @@ window.selectChatGroup=function(gid,gname){
   CHAT_ACTIVE={groupId:gid,name:gname};chatMarkRead(gid);
   document.getElementById('chat-main-head').style.display='flex';
   document.getElementById('chat-head-name').textContent=gname;
-  const g=grpsLoad().find(x=>x.id===gid);
+  const g=myGroups().find(x=>x.id===gid);
   document.getElementById('chat-head-sub').textContent=g?`${g.members.length} miembros · Grupo`:'Grupo';
   document.getElementById('chat-head-av').className='chat-av cav-grp';
   document.getElementById('chat-head-av').textContent='👥';
@@ -1435,7 +1460,7 @@ window.selectChatContact=function(username,name,role){
 function renderChatMessages(scroll=true){
   const msgEl=document.getElementById('chat-msgs');if(!msgEl||!CHAT_ACTIVE)return;
   if(CHAT_ACTIVE.username==='__all__'){
-    const msgs=[...CHAT_MESSAGES].filter(m=>m&&m.from&&m.to).sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp));
+    const msgs=[...CHAT_MESSAGES].filter(m=>m&&m.from&&m.to&&m.type!=='group_create'&&m.type!=='group_delete'&&m.to!=='__groups__').sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp));
     if(!msgs.length){msgEl.innerHTML='<div class="chat-empty-state"><div class="ce-icon">📭</div><p>Sin mensajes todavía</p></div>';return;}
     msgEl.innerHTML=msgs.map(m=>`<div class="chat-all-msg">
       <div class="chat-all-meta">
@@ -1541,17 +1566,66 @@ async function openGrpModal(){
   document.getElementById('grp-modal-cancel').onclick=()=>document.getElementById('grp-modal').classList.remove('show');
   document.getElementById('grp-modal-ok').onclick=createGroup;
 }
-function createGroup(){
+async function createGroup(){
   const name=(document.getElementById('grp-name-input').value||'').trim();
   if(!name){alert('Escribe un nombre para el grupo.');return;}
   const picked=[...document.querySelectorAll('.grp-member-item.picked')].map(el=>el.dataset.u);
   if(!picked.length){alert('Selecciona al menos un miembro.');return;}
-  const group={id:'grp_'+Date.now(),name,members:[CU.username,...picked],createdBy:CU.username,createdAt:new Date().toISOString()};
-  const gs=grpsLoad();gs.push(group);grpsSave(gs);
+  const gid='grp_'+Date.now();
+  const members=[CU.username,...picked];
+  // Store group via API as a special message
+  const groupMsg={
+    type:'group_create',
+    groupId:gid,
+    groupName:name,
+    members:members,
+    from:CU.username,
+    fromName:CU.name,
+    to:'__groups__',
+    toName:'grupos',
+    text:'Grupo creado: '+name,
+    timestamp:new Date().toISOString()
+  };
+  spin(true);
+  const r=await api_sendMessage(groupMsg);
+  spin(false);
+  if(!r||r.ok===false){alert('Error al crear el grupo. Intenta de nuevo.');return;}
+  CHAT_MESSAGES.push(groupMsg);
   document.getElementById('grp-modal').classList.remove('show');
   renderChatContacts();
-  selectChatGroup(group.id,group.name);
+  selectChatGroup(gid,name);
 }
+
+window.deleteGroup=async function(gid,gname){
+  if(!confirm('¿Eliminar el grupo "'+gname+'"? Esto lo quitará para todos los miembros.'))return;
+  const delMsg={
+    type:'group_delete',
+    groupId:gid,
+    from:CU.username,
+    fromName:CU.name,
+    to:'__groups__',
+    toName:'grupos',
+    text:'Grupo eliminado',
+    timestamp:new Date().toISOString()
+  };
+  spin(true);await api_sendMessage(delMsg);spin(false);
+  CHAT_MESSAGES.push(delMsg);
+  if(CHAT_ACTIVE&&CHAT_ACTIVE.groupId===gid)CHAT_ACTIVE=null;
+  renderChatContacts();
+  if(!CHAT_ACTIVE)document.getElementById('chat-msgs').innerHTML='<div class="chat-empty-state"><div class="ce-icon">💬</div><p>Selecciona una conversación</p></div>';
+};
+
+window.deleteConv=function(username){
+  if(!confirm('¿Ocultar la conversación con este usuario? Los mensajes no se borran del servidor.'))return;
+  hideConv('dm_'+username);
+  if(CHAT_ACTIVE&&CHAT_ACTIVE.username===username){
+    CHAT_ACTIVE=null;
+    document.getElementById('chat-main-head').style.display='none';
+    document.getElementById('chat-input-area').style.display='none';
+    document.getElementById('chat-msgs').innerHTML='<div class="chat-empty-state"><div class="ce-icon">💬</div><p>Selecciona una conversación</p></div>';
+  }
+  renderChatContacts();
+};
 
 /* ── BENEFITS (PRO REDESIGN + MANUAL DATA) ── */
 const CARDS=[
