@@ -524,6 +524,16 @@ table td{padding:9px 14px;font-size:13px;font-weight:500;border-bottom:1px solid
     <div class="wide">
       <div class="pgtitle">Estadísticas <span>equipo</span></div>
       <p class="pgsub" id="stats-sub">Cargando…</p>
+      <div class="tctrl" style="padding:10px 14px;background:#161B26;border:1px solid rgba(255,255,255,.08);border-radius:10px;gap:10px;margin-bottom:1rem;">
+        <span style="font-size:11px;font-weight:700;color:#8BA3C0;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;">📅 Periodo</span>
+        <input type="date" id="s-fi" style="background:#0F1219;border:1px solid rgba(255,255,255,.12);border-radius:7px;padding:6px 10px;color:#EBF1FF;font-family:Outfit,sans-serif;font-size:12px;outline:none;">
+        <span style="color:#637A9F;font-size:12px;">→</span>
+        <input type="date" id="s-ff" style="background:#0F1219;border:1px solid rgba(255,255,255,.12);border-radius:7px;padding:6px 10px;color:#EBF1FF;font-family:Outfit,sans-serif;font-size:12px;outline:none;">
+        <button class="ibtn" id="s-hoy" style="border-color:rgba(16,217,128,.3);color:#10D980;">Hoy</button>
+        <button class="ibtn" id="s-sem" style="border-color:rgba(124,58,237,.3);color:#c4b5fd;">Semana</button>
+        <button class="ibtn" id="s-mes" style="border-color:rgba(240,192,96,.3);color:#F0C060;">Mes</button>
+        <button class="ibtn" id="s-todo" style="border-color:rgba(255,255,255,.15);color:#8BA3C0;">Todo</button>
+      </div>
       <div class="stats-section">
         <div class="stats-section-title">🌐 Globales del equipo</div>
         <div class="sgrid" id="stats-global-cards"></div>
@@ -586,6 +596,16 @@ table td{padding:9px 14px;font-size:13px;font-weight:500;border-bottom:1px solid
         <button class="ibtn gold" id="refresh-btn">↻ Actualizar</button>
         <button class="ibtn gold" id="export-btn">📊 Exportar</button>
         <button class="ibtn danger" id="clear-btn">Borrar todo</button>
+      </div>
+      <div class="tctrl" style="margin-top:-4px;padding:10px 14px;background:#161B26;border:1px solid rgba(255,255,255,.08);border-radius:10px;gap:10px;">
+        <span style="font-size:11px;font-weight:700;color:#8BA3C0;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;">📅 Periodo</span>
+        <input type="date" id="d-fi" style="background:#0F1219;border:1px solid rgba(255,255,255,.12);border-radius:7px;padding:6px 10px;color:#EBF1FF;font-family:Outfit,sans-serif;font-size:12px;outline:none;">
+        <span style="color:#637A9F;font-size:12px;">→</span>
+        <input type="date" id="d-ff" style="background:#0F1219;border:1px solid rgba(255,255,255,.12);border-radius:7px;padding:6px 10px;color:#EBF1FF;font-family:Outfit,sans-serif;font-size:12px;outline:none;">
+        <button class="ibtn" id="d-hoy" style="border-color:rgba(16,217,128,.3);color:#10D980;">Hoy</button>
+        <button class="ibtn" id="d-sem" style="border-color:rgba(124,58,237,.3);color:#c4b5fd;">Semana</button>
+        <button class="ibtn" id="d-mes" style="border-color:rgba(240,192,96,.3);color:#F0C060;">Mes</button>
+        <button class="ibtn" id="d-todo" style="border-color:rgba(255,255,255,.15);color:#8BA3C0;">Todo</button>
       </div>
       <div class="twrap">
         <table>
@@ -851,7 +871,13 @@ async function goPage(p){
   document.getElementById('pg-'+p)?.classList.add('on');
   document.querySelector(`.tab[data-pg="${p}"]`)?.classList.add('on');
   if(p==='exec'){setTodayDate();refreshFolio();await renderRecent();}
-  if(p==='stats')await renderStats();
+  if(p==='stats'){
+    await renderStats();
+    const sd2=document.getElementById('s-hoy');if(sd2&&!sd2._wired){sd2._wired=1;sd2.onclick=()=>{document.getElementById('s-fi').value=todayStr();document.getElementById('s-ff').value=todayStr();renderStats();};}
+    const ss2=document.getElementById('s-sem');if(ss2&&!ss2._wired){ss2._wired=1;ss2.onclick=()=>{document.getElementById('s-fi').value=weekAgoStr();document.getElementById('s-ff').value=todayStr();renderStats();};}
+    const sm2=document.getElementById('s-mes');if(sm2&&!sm2._wired){sm2._wired=1;sm2.onclick=()=>{document.getElementById('s-fi').value=monthStartStr();document.getElementById('s-ff').value=todayStr();renderStats();};}
+    const st3=document.getElementById('s-todo');if(st3&&!st3._wired){st3._wired=1;st3.onclick=()=>{document.getElementById('s-fi').value='';document.getElementById('s-ff').value='';renderStats();};}
+  }
   if(p==='dash')await loadDash();
   if(p==='users')await loadUsers();
   if(p==='chat')await initChat();
@@ -999,9 +1025,15 @@ async function doShareSale(remove=false){
 const eLabels={pendiente:'📞 Pendiente',preasignado:'⭐ Preasignado',declino:'❌ Declinó',vendida:'✅ Vendida'};
 async function renderStats(){
   const r=await api('getSales');if(!r.ok)return;
-  const all=r.data,today=new Date().toDateString();
+  const today=new Date().toDateString();
+  const sfi=document.getElementById('s-fi')?.value||'';
+  const sff=document.getElementById('s-ff')?.value||'';
+  let all=r.data;
+  if(sfi)all=all.filter(v=>(v.fecha||v.registrado?.slice(0,10)||'')>=sfi);
+  if(sff)all=all.filter(v=>(v.fecha||v.registrado?.slice(0,10)||'')<=sff);
   const mine=all.filter(v=>v.username===CU.username||(v.sharedWith&&v.sharedWith===CU.username));
-  document.getElementById('stats-sub').textContent=isAdmin()?'Vista completa del equipo':'Tu rendimiento y estadísticas globales';
+  const periodLabel=sfi||sff?` · ${sfi||'inicio'} → ${sff||'hoy'}`:'';
+  document.getElementById('stats-sub').textContent=(isAdmin()?'Vista completa del equipo':'Tu rendimiento y estadísticas globales')+periodLabel;
   const vend=all.filter(v=>v.estado==='vendida').length;
   const pct=all.length?Math.round(vend/all.length*100):0;
   document.getElementById('stats-global-cards').innerHTML=`
@@ -1061,10 +1093,37 @@ async function renderStats(){
 
 /* ── DASHBOARD ── */
 function setSyncS(s,m){const dot=document.getElementById('sync-dot'),txt=document.getElementById('sync-txt');if(!dot)return;dot.className='sync-dot '+s;txt.textContent=m;}
+function setDateRange(fi,ff){
+  const fiEl=document.getElementById('d-fi');
+  const ffEl=document.getElementById('d-ff');
+  if(fiEl)fiEl.value=fi;
+  if(ffEl)ffEl.value=ff;
+  renderDashTable();
+}
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function weekAgoStr(){const d=new Date();d.setDate(d.getDate()-6);return d.toISOString().slice(0,10);}
+function monthStartStr(){const d=new Date();d.setDate(1);return d.toISOString().slice(0,10);}
+
 async function loadDash(){
   setSyncS('loading','Cargando datos…');
   const r=await api('getSales');if(!r.ok){setSyncS('err','Error: '+r.error);return;}
-  SALES_CACHE=r.data||[];setSyncS('ok','Sincronizado · '+SALES_CACHE.length+' ventas');renderDashTable();
+  SALES_CACHE=r.data||[];setSyncS('ok','Sincronizado · '+SALES_CACHE.length+' ventas');
+  // Default: show only today
+  const fi=document.getElementById('d-fi');
+  const ff=document.getElementById('d-ff');
+  if(fi&&!fi.value)fi.value=todayStr();
+  if(ff&&!ff.value)ff.value=todayStr();
+  renderDashTable();
+  // Wire date buttons
+  const bd=document.getElementById('d-hoy');if(bd)bd.onclick=()=>setDateRange(todayStr(),todayStr());
+  const bs=document.getElementById('d-sem');if(bs)bs.onclick=()=>setDateRange(weekAgoStr(),todayStr());
+  const bm=document.getElementById('d-mes');if(bm)bm.onclick=()=>setDateRange(monthStartStr(),todayStr());
+  const bt=document.getElementById('d-todo');if(bt)bt.onclick=()=>setDateRange('','');
+  // Stats buttons
+  const sd=document.getElementById('s-hoy');if(sd)sd.onclick=()=>{document.getElementById('s-fi').value=todayStr();document.getElementById('s-ff').value=todayStr();renderStats();}
+  const ss=document.getElementById('s-sem');if(ss)ss.onclick=()=>{document.getElementById('s-fi').value=weekAgoStr();document.getElementById('s-ff').value=todayStr();renderStats();}
+  const sm=document.getElementById('s-mes');if(sm)sm.onclick=()=>{document.getElementById('s-fi').value=monthStartStr();document.getElementById('s-ff').value=todayStr();renderStats();}
+  const st2=document.getElementById('s-todo');if(st2)st2.onclick=()=>{document.getElementById('s-fi').value='';document.getElementById('s-ff').value='';renderStats();}
 }
 window.openStatusModalFromFolio=function(folio){
   let s=SALES_CACHE.find(v=>v.folio===folio);
@@ -1087,9 +1146,13 @@ function openStatusModal(sale){
 function renderDashTable(){
   const search=(document.getElementById('d-search').value||'').toLowerCase();
   const ft=document.getElementById('d-filt').value;
+  const dfi=document.getElementById('d-fi')?.value||'';
+  const dff=document.getElementById('d-ff')?.value||'';
   const all=SALES_CACHE;let data=all.slice();
   if(search)data=data.filter(v=>(v.exec||'').toLowerCase().includes(search)||(v.cliente||'').toLowerCase().includes(search)||(v.folio||'').toLowerCase().includes(search));
   if(ft)data=data.filter(v=>v.tarjeta===ft);
+  if(dfi)data=data.filter(v=>(v.fecha||v.registrado?.slice(0,10)||'')>=dfi);
+  if(dff)data=data.filter(v=>(v.fecha||v.registrado?.slice(0,10)||'')<=dff);
   document.getElementById('s-tot').textContent=all.length;
   document.getElementById('s-exe').textContent=new Set(all.map(v=>v.username)).size;
   const today=new Date().toDateString();
@@ -1828,7 +1891,10 @@ document.addEventListener('keydown',function(e){
     document.getElementById('img-lightbox').style.display='none';
   }
 });
-document.addEventListener('input',function(e){if(e.target.id==='d-search'||e.target.id==='d-filt')renderDashTable();});
+document.addEventListener('input',function(e){
+  if(['d-search','d-filt','d-fi','d-ff'].includes(e.target.id))renderDashTable();
+  if(['s-fi','s-ff'].includes(e.target.id))renderStats();
+});
 document.getElementById('login-screen').style.display='flex';
 </script>
 </body>
