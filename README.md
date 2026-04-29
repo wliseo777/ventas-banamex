@@ -134,22 +134,17 @@ nav::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;ba
 .ibtn.gold:hover{background:var(--gold-f);}
 .ibtn.danger{border-color:rgba(239,68,68,.3);color:var(--red);}
 .ibtn.danger:hover{background:var(--red-f);}
-.twrap{background:var(--s1);border:1px solid var(--br2);border-radius:14px;overflow:auto;color:var(--tx);}
-table{width:100%;border-collapse:collapse;min-width:750px;}
-thead tr{background:var(--s2);}
-thead tr{background:var(--s3);}
-tbody tr{background:var(--s2) !important;}
-tbody tr:nth-child(even){background:#161B26 !important;}
-tbody tr:hover{background:var(--s4) !important;}
-th{padding:10px 13px;text-align:left;font-size:10px;font-weight:700;color:#8BA3C0;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--br);white-space:nowrap;}
-tr:last-child td{border-bottom:none;}
-/* FORCE all table text white — overrides everything */
-table tbody td{padding:9px 13px;font-size:14px;font-weight:600;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:middle;color:#EBF1FF !important;}
-table tbody tr td span:not(.badge):not(.st-badge):not(.st-badge *):not(.b-r):not(.b-b):not(.b-g):not(.b-p):not(.b-c):not(.b-gr){color:#EBF1FF !important;}
-table tbody tr td div,table tbody tr td p{color:#EBF1FF !important;}
-.tdf{font-family:monospace;font-size:12px;color:var(--gold) !important;font-weight:700;}
-.tdb{font-weight:700;color:#ffffff !important;}
-.tdm{color:#a0b8d0 !important;font-size:12px;font-weight:500;}
+.twrap{background:#0F1219;border:1px solid rgba(255,255,255,.11);border-radius:14px;overflow:auto;}
+table{width:100%;border-collapse:collapse;min-width:750px;background:#0F1219;color:#EBF1FF;}
+table th{padding:10px 13px;text-align:left;font-size:10px;font-weight:700;color:#8BA3C0;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid rgba(255,255,255,.07);white-space:nowrap;background:#1D2535;}
+table tr{background:#0F1219;}
+table tr:nth-child(even){background:#161B26;}
+table tr:hover{background:#232B3E;}
+table tr:last-child td{border-bottom:none;}
+table td{padding:9px 14px;font-size:13px;font-weight:500;border-bottom:1px solid rgba(255,255,255,.06);vertical-align:middle;color:#EBF1FF;}
+.tdf{font-family:monospace;font-size:11px;color:#F0C060;font-weight:700;}
+.tdb{font-weight:700;color:#EBF1FF;}
+.tdm{color:#8BA3C0;font-size:12px;}
 .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;letter-spacing:.02em;}
 .b-r{background:var(--red-f);color:#fca5a5;}
 .b-b{background:rgba(59,130,246,.12);color:#93c5fd;}
@@ -206,13 +201,14 @@ table tbody tr td div,table tbody tr td p{color:#EBF1FF !important;}
 .stats-section{background:var(--s2);border:1px solid var(--br2);border-radius:14px;padding:1.3rem;margin-bottom:1.2rem;}
 .stats-section-title{font-size:11px;font-weight:700;color:var(--mu2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1rem;}
 .mini-table{width:100%;border-collapse:collapse;font-size:12px;}
-.mini-table{background:var(--s1);}
-.mini-table thead tr{background:var(--s3);}
-.mini-table tbody tr{background:var(--s1);}
-.mini-table th{padding:7px 10px;text-align:left;color:var(--mu2);font-size:10px;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--br);font-weight:700;}
-.mini-table td{padding:8px 10px;border-bottom:1px solid var(--br);color:#EBF1FF !important;font-size:13px;background:inherit;}
+.mini-table{width:100%;border-collapse:collapse;font-size:13px;background:#0F1219;color:#EBF1FF;}
+.mini-table thead tr{background:#1D2535;}
+.mini-table tbody tr{background:#0F1219;}
+.mini-table tbody tr:nth-child(even){background:#161B26;}
+.mini-table th{padding:8px 10px;text-align:left;color:#8BA3C0;font-size:10px;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid rgba(255,255,255,.07);font-weight:700;}
+.mini-table td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.06);color:#EBF1FF;font-size:13px;}
 .mini-table tr:last-child td{border-bottom:none;}
-.mini-table tr:hover td{background:var(--s2);}
+.mini-table tr:hover td{background:#232B3E;}
 .exec-accordion{margin-bottom:7px;border:1px solid var(--br2);border-radius:10px;overflow:hidden;}
 .exec-acc-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;background:var(--s3);font-size:13px;font-weight:500;color:var(--tx);}
 .exec-acc-head:hover{background:rgba(255,255,255,.03);}
