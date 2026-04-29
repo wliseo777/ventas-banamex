@@ -137,15 +137,17 @@ nav::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;ba
 .twrap{background:var(--s1);border:1px solid var(--br2);border-radius:14px;overflow:auto;color:var(--tx);}
 table{width:100%;border-collapse:collapse;min-width:750px;}
 thead tr{background:var(--s2);}
-tbody tr{background:var(--s1);}
+thead tr{background:var(--s3);}
+tbody tr{background:var(--s2);}
+tbody tr:nth-child(even){background:var(--s1);}
+tbody tr:hover{background:var(--s3);}
 th{padding:10px 13px;text-align:left;font-size:10px;font-weight:700;color:#8BA3C0;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--br);white-space:nowrap;}
 tr:last-child td{border-bottom:none;}
-tr:hover td{background:var(--s2);}
-td{padding:9px 13px;font-size:13px;border-bottom:1px solid var(--br);vertical-align:middle;color:#EBF1FF !important;background:inherit;}
+td{padding:9px 13px;font-size:14px;font-weight:600;border-bottom:1px solid var(--br);vertical-align:middle;color:#EBF1FF !important;background:inherit;}
 td *{color:inherit;}
-.tdf{font-family:monospace;font-size:11px;color:var(--gold) !important;font-weight:700;}
+.tdf{font-family:monospace;font-size:12px;color:var(--gold) !important;font-weight:700;}
 .tdb{font-weight:700;color:#EBF1FF !important;}
-.tdm{color:#8BA3C0 !important;font-size:12px;}
+.tdm{color:#a0b8d0 !important;font-size:12px;font-weight:500;}
 .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;letter-spacing:.02em;}
 .b-r{background:var(--red-f);color:#fca5a5;}
 .b-b{background:rgba(59,130,246,.12);color:#93c5fd;}
