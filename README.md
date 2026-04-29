@@ -141,9 +141,10 @@ th{padding:10px 13px;text-align:left;font-size:10px;font-weight:700;color:var(--
 td{padding:9px 13px;font-size:12px;border-bottom:1px solid var(--br);vertical-align:middle;}
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:rgba(255,255,255,.012);}
-.tdf{font-family:monospace;font-size:11px;color:var(--gold);}
-.tdb{font-weight:600;}
-.tdm{color:var(--mu2);font-size:11px;}
+.tdf{font-family:monospace;font-size:11px;color:var(--gold);font-weight:700;}
+.tdb{font-weight:700;color:var(--tx);}
+.tdm{color:#a0b4cc;font-size:11px;}
+td{padding:9px 13px;font-size:13px;border-bottom:1px solid var(--br);vertical-align:middle;color:var(--tx);}
 .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;letter-spacing:.02em;}
 .b-r{background:var(--red-f);color:#fca5a5;}
 .b-b{background:rgba(59,130,246,.12);color:#93c5fd;}
@@ -153,8 +154,10 @@ tr:hover td{background:rgba(255,255,255,.012);}
 .b-gr{background:var(--green-f);color:var(--green);}
 .delbtn{background:transparent;border:none;color:#2a364e;cursor:pointer;font-size:14px;padding:2px 6px;border-radius:4px;transition:color .15s;}
 .delbtn:hover{color:var(--red);}
-.share-btn-tbl{background:transparent;border:1px solid var(--br2);color:var(--mu2);cursor:pointer;font-size:11px;padding:3px 8px;border-radius:5px;transition:all .15s;font-family:'Outfit',sans-serif;}
-.share-btn-tbl:hover{border-color:var(--cyan);color:var(--cyan);}
+.share-btn-tbl{background:var(--cyan-f);border:1px solid rgba(6,182,212,.3);color:var(--cyan);cursor:pointer;font-size:11px;padding:4px 10px;border-radius:6px;transition:all .15s;font-family:'Outfit',sans-serif;font-weight:600;}
+.share-btn-tbl:hover{background:var(--cyan);color:#fff;border-color:var(--cyan);}
+.share-btn-tbl.shared{background:var(--pri-f);border-color:rgba(124,58,237,.3);color:#c4b5fd;}
+.share-btn-tbl.shared:hover{background:var(--red-f);border-color:var(--red);color:#fca5a5;}
 .empty{padding:3rem;text-align:center;color:var(--mu);font-size:13px;}
 
 /* ─ RANKING ─ */
@@ -196,10 +199,10 @@ tr:hover td{background:rgba(255,255,255,.012);}
 
 /* ─ STATS SECTION ─ */
 .stats-section{background:var(--s1);border:1px solid var(--br2);border-radius:14px;padding:1.3rem;margin-bottom:1.2rem;}
-.stats-section-title{font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1rem;}
+.stats-section-title{font-size:11px;font-weight:700;color:var(--mu2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1rem;}
 .mini-table{width:100%;border-collapse:collapse;font-size:12px;}
 .mini-table th{padding:7px 10px;text-align:left;color:var(--mu);font-size:10px;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--br);font-weight:700;}
-.mini-table td{padding:7px 10px;border-bottom:1px solid var(--br);}
+.mini-table td{padding:7px 10px;border-bottom:1px solid var(--br);color:var(--tx);font-size:13px;}
 .mini-table tr:last-child td{border-bottom:none;}
 .mini-table tr:hover td{background:rgba(255,255,255,.02);}
 .exec-accordion{margin-bottom:7px;border:1px solid var(--br2);border-radius:10px;overflow:hidden;}
@@ -400,6 +403,18 @@ tr:hover td{background:rgba(255,255,255,.012);}
 .grp-member-item.picked{border-color:var(--green);background:var(--green-f);}
 .grp-member-item .gmi-av{width:28px;height:28px;border-radius:50%;background:var(--red-f);color:#fca5a5;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
 .grp-member-item .gmi-name{font-size:13px;font-weight:600;}
+
+/* ─ NOTIFICATION TOAST ─ */
+.notif-toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--s1);border:1px solid var(--pri);border-radius:14px;padding:1rem 1.2rem;max-width:320px;z-index:9999;display:none;box-shadow:0 10px 40px rgba(0,0,0,.6);animation:slideIn .3s ease;}
+.notif-toast.show{display:flex;gap:10px;align-items:flex-start;}
+@keyframes slideIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.notif-icon{font-size:22px;flex-shrink:0;}
+.notif-from{font-size:12px;font-weight:700;color:#c4b5fd;margin-bottom:3px;}
+.notif-text{font-size:13px;color:var(--tx);line-height:1.4;}
+.notif-close{background:transparent;border:none;color:var(--mu2);cursor:pointer;font-size:16px;padding:0;margin-left:auto;flex-shrink:0;}
+
+/* ─ GROUP BADGE ─ */
+.grp-badge{font-size:9px;background:var(--green-f);color:var(--green);border-radius:3px;padding:1px 5px;margin-left:5px;font-weight:700;}
 
 /* ─ RESPONSIVE ─ */
 @media(max-width:768px){
@@ -720,6 +735,16 @@ tr:hover td{background:rgba(255,255,255,.012);}
   </div>
 </div>
 
+<!-- ── NOTIFICATION TOAST ── -->
+<div class="notif-toast" id="notif-toast">
+  <div class="notif-icon">💬</div>
+  <div style="flex:1;min-width:0">
+    <div class="notif-from" id="notif-from"></div>
+    <div class="notif-text" id="notif-text"></div>
+  </div>
+  <button class="notif-close" onclick="document.getElementById('notif-toast').classList.remove('show')">✕</button>
+</div>
+
 <!-- ── IMAGE LIGHTBOX ── -->
 <div id="img-lightbox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9999;align-items:center;justify-content:center;cursor:zoom-out;" onclick="this.style.display='none'">
   <img id="img-lightbox-src" src="" style="max-width:90vw;max-height:90vh;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.8);">
@@ -794,6 +819,7 @@ async function bootApp(){
   document.getElementById('app').style.display='block';
   document.getElementById('nav-name').textContent=CU.name;
   buildNav();buildBen();
+  reqNotifPerm();
   if(isAdmin())await goPage('dash');else await goPage('exec');
 }
 
@@ -883,7 +909,7 @@ async function renderRecent(){
   list.innerHTML=data.map(v=>{
     const com=getComment(v);const isMine=v.username===CU.username;
     const shBadge=!isMine?`<span class="shared-badge">📥 De @${esc(v.username)}</span>`:v.sharedWith?`<span class="shared-badge shared-out">📤 @${esc(v.sharedWith)}</span>`:'';
-    const shareBtn=isMine?`<button class="share-btn-tbl" onclick="openShareModal('${esc(v.folio)}')" title="Compartir/quitar">${v.sharedWith?'🔄':'📤'}</button>`:'';
+    const shareBtn=isMine?`<button class="share-btn-tbl${v.sharedWith?' shared':''}" onclick="openShareModal('${esc(v.folio)}')" title="${v.sharedWith?'Cambiar/quitar compartido':'Compartir con otro ejecutivo'}">${v.sharedWith?'🔄 @'+esc(v.sharedWith):'📤 Compartir'}</button>`:'';
     return`<div class="ri">
       <div style="flex:1;min-width:0">
         <div class="ri-n">${esc(v.cliente)}${v.rfc?' 📄':''}${v.ingresos?' 💰':''}</div>
@@ -1150,6 +1176,36 @@ async function api_sendMessage(msg){
 /* ── CHAT (API-based — idéntico al original que funciona) ── */
 let CHAT_MESSAGES=[];
 let _chatImgData=null,_chatPasteReady=false;
+const LS_GROUPS='wliseos_grps_v1';
+
+/* ── GROUPS ── */
+function grpsLoad(){try{return JSON.parse(localStorage.getItem(LS_GROUPS)||'[]');}catch{return[];}}
+function grpsSave(g){try{localStorage.setItem(LS_GROUPS,JSON.stringify(g));}catch(e){}}
+function myGroups(){return grpsLoad().filter(g=>g&&g.members&&g.members.includes(CU?.username));}
+
+/* ── BROWSER NOTIFICATIONS ── */
+async function reqNotifPerm(){if('Notification' in window&&Notification.permission==='default')await Notification.requestPermission();}
+function showNotifToast(fromName,text){
+  const t=document.getElementById('notif-toast');
+  const f=document.getElementById('notif-from');
+  const tx=document.getElementById('notif-text');
+  if(!t)return;
+  f.textContent=fromName;
+  tx.textContent=text.length>80?text.slice(0,80)+'…':text;
+  t.classList.add('show');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),5000);
+}
+function fireNotification(fromName,text,groupName){
+  const title=groupName?`${groupName} — ${fromName}`:`Mensaje de ${fromName}`;
+  // Browser notification
+  if('Notification' in window&&Notification.permission==='granted'){
+    const n=new Notification(title,{body:text.length>100?text.slice(0,100)+'…':text,icon:'',tag:'wliseos-chat'});
+    n.onclick=()=>{window.focus();goPage('chat');n.close();};
+    setTimeout(()=>n.close(),6000);
+  }
+  // In-app toast (always show)
+  showNotifToast(groupName?`${fromName} en ${groupName}`:fromName,text||'📎 Imagen');
+}
 
 function getAllChatUsers(){
   const all=[];
@@ -1168,10 +1224,14 @@ function fmtChatTime(ts){
 function chatAvCls(role){return role==='superadmin'?'cav-s':role==='admin'?'cav-a':'cav-e';}
 
 async function initChat(){
-  document.getElementById('chat-sub').textContent=isAdmin()?'Vista completa · todos los mensajes del equipo':'Mensajes privados';
+  reqNotifPerm();
+  document.getElementById('chat-sub').textContent=isAdmin()?'Vista completa · todos los mensajes del equipo':'Mensajes privados y grupos';
   if(USERS_CACHE.length===0){const r=await api('getUsers');if(r.ok)USERS_CACHE=r.data||[];}
   const r=await api_getMessages();
   CHAT_MESSAGES=r.ok?(r.data||[]):[];
+  // Show group button for admins
+  const grpBtn=document.getElementById('chat-grp-btn');
+  if(grpBtn){grpBtn.classList.toggle('show',isAdmin());grpBtn.onclick=openGrpModal;}
   renderChatContacts();
   if(CHAT_ACTIVE)renderChatMessages();
   startChatPoll();
@@ -1209,9 +1269,35 @@ async function initChat(){
 function startChatPoll(){
   stopChatPoll();
   CHAT_POLL=setInterval(async()=>{
-    if(!document.getElementById('pg-chat')?.classList.contains('on'))return;
+    const prevCount=CHAT_MESSAGES.length;
+    const prevIds=new Set(CHAT_MESSAGES.map(m=>m.timestamp+'_'+m.from));
     const r=await api_getMessages();
-    if(r.ok){CHAT_MESSAGES=r.data||[];renderChatContacts();if(CHAT_ACTIVE)renderChatMessages(false);}
+    if(r.ok){
+      const newMsgs=r.data||[];
+      // Find truly new messages for this user
+      const incoming=newMsgs.filter(m=>{
+        if(!m||!m.from||!m.to)return false;
+        if(m.from===CU.username)return false; // own message
+        // DM to me
+        if(m.to===CU.username&&!prevIds.has(m.timestamp+'_'+m.from))return true;
+        // Group message
+        const myGrps=myGroups().map(g=>g.id);
+        if(myGrps.includes(m.to)&&!prevIds.has(m.timestamp+'_'+m.from))return true;
+        return false;
+      });
+      // Fire notification for each new incoming message
+      incoming.forEach(m=>{
+        const grp=myGroups().find(g=>g.id===m.to);
+        const isOnChatPage=document.getElementById('pg-chat')?.classList.contains('on');
+        const isActiveConv=CHAT_ACTIVE&&(CHAT_ACTIVE.username===m.from||(CHAT_ACTIVE.groupId&&CHAT_ACTIVE.groupId===m.to));
+        if(!isActiveConv||!isOnChatPage){
+          fireNotification(m.fromName||m.from,m.text||'📎 Imagen',grp?grp.name:null);
+        }
+      });
+      CHAT_MESSAGES=newMsgs;
+      renderChatContacts();
+      if(CHAT_ACTIVE&&document.getElementById('pg-chat')?.classList.contains('on'))renderChatMessages(false);
+    }
     updateChatDot();
   },5000);
 }
@@ -1220,16 +1306,32 @@ function stopChatPoll(){if(CHAT_POLL){clearInterval(CHAT_POLL);CHAT_POLL=null;}}
 function updateChatDot(){
   const dot=document.getElementById('nav-chat-dot');if(!dot||!CU)return;
   try{
-    const hasUnread=CHAT_MESSAGES.some(m=>m.to===CU.username&&new Date(m.timestamp).getTime()>chatLastRead(m.from));
+    const lr_cache={};
+    const chatLR=k=>{if(!(k in lr_cache))lr_cache[k]=chatLastRead(k);return lr_cache[k];};
+    const myGrpIds=myGroups().map(g=>g.id);
+    const hasUnread=CHAT_MESSAGES.some(m=>{
+      if(!m||m.from===CU.username)return false;
+      if(m.to===CU.username)return new Date(m.timestamp).getTime()>chatLR(m.from);
+      if(myGrpIds.includes(m.to))return new Date(m.timestamp).getTime()>chatLR(m.to);
+      return false;
+    });
     dot.classList.toggle('show',hasUnread);
   }catch(e){}
 }
 
 function getConversations(){
   const convMap={};
+  const grpMap={};
   const users=getAllChatUsers();
+  const groups=myGroups();
+  const grpIds=new Set(groups.map(g=>g.id));
+  // Initialize groups
+  groups.forEach(g=>{grpMap[g.id]={...g,messages:[]};});
   CHAT_MESSAGES.forEach(m=>{
     if(!m||!m.from||!m.to)return;
+    // Group message
+    if(grpIds.has(m.to)){grpMap[m.to]?.messages.push(m);return;}
+    if(isAdmin()&&m.to.startsWith('grp_')&&!grpIds.has(m.to))return; // skip unknown groups for admin DM view
     const myMsg=m.from===CU.username||m.to===CU.username;
     if(!isAdmin()&&!myMsg)return;
     const other=m.from===CU.username?m.to:m.from;
@@ -1238,16 +1340,22 @@ function getConversations(){
     convMap[other].messages.push(m);
   });
   users.forEach(u=>{if(!convMap[u.username])convMap[u.username]={...u,messages:[]};});
-  return Object.values(convMap).sort((a,b)=>{
+  const dmList=Object.values(convMap).sort((a,b)=>{
     const ta=a.messages.length?new Date(a.messages[a.messages.length-1].timestamp).getTime():0;
     const tb=b.messages.length?new Date(b.messages[b.messages.length-1].timestamp).getTime():0;
     return tb-ta;
   });
+  const grpList=Object.values(grpMap).sort((a,b)=>{
+    const ta=a.messages.length?new Date(a.messages[a.messages.length-1].timestamp).getTime():0;
+    const tb=b.messages.length?new Date(b.messages[b.messages.length-1].timestamp).getTime():0;
+    return tb-ta;
+  });
+  return{groups:grpList,dms:dmList};
 }
 
 function renderChatContacts(){
   const cont=document.getElementById('chat-contacts');if(!cont)return;
-  const convs=getConversations();
+  const {groups,dms}=getConversations();
   let html='';
   if(isAdmin()){
     const allActive=CHAT_ACTIVE&&CHAT_ACTIVE.username==='__all__';
@@ -1256,14 +1364,31 @@ function renderChatContacts(){
       <div class="chat-ci"><div class="chat-cn">Todos los mensajes</div><div class="chat-cl">${CHAT_MESSAGES.length} mensajes en total</div></div>
     </div>`;
   }
-  if(!convs.length){
+  // Groups first
+  groups.forEach(g=>{
+    const lm=g.messages[g.messages.length-1];
+    const prev=lm?(lm.text?(lm.text.length>34?lm.text.slice(0,34)+'…':lm.text):'🖼 Imagen'):'Sin mensajes';
+    const lr=chatLastRead(g.id);
+    const unread=g.messages.filter(m=>m.from!==CU.username&&new Date(m.timestamp).getTime()>lr).length;
+    const isAct=CHAT_ACTIVE&&CHAT_ACTIVE.groupId===g.id;
+    html+=`<div class="chat-contact${isAct?' active':''}" onclick="selectChatGroup('${esc(g.id)}','${esc(g.name)}')">
+      <div class="chat-av cav-grp">👥</div>
+      <div class="chat-ci">
+        <div class="chat-cn">${esc(g.name)}<span class="grp-badge">${g.members.length} miembros</span></div>
+        <div class="chat-cl">${lm?`${esc(lm.fromName||lm.from)}: ${esc(prev)}`:prev}</div>
+      </div>
+      ${unread>0?`<div class="chat-unread">${unread}</div>`:''}
+    </div>`;
+  });
+  if(!dms.length&&!groups.length){
     cont.innerHTML=html+'<div style="padding:1.5rem 1rem;text-align:center;color:var(--mu);font-size:13px">Sin conversaciones.<br><span style="font-size:11px">Presiona "+ Nuevo".</span></div>';
     return;
   }
-  convs.forEach(c=>{
+  // DMs
+  dms.forEach(c=>{
     if(!c.username)return;
-    const lastMsg=c.messages[c.messages.length-1];
-    const lastText=lastMsg?(lastMsg.text?(lastMsg.text.length>38?lastMsg.text.slice(0,38)+'…':lastMsg.text):'🖼 Imagen'):'Escribe el primer mensaje';
+    const lm=c.messages[c.messages.length-1];
+    const lastText=lm?(lm.text?(lm.text.length>34?lm.text.slice(0,34)+'…':lm.text):'🖼 Imagen'):'Escribe el primer mensaje';
     const lr=chatLastRead(c.username);
     const unread=c.messages.filter(m=>m.from===c.username&&m.to===CU.username&&new Date(m.timestamp).getTime()>lr).length;
     const isActive=CHAT_ACTIVE&&CHAT_ACTIVE.username===c.username;
@@ -1278,6 +1403,20 @@ function renderChatContacts(){
   });
   cont.innerHTML=html;
 }
+
+window.selectChatGroup=function(gid,gname){
+  CHAT_ACTIVE={groupId:gid,name:gname};chatMarkRead(gid);
+  document.getElementById('chat-main-head').style.display='flex';
+  document.getElementById('chat-head-name').textContent=gname;
+  const g=grpsLoad().find(x=>x.id===gid);
+  document.getElementById('chat-head-sub').textContent=g?`${g.members.length} miembros · Grupo`:'Grupo';
+  document.getElementById('chat-head-av').className='chat-av cav-grp';
+  document.getElementById('chat-head-av').textContent='👥';
+  document.getElementById('chat-input-area').style.display='flex';
+  renderChatContacts();renderChatMessages();
+  setTimeout(()=>document.getElementById('chat-input')?.focus(),80);
+  updateChatDot();
+};
 
 window.selectChatContact=function(username,name,role){
   CHAT_ACTIVE={username,name,role};
@@ -1306,6 +1445,25 @@ function renderChatMessages(scroll=true){
       </div>
       <div class="chat-all-text">${m.text?esc(m.text):''}${m.img?`<img src="${m.img}" style="max-width:200px;border-radius:6px;display:block;margin-top:4px" alt="">`:''}</div>
     </div>`).join('');
+  }else if(CHAT_ACTIVE.groupId){
+    const msgs=CHAT_MESSAGES.filter(m=>m&&m.to===CHAT_ACTIVE.groupId).sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp));
+    if(!msgs.length){msgEl.innerHTML=`<div class="chat-empty-state"><div class="ce-icon">👥</div><p>Sé el primero en escribir en <strong>${esc(CHAT_ACTIVE.name)}</strong></p><small>Todos los miembros del grupo verán este mensaje</small></div>`;return;}
+    let html='',lastDay='';
+    msgs.forEach(m=>{
+      if(!m||!m.ts&&!m.timestamp)return;
+      const ts=m.timestamp||m.ts;
+      let day='';try{day=new Date(ts).toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});}catch(e){}
+      if(day&&day!==lastDay){html+=`<div class="chat-day-sep"><span>${day}</span></div>`;lastDay=day;}
+      const isMine=m.from===CU.username;
+      const tp=m.text?`<span style="white-space:pre-wrap">${esc(m.text)}</span>`:'';
+      const ip=m.img?`<img src="${m.img}" alt="" style="max-width:100%;border-radius:8px;display:block;margin-top:${m.text?'6':'0'}px;cursor:zoom-in" onclick="openChatLightbox(this.src)">`:'';
+      html+=`<div class="chat-msg-wrap ${isMine?'mine':'theirs'}">
+        ${!isMine?`<div class="chat-bname">${esc(m.fromName||m.from)}</div>`:''}
+        <div class="chat-bubble ${isMine?'mine':'theirs'}">${tp}${ip}</div>
+        <div class="chat-btime">${fmtChatTime(ts)}</div>
+      </div>`;
+    });
+    msgEl.innerHTML=html;
   }else{
     const msgs=CHAT_MESSAGES.filter(m=>m&&m.from&&m.to&&((m.from===CU.username&&m.to===CHAT_ACTIVE.username)||(m.from===CHAT_ACTIVE.username&&m.to===CU.username))).sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp));
     if(!msgs.length){msgEl.innerHTML=`<div class="chat-empty-state"><div class="ce-icon">✉️</div><p>Escríbele a <strong>${esc(CHAT_ACTIVE.name)}</strong></p><small>Sé el primero en enviar un mensaje</small></div>`;return;}
@@ -1330,19 +1488,23 @@ function renderChatMessages(scroll=true){
 window.openChatLightbox=function(src){const lb=document.getElementById('img-lightbox');if(lb){document.getElementById('img-lightbox-src').src=src;lb.style.display='flex';}};
 
 async function sendChatMsg(){
-  if(!CHAT_ACTIVE||CHAT_ACTIVE.username==='__all__')return;
+  if(!CHAT_ACTIVE||(CHAT_ACTIVE.username==='__all__'))return;
   const input=document.getElementById('chat-input');
   const text=(input.value||'').trim();
   if(!text&&!_chatImgData)return;
   const btn=document.getElementById('chat-send-btn');btn.disabled=true;
-  const msg={from:CU.username,fromName:CU.name,to:CHAT_ACTIVE.username,toName:CHAT_ACTIVE.name||CHAT_ACTIVE.username,text:text||'',timestamp:new Date().toISOString()};
+  const isGroup=!!CHAT_ACTIVE.groupId;
+  const toId=isGroup?CHAT_ACTIVE.groupId:CHAT_ACTIVE.username;
+  const toName=CHAT_ACTIVE.name||CHAT_ACTIVE.username||'';
+  const msg={from:CU.username,fromName:CU.name,to:toId,toName,text:text||'',timestamp:new Date().toISOString()};
   if(_chatImgData)msg.img=_chatImgData;
   input.value='';_chatImgData=null;
   const p=document.getElementById('chat-img-preview');if(p)p.classList.remove('show');
   const r=await api_sendMessage(msg);
   btn.disabled=false;
   if(r&&r.ok!==false){
-    CHAT_MESSAGES.push(msg);chatMarkRead(CHAT_ACTIVE.username);
+    CHAT_MESSAGES.push(msg);
+    chatMarkRead(toId);
     renderChatContacts();renderChatMessages(true);
   }else{input.value=text;alert('Error al enviar. Intenta de nuevo.');}
 }
@@ -1364,6 +1526,31 @@ function openChatModal(){
     </div>
   </div>`;
   document.body.appendChild(m);
+}
+
+/* ── GROUP CHAT ── */
+async function openGrpModal(){
+  if(!isAdmin())return;
+  if(USERS_CACHE.length===0){spin(true);const r=await api('getUsers');spin(false);if(r.ok)USERS_CACHE=r.data||[];}
+  document.getElementById('grp-name-input').value='';
+  const users=getAllChatUsers();
+  document.getElementById('grp-member-list').innerHTML=users.length
+    ?users.map(u=>`<div class="grp-member-item" data-u="${esc(u.username)}" onclick="this.classList.toggle('picked')"><div class="gmi-av">${ini(u.name)}</div><div class="gmi-name">${esc(u.name)} <span style="font-size:10px;color:var(--mu2)">@${esc(u.username)}</span></div></div>`).join('')
+    :'<p style="color:var(--mu);font-size:13px">No hay usuarios para agregar.</p>';
+  document.getElementById('grp-modal').classList.add('show');
+  document.getElementById('grp-modal-cancel').onclick=()=>document.getElementById('grp-modal').classList.remove('show');
+  document.getElementById('grp-modal-ok').onclick=createGroup;
+}
+function createGroup(){
+  const name=(document.getElementById('grp-name-input').value||'').trim();
+  if(!name){alert('Escribe un nombre para el grupo.');return;}
+  const picked=[...document.querySelectorAll('.grp-member-item.picked')].map(el=>el.dataset.u);
+  if(!picked.length){alert('Selecciona al menos un miembro.');return;}
+  const group={id:'grp_'+Date.now(),name,members:[CU.username,...picked],createdBy:CU.username,createdAt:new Date().toISOString()};
+  const gs=grpsLoad();gs.push(group);grpsSave(gs);
+  document.getElementById('grp-modal').classList.remove('show');
+  renderChatContacts();
+  selectChatGroup(group.id,group.name);
 }
 
 /* ── BENEFITS (PRO REDESIGN + MANUAL DATA) ── */
