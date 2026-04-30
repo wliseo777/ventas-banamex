@@ -329,72 +329,77 @@ table td{padding:9px 14px;font-size:13px;font-weight:500;border-bottom:1px solid
 .share-save:hover{box-shadow:0 6px 22px rgba(6,182,212,.5);}
 
 /* ─ CHAT ─ */
-.chat-layout{display:grid;grid-template-columns:280px 1fr;height:calc(100vh - 138px);min-height:520px;background:var(--s1);border:1px solid var(--br2);border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4);}
-.chat-sidebar{border-right:1px solid var(--br);display:flex;flex-direction:column;overflow:hidden;background:var(--s2);}
-.chat-sidebar-head{padding:.85rem 1rem;border-bottom:1px solid var(--br);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-.chat-sidebar-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.05em;}
-.chat-top-btns{display:flex;gap:4px;}
-.chat-new-btn,.chat-grp-btn{padding:4px 10px;border-radius:6px;border:1px solid var(--br2);background:transparent;color:var(--mu2);font-family:'Outfit',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;}
-.chat-new-btn:hover{color:var(--cyan);border-color:var(--cyan);}
+.chat-layout{display:grid;grid-template-columns:300px 1fr;height:calc(100vh - 138px);min-height:520px;background:#09111f;border:1px solid rgba(124,58,237,.25);border-radius:20px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 0 1px rgba(124,58,237,.1),inset 0 1px 0 rgba(255,255,255,.04);}
+.chat-sidebar{border-right:1px solid rgba(255,255,255,.05);display:flex;flex-direction:column;overflow:hidden;background:#060d18;}
+.chat-sidebar-head{padding:1rem 1.1rem;border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:rgba(124,58,237,.06);}
+.chat-sidebar-title{font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:.06em;background:linear-gradient(120deg,#fff,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.chat-top-btns{display:flex;gap:5px;}
+.chat-new-btn,.chat-grp-btn{padding:5px 11px;border-radius:7px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#8BA3C0;font-family:'Outfit',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;}
+.chat-new-btn:hover{color:#06B6D4;border-color:rgba(6,182,212,.4);background:rgba(6,182,212,.08);}
 .chat-grp-btn{display:none;}
-.chat-grp-btn:hover{color:var(--green);border-color:var(--green);}
+.chat-grp-btn:hover{color:#10D980;border-color:rgba(16,217,128,.4);background:rgba(16,217,128,.08);}
 .chat-grp-btn.show{display:block;}
-.chat-contacts{flex:1;overflow-y:auto;}
-.chat-contact{padding:.65rem 1rem;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.03);display:flex;align-items:center;gap:9px;transition:background .12s;}
-.chat-contact:hover{background:rgba(255,255,255,.04);}
-.chat-contact.active{background:var(--pri-f);border-left:3px solid var(--pri);}
-.chat-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;}
-.cav-e{background:var(--red-f);color:#fca5a5;}
-.cav-a{background:var(--gold-f);color:var(--gold);}
-.cav-s{background:var(--pri-f);color:#c4b5fd;}
-.cav-all{background:var(--cyan-f);color:var(--cyan);font-size:15px;}
-.cav-grp{background:var(--green-f);color:var(--green);font-size:14px;}
+.chat-contacts{flex:1;overflow-y:auto;padding:6px 0;}
+.chat-contacts::-webkit-scrollbar{width:3px;}
+.chat-contacts::-webkit-scrollbar-track{background:transparent;}
+.chat-contacts::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:3px;}
+.chat-contact{padding:.7rem 1rem;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .15s;margin:1px 6px;border-radius:10px;}
+.chat-contact:hover{background:rgba(255,255,255,.05);}
+.chat-contact.active{background:linear-gradient(135deg,rgba(124,58,237,.2),rgba(91,33,182,.15));border:1px solid rgba(124,58,237,.3);box-shadow:0 4px 16px rgba(124,58,237,.15);}
+.chat-av{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;}
+.cav-e{background:linear-gradient(135deg,rgba(239,68,68,.2),rgba(239,68,68,.1));color:#fca5a5;border:1px solid rgba(239,68,68,.2);}
+.cav-a{background:linear-gradient(135deg,rgba(240,192,96,.2),rgba(240,192,96,.1));color:#F0C060;border:1px solid rgba(240,192,96,.2);}
+.cav-s{background:linear-gradient(135deg,rgba(124,58,237,.25),rgba(124,58,237,.1));color:#c4b5fd;border:1px solid rgba(124,58,237,.25);}
+.cav-all{background:linear-gradient(135deg,rgba(6,182,212,.2),rgba(6,182,212,.1));color:#06B6D4;font-size:16px;border:1px solid rgba(6,182,212,.2);}
+.cav-grp{background:linear-gradient(135deg,rgba(16,217,128,.2),rgba(16,217,128,.1));color:#10D980;font-size:15px;border:1px solid rgba(16,217,128,.2);}
 .chat-ci{flex:1;min-width:0;}
-.chat-cn{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.chat-cl{font-size:11px;color:var(--mu2);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.chat-unread{background:var(--red);color:#fff;border-radius:10px;font-size:10px;font-weight:700;padding:1px 6px;min-width:18px;text-align:center;flex-shrink:0;}
-.chat-main{display:flex;flex-direction:column;overflow:hidden;}
-.chat-main-head{padding:.8rem 1.2rem;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:10px;flex-shrink:0;background:rgba(255,255,255,.012);}
-.chat-main-title{font-size:14px;font-weight:700;}
-.chat-main-sub{font-size:11px;color:var(--mu2);margin-top:1px;}
-.chat-msgs{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:5px;}
-.chat-day-sep{text-align:center;font-size:10px;color:var(--mu);padding:6px 0;position:relative;font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
-.chat-day-sep::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:var(--br);}
-.chat-day-sep span{background:var(--s1);padding:0 10px;position:relative;}
-.chat-msg-wrap{display:flex;flex-direction:column;}
+.chat-cn{font-size:13px;font-weight:600;color:#EBF1FF;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.chat-cl{font-size:11px;color:#637A9F;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.chat-unread{background:linear-gradient(135deg,#EF4444,#dc2626);color:#fff;border-radius:20px;font-size:10px;font-weight:700;padding:2px 7px;min-width:20px;text-align:center;flex-shrink:0;box-shadow:0 2px 8px rgba(239,68,68,.4);}
+.chat-main{display:flex;flex-direction:column;overflow:hidden;background:#07090F;}
+.chat-main-head{padding:.9rem 1.3rem;border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;gap:12px;flex-shrink:0;background:rgba(255,255,255,.015);backdrop-filter:blur(10px);}
+.chat-main-title{font-size:14px;font-weight:700;color:#EBF1FF;}
+.chat-main-sub{font-size:11px;color:#637A9F;margin-top:2px;}
+.chat-msgs{flex:1;overflow-y:auto;padding:1.25rem;display:flex;flex-direction:column;gap:4px;background:linear-gradient(180deg,#07090F 0%,#070c14 100%);}
+.chat-msgs::-webkit-scrollbar{width:3px;}
+.chat-msgs::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:3px;}
+.chat-day-sep{text-align:center;font-size:10px;color:#3d5070;padding:10px 0;position:relative;font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
+.chat-day-sep::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:rgba(255,255,255,.05);}
+.chat-day-sep span{background:#07090F;padding:0 12px;position:relative;}
+.chat-msg-wrap{display:flex;flex-direction:column;margin-bottom:2px;}
 .chat-msg-wrap.mine{align-items:flex-end;}
 .chat-msg-wrap.theirs{align-items:flex-start;}
-.chat-bname{font-size:10px;color:var(--mu2);margin-bottom:3px;padding:0 4px;font-weight:600;}
-.chat-bubble{max-width:72%;padding:9px 13px;border-radius:14px;font-size:13px;line-height:1.55;word-break:break-word;}
-.chat-bubble.mine{background:linear-gradient(135deg,var(--pri),var(--pri-d));color:#fff;border-bottom-right-radius:4px;box-shadow:0 4px 14px rgba(124,58,237,.3);}
-.chat-bubble.theirs{background:var(--s3);color:var(--tx);border-bottom-left-radius:4px;border:1px solid var(--br);}
-.chat-bubble img{max-width:100%;border-radius:8px;display:block;margin-top:4px;cursor:pointer;}
-.chat-btime{font-size:10px;opacity:.45;margin-top:3px;padding:0 4px;}
-.chat-empty-state{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--mu);}
-.chat-empty-state .ce-icon{font-size:2.5rem;margin-bottom:6px;}
-.chat-empty-state p{font-size:13px;}
-.chat-empty-state small{font-size:11px;color:var(--mu);}
-.chat-input-area{padding:.75rem 1rem;border-top:1px solid var(--br);display:flex;gap:6px;align-items:flex-end;flex-shrink:0;}
-.chat-input-area textarea{flex:1;background:var(--s2);border:1px solid var(--br2);border-radius:10px;padding:9px 12px;color:var(--tx);font-family:'Outfit',sans-serif;font-size:13px;resize:none;outline:none;max-height:90px;min-height:40px;line-height:1.5;transition:border-color .18s;}
-.chat-input-area textarea:focus{border-color:var(--pri);}
-.chat-img-btn{padding:9px 10px;background:var(--s2);border:1px solid var(--br2);border-radius:10px;color:var(--mu2);cursor:pointer;font-size:16px;transition:all .15s;flex-shrink:0;}
-.chat-img-btn:hover{border-color:var(--pri);color:#c4b5fd;}
-.chat-send{padding:9px 17px;background:linear-gradient(135deg,var(--pri),var(--pri-d));border:none;border-radius:10px;color:#fff;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .18s;box-shadow:0 4px 14px rgba(124,58,237,.3);}
-.chat-send:hover{box-shadow:0 6px 22px rgba(124,58,237,.5);}
-.chat-send:disabled{background:#1a2030;color:#445;cursor:not-allowed;box-shadow:none;}
-/* img preview in input */
-.chat-img-preview{display:none;align-items:center;gap:8px;padding:.5rem 1rem;border-top:1px solid var(--br);background:var(--s2);flex-shrink:0;}
+.chat-bname{font-size:10px;color:#637A9F;margin-bottom:4px;padding:0 4px;font-weight:600;letter-spacing:.03em;}
+.chat-bubble{max-width:70%;padding:10px 14px;border-radius:16px;font-size:13px;line-height:1.6;word-break:break-word;}
+.chat-bubble.mine{background:linear-gradient(135deg,#7C3AED,#5B21B6);color:#fff;border-bottom-right-radius:4px;box-shadow:0 6px 20px rgba(124,58,237,.35);}
+.chat-bubble.theirs{background:#131c2e;color:#EBF1FF;border-bottom-left-radius:4px;border:1px solid rgba(255,255,255,.07);box-shadow:0 2px 8px rgba(0,0,0,.3);}
+.chat-bubble img{max-width:100%;border-radius:10px;display:block;margin-top:6px;cursor:pointer;}
+.chat-btime{font-size:10px;color:#3d5070;margin-top:4px;padding:0 4px;}
+.chat-empty-state{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:#3d5070;}
+.chat-empty-state .ce-icon{font-size:3rem;margin-bottom:8px;filter:grayscale(30%);}
+.chat-empty-state p{font-size:14px;color:#637A9F;font-weight:500;}
+.chat-empty-state small{font-size:12px;color:#3d5070;}
+.chat-input-area{padding:.85rem 1.1rem;border-top:1px solid rgba(255,255,255,.05);display:flex;gap:8px;align-items:flex-end;flex-shrink:0;background:#060d18;}
+.chat-input-area textarea{flex:1;background:#131c2e;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px 14px;color:#EBF1FF;font-family:'Outfit',sans-serif;font-size:13px;resize:none;outline:none;max-height:90px;min-height:42px;line-height:1.5;transition:all .2s;}
+.chat-input-area textarea:focus{border-color:rgba(124,58,237,.5);background:#161f35;box-shadow:0 0 0 3px rgba(124,58,237,.1);}
+.chat-input-area textarea::placeholder{color:#3d5070;}
+.chat-img-btn{padding:10px 11px;background:#131c2e;border:1px solid rgba(255,255,255,.08);border-radius:12px;color:#637A9F;cursor:pointer;font-size:16px;transition:all .2s;flex-shrink:0;}
+.chat-img-btn:hover{border-color:rgba(124,58,237,.4);color:#c4b5fd;background:#1a2535;}
+.chat-send{padding:10px 18px;background:linear-gradient(135deg,#7C3AED,#5B21B6);border:none;border-radius:12px;color:#fff;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s;box-shadow:0 4px 16px rgba(124,58,237,.35);letter-spacing:.02em;}
+.chat-send:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(124,58,237,.5);}
+.chat-send:disabled{background:#131c2e;color:#3d5070;cursor:not-allowed;box-shadow:none;transform:none;}
+.chat-img-preview{display:none;align-items:center;gap:10px;padding:.6rem 1.1rem;border-top:1px solid rgba(255,255,255,.05);background:#060d18;flex-shrink:0;}
 .chat-img-preview.show{display:flex;}
-.chat-img-preview img{height:50px;border-radius:6px;object-fit:cover;}
-.chat-img-preview span{font-size:12px;color:var(--mu2);flex:1;}
-.chat-img-preview button{background:var(--red-f);border:none;color:#fca5a5;border-radius:5px;padding:3px 8px;cursor:pointer;font-size:12px;}
-/* All-messages admin */
-.chat-all-msg{display:flex;flex-direction:column;gap:3px;padding:9px 12px;border-radius:10px;background:var(--s2);border:1px solid var(--br);margin-bottom:4px;}
-.chat-all-meta{font-size:10px;color:var(--mu2);display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
-.chat-all-from{font-weight:700;color:var(--pri-l);}
-.chat-all-to{font-weight:700;color:var(--cyan);}
-.chat-all-text{font-size:13px;margin-top:3px;}
-.chat-all-text img{max-width:200px;border-radius:6px;display:block;margin-top:4px;}
+.chat-img-preview img{height:52px;border-radius:8px;object-fit:cover;border:1px solid rgba(255,255,255,.1);}
+.chat-img-preview span{font-size:12px;color:#637A9F;flex:1;}
+.chat-img-preview button{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:#fca5a5;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px;transition:all .15s;}
+.chat-img-preview button:hover{background:#EF4444;color:#fff;}
+.chat-all-msg{display:flex;flex-direction:column;gap:4px;padding:10px 14px;border-radius:12px;background:#0d1625;border:1px solid rgba(255,255,255,.05);margin-bottom:4px;}
+.chat-all-meta{font-size:10px;color:#637A9F;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.chat-all-from{font-weight:700;color:#c4b5fd;}
+.chat-all-to{font-weight:700;color:#06B6D4;}
+.chat-all-text{font-size:13px;margin-top:4px;color:#EBF1FF;}
+.chat-all-text img{max-width:200px;border-radius:8px;display:block;margin-top:4px;}
 /* Generic modal */
 .generic-modal{position:fixed;inset:0;background:rgba(0,0,0,.82);display:none;align-items:center;justify-content:center;z-index:1000;padding:1rem;}
 .generic-modal.show{display:flex;}
@@ -665,7 +670,8 @@ table td{padding:9px 14px;font-size:13px;font-weight:500;border-bottom:1px solid
         <div class="chat-main">
           <div class="chat-main-head" id="chat-main-head" style="display:none">
             <div class="chat-av cav-e" id="chat-head-av">?</div>
-            <div><div class="chat-main-title" id="chat-head-name">—</div><div class="chat-main-sub" id="chat-head-sub">—</div></div>
+            <div style="flex:1;min-width:0"><div class="chat-main-title" id="chat-head-name">—</div><div class="chat-main-sub" id="chat-head-sub">—</div></div>
+            <button id="chat-edit-grp-btn" style="display:none;padding:5px 12px;border-radius:8px;border:1px solid rgba(16,217,128,.3);background:rgba(16,217,128,.08);color:#10D980;font-family:Outfit,sans-serif;font-size:11px;font-weight:700;cursor:pointer;gap:5px;align-items:center;" onclick="openEditGrpModal()">✏️ Editar grupo</button>
           </div>
           <div class="chat-msgs" id="chat-msgs">
             <div class="chat-empty-state">
@@ -1508,10 +1514,17 @@ window.selectChatGroup=function(gid,gname){
   document.getElementById('chat-main-head').style.display='flex';
   document.getElementById('chat-head-name').textContent=gname;
   const g=myGroups().find(x=>x.id===gid);
-  document.getElementById('chat-head-sub').textContent=g?`${g.members.length} miembros · Grupo`:'Grupo';
+  const members=g?g.members:[];
+  document.getElementById('chat-head-sub').textContent=`${members.length} miembro${members.length!==1?'s':''} · Grupo`;
   document.getElementById('chat-head-av').className='chat-av cav-grp';
   document.getElementById('chat-head-av').textContent='👥';
   document.getElementById('chat-input-area').style.display='flex';
+  // Show edit button only for admin or creator
+  const editBtn=document.getElementById('chat-edit-grp-btn');
+  if(editBtn){
+    const canEdit=isAdmin()||(g&&g.createdBy===CU.username);
+    editBtn.style.display=canEdit?'inline-flex':'none';
+  }
   renderChatContacts();renderChatMessages();
   setTimeout(()=>document.getElementById('chat-input')?.focus(),80);
   updateChatDot();
@@ -1520,6 +1533,8 @@ window.selectChatGroup=function(gid,gname){
 window.selectChatContact=function(username,name,role){
   CHAT_ACTIVE={username,name,role};
   if(username!=='__all__')chatMarkRead(username);
+  const editBtn=document.getElementById('chat-edit-grp-btn');
+  if(editBtn)editBtn.style.display='none';
   renderChatContacts();renderChatMessages();
   document.getElementById('chat-main-head').style.display='flex';
   document.getElementById('chat-head-name').textContent=username==='__all__'?'Todos los mensajes':name;
@@ -1669,6 +1684,79 @@ async function createGroup(){
   renderChatContacts();
   selectChatGroup(gid,name);
 }
+
+window.openEditGrpModal=async function(){
+  if(!CHAT_ACTIVE||!CHAT_ACTIVE.groupId)return;
+  const gid=CHAT_ACTIVE.groupId;
+  const g=myGroups().find(x=>x.id===gid);
+  if(!g){alert('Grupo no encontrado.');return;}
+  if(USERS_CACHE.length===0){spin(true);const r=await api('getUsers');spin(false);if(r.ok)USERS_CACHE=r.data||[];}
+  const allUsers=getAllChatUsers();
+  // include fixed accounts too
+  const everyone=[...FIXED_ACCOUNTS.filter(u=>u.username!==CU.username).map(u=>({username:u.username,name:u.name,role:u.role})),...USERS_CACHE.filter(u=>u.username!==CU.username&&!FIXED_ACCOUNTS.find(f=>f.username===u.username))];
+  let ex=document.getElementById('_editgrp');if(ex)ex.remove();
+  const m=document.createElement('div');m.id='_editgrp';
+  m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:1000;padding:1rem;';
+  const memberItems=everyone.map(u=>{
+    const isMember=g.members.includes(u.username);
+    const isCreator=u.username===g.createdBy;
+    return`<div class="grp-member-item${isMember?' picked':''}" data-u="${esc(u.username)}" onclick="if('${esc(u.username)}'!=='${esc(g.createdBy)}')this.classList.toggle('picked')">
+      <div class="gmi-av">${ini(u.name)}</div>
+      <div style="flex:1"><div class="gmi-name">${esc(u.name)}</div><div style="font-size:10px;color:#8BA3C0">@${esc(u.username)}${isCreator?' · creador':''}</div></div>
+      ${isMember?'<span style="color:#10D980;font-size:14px;">✓</span>':''}
+    </div>`;
+  }).join('');
+  m.innerHTML=`<div style="background:#0F1219;border:1px solid rgba(255,255,255,.12);border-radius:22px;padding:2rem;max-width:420px;width:100%;box-shadow:0 40px 80px rgba(0,0,0,.7);">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.4rem;">
+      <div style="width:40px;height:40px;border-radius:50%;background:rgba(16,217,128,.12);color:#10D980;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">👥</div>
+      <div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.04em;">Editar grupo</div>
+        <div style="font-size:12px;color:#8BA3C0;">${esc(g.name)} · ${g.members.length} miembros actuales</div>
+      </div>
+    </div>
+    <div style="margin-bottom:.8rem;">
+      <label style="font-size:10px;font-weight:700;color:#8BA3C0;text-transform:uppercase;letter-spacing:.08em;">Nombre del grupo</label>
+      <input id="_editgrp_name" value="${esc(g.name)}" style="width:100%;margin-top:5px;background:#161B26;border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:10px 13px;color:#EBF1FF;font-family:Outfit,sans-serif;font-size:14px;outline:none;">
+    </div>
+    <div style="font-size:10px;font-weight:700;color:#8BA3C0;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Miembros <span style="color:#637A9F;font-weight:400;">(haz clic para agregar/quitar)</span></div>
+    <div class="grp-member-list" style="max-height:240px;">${memberItems}</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:1.3rem;">
+      <button class="st-cancel" onclick="document.getElementById('_editgrp').remove()">Cancelar</button>
+      <button onclick="saveGrpChanges('${esc(gid)}','${esc(g.createdBy)}')" style="padding:10px 22px;background:linear-gradient(135deg,#10D980,#059669);border:none;border-radius:9px;color:#fff;font-family:Outfit,sans-serif;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(16,217,128,.3);">💾 Guardar cambios</button>
+    </div>
+  </div>`;
+  document.body.appendChild(m);
+};
+
+window.saveGrpChanges=async function(gid,createdBy){
+  const newName=(document.getElementById('_editgrp_name').value||'').trim();
+  if(!newName){alert('El nombre no puede estar vacío.');return;}
+  const picked=[createdBy,...[...document.querySelectorAll('#_editgrp .grp-member-item.picked')].map(el=>el.dataset.u)];
+  const members=[...new Set(picked)]; // deduplicate
+  if(members.length<1){alert('El grupo debe tener al menos un miembro además del creador.');return;}
+  // Send group_update message
+  const updateMsg={
+    type:'group_create', // re-create with same ID = updates it
+    groupId:gid,
+    groupName:newName,
+    members:members,
+    from:CU.username,
+    fromName:CU.name,
+    to:'__groups__',
+    toName:'grupos',
+    text:`Grupo actualizado: ${newName}`,
+    timestamp:new Date().toISOString()
+  };
+  spin(true);const r=await api_sendMessage(updateMsg);spin(false);
+  if(!r||r.ok===false){alert('Error al guardar cambios.');return;}
+  CHAT_MESSAGES.push(updateMsg);
+  document.getElementById('_editgrp').remove();
+  // Refresh header
+  document.getElementById('chat-head-name').textContent=newName;
+  document.getElementById('chat-head-sub').textContent=`${members.length} miembro${members.length!==1?'s':''} · Grupo`;
+  CHAT_ACTIVE.name=newName;
+  renderChatContacts();
+};
 
 window.deleteGroup=async function(gid,gname){
   if(!confirm('¿Eliminar el grupo "'+gname+'"? Esto lo quitará para todos los miembros.'))return;
